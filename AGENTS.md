@@ -23,6 +23,11 @@ Code, Codex, Cursor, Gemini CLI, aider, OpenHands, or a custom harness.
 6. Persist at pass end: `add-finding` for every finding (fingerprints dedupe
    re-discoveries) and `add-run` with journeys + Bar scores. The ledger is append-only;
    the regression corpus only grows.
+7. Shipping a fix: once a finding's fix is gate-green, `HANDOFF.md` takes it from a §6
+   finding to a readable, verified PR (BetterPRHandoff — changelog lanes, verified demo,
+   live-DOM "shipped" grep, runtime diagram, QA packet; an independent layer required
+   before "shipped"). For a landed REVAMP or a demo deliverable, `PROOF.md` generates the
+   narrated before/after clip (FeatureClipStudio) for HANDOFF's verified-demo phase.
 
 ## Tool mapping (SKILL.md names capabilities, not vendor tools)
 

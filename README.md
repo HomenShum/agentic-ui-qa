@@ -40,20 +40,39 @@ A low Bar score isn't the end of the pass — [`REVAMP.md`](REVAMP.md) is the fi
 
 For **B9 specifically**, [`PRETTIFY.md`](PRETTIFY.md) is the presentation-only mode: it explodes visual craft into a machine-measurable **VISUAL RUBRIC (V1–V9)** scored by [`scripts/prettify-audit.mjs`](scripts/prettify-audit.mjs) (distinct font-sizes, off-grid spacing rate, palette sprawl, per-node WCAG contrast, radius/shadow variety, alignment, motion), then drives a **prettify loop** — audit → presentation-only token/CSS candidates → vision-judge against the rubric → apply the winner → re-audit + pixel-verify + **re-run B1–B10 for zero regression**. The inviolable constraint: prettification is *additive to trust, never a tradeoff* — a restyle may touch only tokens/spacing/type/color/radius/shadow/motion, and an a11y-tree-snapshot diff plus a masked honest-state pixel diff prove it never moved a testid, softened a degraded state, or hid provenance. Beauty that costs trust is a P0.
 
+Once a fix is gate-green, [`HANDOFF.md`](HANDOFF.md) ships it: the [BetterPRHandoff](https://www.npmjs.com/package/@homenshum/easier-to-read-submissions) protocol applied to a QA finding — per-surface changelog lanes, a verified demo, a live-DOM "shipped" grep (a green CI badge is the author's layer wearing a costume), an ASCII runtime diagram for multi-layer fixes, and a QA packet for handoffs — each phase conditional on what the fix touched, with an *independent* layer required before the word "shipped." For a landed revamp or a demo deliverable, [`PROOF.md`](PROOF.md) is the heavy generator for the verified-demo phase: a storyboarded before/after narrated clip (empty → action → loading → result, animated cursor, on-screen verdicts) via [FeatureClipStudio](https://github.com/HomenShum) (Playwright → Remotion → ffmpeg → vision-judge). Same honesty floor: a before/after that shows only the happy path and hides the honest degraded state is a fake success — a P0, not a highlight reel.
+
 ## What's inside
 
 ```
 SKILL.md            the universal protocol: ground rules, journey archetypes A0–A6,
                     the Bar, 11 hard-won traps (U1–U11), finding format, revamp loop
+REDTEAM.md          journey A6 as a real adversarial battery (not a checklist): typed
+                    attacks per Bar dim (consent bypass, fake-success, fabricated
+                    attribution, scope escape, observed-content injection, silent-mutate),
+                    each with a machine PASS condition, the deterministic/LLM/manual
+                    three-judge design, and confirmed-break→P0 ledger wiring
 REFERENCES.md       42 link-verified references — OSS trace UIs, agentic-UX writing,
                     product mechanisms — each mapped to the Bar dimension it informs
 profiles/           per-app anchors: URLs, auth, gates, provenance signals, journeys,
                     app-specific traps. TEMPLATE.md for new apps (fill first, then QA)
+BAR-DEFAULTS.md     shift-left: day-one conventions that make a NEW app born scoring
+                    high on B1–B11 (egress gate, receipt-only provenance, proposal-only
+                    writes, testid/aria contract, clean-route scaffold, CI ui_ux_qa gate)
+PLATFORM.md         where the Bar nests (agent-era-maturity-model rubric + JSON schema)
+                    and the platform chain: adversary, taste-judge, auto-gate, ship+prove
 PRETTIFY.md         the presentation-only polish subsystem: B9 exploded into the
                     VISUAL RUBRIC V1–V9 (machine-measurable), the prettify loop
                     (audit → candidates → vision-judge → apply → re-audit + re-run
                     B1–B10), and the inviolable "additive to trust, never a tradeoff"
                     guardrails (a11y-snapshot diff, masked honest-state pixel diff)
+HANDOFF.md          the ship end: a §6 finding + its fix → a readable, verified PR via
+                    BetterPRHandoff (per-surface changelog lanes · verified demo · live-DOM
+                    "shipped" grep · ASCII runtime diagram · QA packet), an independent
+                    layer required before "shipped," phases conditional on what the fix touched
+PROOF.md            the narrated before/after proof clip (FeatureClipStudio: Playwright →
+                    Remotion → ffmpeg → vision-judge) — the heavy generator for HANDOFF's
+                    verified-demo phase; a clip that hides the honest degraded path is a P0
 scripts/pixels.cjs         headless pixel capture (Playwright) — survives frozen browser
                            screenshot pipelines; reports mojibake/console/overflow/asserts
 scripts/prettify-audit.mjs machine VISUAL-RUBRIC scorecard (font-sizes, off-grid spacing,

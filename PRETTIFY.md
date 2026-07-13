@@ -127,7 +127,10 @@ first — a "variation" may not smuggle in DOM/testid changes.
 
 **3. Vision-judge each rendered candidate.** Render every candidate to PNG (`pixels.cjs`),
 then a **vision-capable model** scores each against the fixed V1–V9 rubric (region-
-grounded critique, UICrit-style: bbox + issue + severity). Pin the rubric text across
+grounded critique, UICrit-style: bbox + issue + severity). To score *on-brand* rather than
+generic-good, prepend the studio's **TASTE PREAMBLE** from `TASTE.md` §A (durable taste
+signals mined from prior accept/decline/ship events) — selection becomes argmax over
+(rubric + taste adherence). Without it the judge optimizes toward tasteful-generic. Pin the rubric text across
 candidates, **shuffle candidate order** per judging call, and log score+rationale (guards
 the documented position/verbosity/self-preference judge biases). Selection = **argmax on
 the rubric, ties broken by guardrail pass.** A **no-vision model DEFERS** this step and

@@ -1,0 +1,97 @@
+# agentic-ui-qa · unattended deploy gate (GitHub Actions example)
+# =============================================================================
+# The agent-neutral BACKSTOP (GATING.md Layer C): re-runs scripts/qa-gate.mjs from a
+# CLEAN checkout on every push/PR, so anything an agent bypassed via raw shell is still
+# caught here. A red gate is a red check — no scoring glue, no model in the decision path.
+#
+# INSTALL: copy this file to `.github/workflows/qa-gate.yml` in the TARGET app repo, then:
+#   1. Vendor the skill into the repo (git submodule / subtree / clone under a stable path),
+#      OR check out HomenShum/agentic-ui-qa in a step (shown below, commented).
+#   2. Set SKILL_DIR and GATE_CONFIG below to match your repo.
+#   3. Commit a qa-gate.config.json (see scripts/qa-gate.mjs header for every field).
+#
+# EXIT-CODE CONTRACT (scripts/qa-gate.mjs — fail-closed, never silently allows):
+#   0 PASSED · 1 BLOCKED · 2 NO_GATE (misconfigured, never a pass) · 3 INTERNAL
+# Any non-zero fails the job. gate-state.json is uploaded as an artifact on every run.
+#
+# NOTE: the gate reads the app's append-only QA memory ledger (.qa/memory/) that the last
+# ATTENDED pass committed — that ledger is the persisted verdict. live-signal + Bar-floor
+# are re-checked fresh here; prettify-audit is advisory (needs Playwright; skipped cleanly
+# if absent — it never blocks). Keep .qa/ committed so CI can read it.
+# =============================================================================
+
+name: qa-gate
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: qa-gate-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  # --- EDIT THESE for your repo -------------------------------------------------
+  SKILL_DIR: .claude/skills/agentic-ui-qa   # where the skill is vendored in this repo
+  GATE_CONFIG: qa-gate.config.json          # the qa-gate.mjs config (repo-relative)
+  # -----------------------------------------------------------------------------
+
+jobs:
+  gate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout (full history so the .qa ledger + git state are intact)
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      # If the skill is NOT vendored in-repo, check it out alongside instead and point
+      # SKILL_DIR at it (uncomment; then set SKILL_DIR: agentic-ui-qa above):
+      # - name: Checkout agentic-ui-qa skill
+      #   uses: actions/checkout@v4
+      #   with:
+      #     repository: HomenShum/agentic-ui-qa
+      #     path: agentic-ui-qa
+
+      - name: Setup Node 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      # Optional: install app deps so prettify-audit can resolve Playwright from the repo.
+      # prettify is ADVISORY — if this step is removed, the gate still runs; prettify simply
+      # downgrades to an advisory note and never blocks. Guarded so a repo without a lockfile
+      # doesn't fail the job here.
+      - name: Install app deps (optional — enables advisory prettify-audit)
+        run: |
+          if [ -f package-lock.json ]; then npm ci --ignore-scripts
+          elif [ -f pnpm-lock.yaml ]; then corepack enable && pnpm install --frozen-lockfile --ignore-scripts
+          elif [ -f yarn.lock ]; then corepack enable && yarn install --frozen-lockfile --ignore-scripts
+          else echo "no lockfile — skipping (prettify-audit will be advisory-only)"; fi
+        continue-on-error: true
+
+      # Optional: browser for prettify-audit. Advisory — safe to drop.
+      - name: Install Playwright Chromium (optional — for advisory prettify-audit)
+        run: npx --yes playwright install --with-deps chromium
+        continue-on-error: true
+
+      - name: Run the agentic-ui-qa gate (deterministic — decides ship/block)
+        id: gate
+        run: node "$SKILL_DIR/scripts/qa-gate.mjs" "$GATE_CONFIG" --json
+        # A non-zero exit (1 BLOCKED / 2 NO_GATE / 3 INTERNAL) fails this step -> red check.
+
+      - name: Upload gate-state.json (verdict artifact — always)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: qa-gate-state
+          path: |
+            **/.qa/gate/gate-state.json
+            **/.qa/gate/prettify-audit.json
+          if-no-files-found: warn
+          retention-days: 30

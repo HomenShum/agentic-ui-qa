@@ -31,6 +31,20 @@ Playwright) and **model-tier adaptive**:
   provenance is ground truth · scope discipline · never print secrets. A stronger model
   earns wider action, never looser honesty.
 
+## Platform & lifecycle (where this skill sits)
+
+This core file is the RUNNER. Around it, one module per lifecycle phase (full map in
+`PLATFORM.md`):
+- **`PLATFORM.md`** — where the Bar nests (the agent-era-maturity-model rubric it instances)
+  and the platform chain that surrounds it.
+- **`REDTEAM.md`** — attack: journey A6 as a real adversarial battery, not a checklist.
+- **`BAR-DEFAULTS.md`** — prevent: day-one conventions so a NEW app is born scoring high.
+- **`GATING.md`** (auto-gate, runs `scripts/qa-gate.mjs`) — the out-of-process verdict the
+  loop cannot self-close.
+- **`HANDOFF.md`** — ship: a gate-green finding → a readable, verified PR.
+- **`PROOF.md`** — prove: the narrated before/after verified-demo clip.
+- **`TASTE.md`** — calibrate/learn: taste memory + learning adapters over the QA ledger.
+
 ## 0. Resolve the app profile FIRST
 
 1. Identify the target app (user said it, or infer from cwd / URL).
@@ -56,6 +70,12 @@ Playwright) and **model-tier adaptive**:
 5. **Scope discipline:** fixes touch only files your finding names; re-run gates after;
    never commit unless asked.
 6. **Never print secrets** (access codes, API keys) into reports — name the env var, not the value.
+7. **No gaming the Bar.** A dimension is met only by held-out, honest evidence the app
+   cannot manufacture about itself — never by a signal the app emits (a hardcoded
+   "verified" badge, a spinner with no run behind it, a testid pinned to a fake state). If
+   an app could pass a Bar dim by printing the right string, that dim is UNMET: score what
+   the artifact proves, not what the UI asserts. (Solo-founder rule: an app must not be
+   able to GAME its own scorecard — scores are held-out and honest.)
 
 ## 2. Tool decision tree (in order)
 
@@ -93,7 +113,11 @@ implementation). Every app runs the same archetypes:
   need an in-app toggle), 3 viewports, no horizontal overflow, visible focus, reduced motion.
 - **A6 Adversarial** (hostile gremlin): empty submits, double-clicks (no double-apply),
   oversized inputs, consent-off AI attempt (egress without consent = P0), mid-operation
-  reload recovery.
+  reload recovery. **This list is the floor.** For a real red-team pass, run `REDTEAM.md`
+  (next to this file) — the adversarial BATTERY that fires typed attacks (consent bypass,
+  forced fake-success, fabricated attribution, scope escape, injection via observed content,
+  silent-mutate) each with a machine-checkable PASS condition, judged by the deterministic/
+  LLM/manual three-tier design; any confirmed break files a P0 (§9).
 
 ## 4. The Agentic UI Bar (score 0–2 each; the revamp target list)
 
@@ -113,6 +137,13 @@ The LOWEST dimensions become the next revamp targets — that is the "revamp unt
 | B9 | Visual craft | reads as designed tooling, not AI slop: real hierarchy, one signature element, disciplined color (hue classifies, never decorates), mono for data, both themes actually work — judged on RENDERED PIXELS |
 | B10 | Conversation & content quality | agent chat/copy earns trust: verdict-first responses, tool-calls visible, honest error voice (cause + next step), sources marked or flagged `[source needed]`, no sycophancy, formatting disciplined |
 | B11 | First-run & progressive disclosure | the landing presents the user's PRIMARY intent (one dominant composer / clear first action), not the app's machinery; complexity reveals progressively — navigator, canvas, inspector, validation, trace appear only AFTER creation begins; clean canonical + public routes; NO leaked debug/QA/legacy query params (`?qa=`, `?domain=`, `?deck=…`) or auto-loaded internal state; an example is an explicit suggestion, not an auto-opened workspace |
+
+**Prevent, not just detect:** `BAR-DEFAULTS.md` (next to this file) is the shift-left
+companion — the day-one conventions (egress gate, receipt-only provenance, proposal-only
+writes, testid/aria contract, clean-route scaffold, CI `ui_ux_qa` gate) that make a NEW
+app score 2 on B1–B11 from its first commit, each mapped to the dim it pre-satisfies.
+`PLATFORM.md` maps where this Bar nests (the agent-era-maturity-model rubric it instances)
+and the platform chain around it (adversary, taste-judge, auto-gate, ship-and-prove).
 
 B8 is the meta-dimension this whole skill exists for: if a Haiku-class agent cannot
 complete A0–A2 from the profile alone, B8 < 2 and the friction list is the revamp spec.
@@ -193,6 +224,17 @@ re-run the affected journeys → re-score. Repeat.
 next revamp target named · memory written (§9: regression sweep ran at start; add-run +
 every finding appended at end) · zero artifact-less claims (re-read and delete any).
 
+**Shipping a fix:** once a finding's fix is implemented and gate-green, `HANDOFF.md` (next
+to this file) takes it from §6 finding → a readable, verified PR — the BetterPRHandoff
+protocol (per-surface changelog lanes · verified demo · live-DOM "shipped" grep · ASCII
+runtime diagram · QA packet), applied conditionally on what the fix touched, with an
+independent layer (not the author) required before the word "shipped." For a landed REVAMP
+or a demo deliverable, `PROOF.md` is the heavy generator for HANDOFF's verified-demo phase:
+a storyboarded before/after narrated clip (empty → action → loading → result, animated
+cursor, on-screen verdicts) via FeatureClipStudio (Playwright → Remotion → ffmpeg →
+vision-judge). Both enforce the same invariants — a before/after that hides the honest
+degraded path is a fake success (P0), just like any artifact-less claim.
+
 ## 9. Memory (remember every failure — the corpus only grows)
 
 Each app keeps an append-only QA memory in ITS OWN repo (default `<app-repo>/.qa/memory/`,
@@ -216,6 +258,14 @@ app repo, not this skill clone: QA history travels with, and stays as private as
 
 **Rules:** ledgers are append-only (state changes = new events, same fp) · never shrink
 the regression list · a finding fixed without a re-verify artifact stays "open".
+
+**Optional learning layer (`TASTE.md`).** Three additive adapters over this ledger — none
+rewrites qa-memory.mjs: (A) mine accept/decline/ship events into provenanced **taste
+memory** that calibrates the B9/PRETTIFY vision-judge to the studio's design language;
+(B) a NodeMem-style gate that learns from `wontfix` dismissals and surfaces recurring
+finding **classes** instead of re-nagging line-items; (C) each pass as a trace→**Bar-delta
+reward**→memory→repair loop so the skill compounds per pass. Skip any layer and behavior is
+unchanged. Same honest-memory invariants (append-only, provenance, unscored-not-floored).
 
 ## 10. Validating THIS skill (dogfood the dogfooder)
 
