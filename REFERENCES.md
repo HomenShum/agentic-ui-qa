@@ -70,6 +70,78 @@ swept + verified alive 2026-07 (corrected URLs applied where the original moved)
 
 ---
 
+## First-party (Homen) references
+
+The prior art authored by the same hand as this skill — MIT, safe to cite as own prior art,
+no third-party license risk. These are the concrete implementations the `PLATFORM.md`
+platform chain names; consult them when the lowest Bar dim (or the lifecycle phase around a
+fix) has a first-party mechanism to steal rather than re-derive.
+
+- **NodeTrace** — B2 trace UI. https://github.com/HomenShum/NodeTrace (MIT,
+  `@homenshum/nodetrace`). *Steal:* a portable React "Trace Lens" — Cmd/Ctrl-click any DOM
+  surface tagged `data-nodetrace-surface="<id>"` opens a panel with that surface's
+  business-proof cards, a **bounded** runtime trace window (tool calls, receipts, verifier
+  status), and server-gated code-ownership receipts. Client sees only opaque surface ids +
+  labels; Review is default, Builder is server-verified. Mechanism: one capture-phase
+  Cmd/Ctrl-click listener → `resolveTraceHit()` → `SurfaceHit{surfaceId, artifactId?, …}`.
+  (Dims: B2 B5 B8.)
+- **VisualJudge** — B9 vision judge. https://github.com/HomenShum/VisualJudge (MIT,
+  `@homenshum/visual-judge`, bin `visual-judge`). *Steal:* a Gemini-backed stdio CLI in three
+  composable steps — `capture` (Playwright drives a scenario, emits screenshots + `.webm` +
+  deterministic P0/P1/P2 findings), `judge` (Gemini scores the media on 8 dims 0–2 with a
+  hard rule: **judge only what is visibly rendered, never infer backend success from UI
+  text**), `scorecard` (merge deterministic + model → pass/fix/rework, P0→rework precedence,
+  degrades without an API key). Agents gate on the printed `verdict=/p0=/p1=` line. Backs the
+  PRETTIFY vision-judge loop. (Dims: B9 B5.)
+- **agent-era-maturity-model** — the Bar's parent rubric.
+  https://github.com/HomenShum/agent-era-maturity-model (MIT). *Steal:* the container standard
+  the Agentic UI Bar is a UI-scoped instance of — `scoreScale` 0–5, six levels L0–L5, a 12-dim
+  assessment JSON schema, "build a repo scanner that emits this assessment JSON." Per-domain
+  instances (the Bar) are the intended extension. (Dims: all — the rubric family.)
+- **AgentRedteam** (`redteam_eval_lab`) — A6 adversary.
+  https://github.com/HomenShum/AgentRedteam (MIT). *Steal:* the typed-attack battery shape
+  `REDTEAM.md` is grounded in — five transforms (control, consent-bypass, forced-fake-success,
+  fabricated-attribution, scope-escape, injection-via-observed-content) each with a
+  machine-checkable PASS condition and the deterministic/LLM/manual three-tier judge; the
+  "attack your own gates" doctrine (a gate that trusts agent-supplied operands is
+  trust-laundering). (Dims: B1 B2 B3 B4 B5 — the whole honesty column.)
+- **proofloop / NodeProof** — the auto-gate.
+  https://github.com/HomenShum/proofloop-fork + https://github.com/HomenShum/NodeProof (MIT).
+  *Steal:* the honest-verification lineage this skill's memory inherits ("remember every
+  failure") and the out-of-process gate the loop cannot self-close — `qa-gate.mjs` persists the
+  verdict to `gate-state.json` (absent = fail-closed 2), a Stop hook refuses "done" while red,
+  a `proofloop guard deploy -- <cmd>` never spawns the child if blocked. A build-green does not
+  close it; a rendered DOM signal + receipt does. (Dims: B2 B5 B8.)
+- **BetterPRHandoff** (easier-to-read-submissions) — ship.
+  https://www.npmjs.com/package/@homenshum/easier-to-read-submissions (MIT). *Steal:* a
+  gate-green finding → a readable, verified PR — per-surface changelog lanes (one append-only
+  file per page/component/server-module/table/integration, not one git log), a verified demo
+  with BOTH DOM checks and video analysis, a live-DOM "shipped" grep, an ASCII runtime diagram,
+  a QA packet — an independent layer required before the word "shipped." Drives `HANDOFF.md`.
+  (Dims: B2 B3 B7.)
+- **FeatureClipStudio** — prove. https://github.com/HomenShum/FeatureClipStudio (MIT).
+  *Steal:* the narrated before/after verified-demo clip that proves a journey through product
+  code (empty → action → loading → result, animated cursor, on-screen verdicts) via Playwright
+  → Remotion → ffmpeg → vision-judge; a clip that hides the honest degraded path is a fake
+  success (P0). The heavy generator for `HANDOFF.md`'s verified-demo phase / `PROOF.md`.
+  (Dims: B5 B6 B9.)
+- **NodeBenchBoilerplate** — prevent. https://github.com/HomenShum/NodeBenchBoilerplate (MIT).
+  *Steal:* the GitHub template a new app is scaffolded from so it's *born* scoring high —
+  `BAR-DEFAULTS.md` is the bridge that maps each B1–B11 dim to a copyable default (egress gate,
+  receipt-only provenance badge, proposal-only write path, clean-route scaffold, testid/aria
+  contract, CI `ui_ux_qa` gate). Prevent is cheaper than detect. (Dims: B1–B11 substrate.)
+- **harness4visuals / NodeMem / NodeRL** — learn. https://github.com/HomenShum/harness4visuals
+  + https://github.com/HomenShum/NodeMem + https://github.com/HomenShum/NodeRL (MIT). *Steal:*
+  the three learning adapters `TASTE.md` layers over the QA ledger — harness4visuals mines
+  accept/decline/ship events into provenanced **taste memory** (reject-on-write without
+  provenance) that calibrates the B9 judge; NodeMem gives the findings ledger a
+  notice→gate→learn-from-`wontfix`→dedup brain that surfaces finding **classes** instead of
+  re-nagging line-items; NodeRL makes each pass a trace→**reward(Bar-delta)**→memory→repair
+  loop that compounds. Same honest-memory invariants (append-only, provenance,
+  unscored-not-floored). (Dims: B9 B8 + the compounding loop.)
+
+---
+
 ## Full catalog
 
 | Name | Category | URL | License / maturity | Steal | Dims |

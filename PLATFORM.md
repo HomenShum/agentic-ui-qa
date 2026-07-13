@@ -60,6 +60,27 @@ The maturity model already anticipates this: its worked example's `upgradePath[3
 literally *"Build an automated repo scanner that emits this assessment JSON"* — a
 per-domain instance (the UI Bar) is the intended extension, and this skill is that instance.
 
+**Two tiers nest under the levels — B (surface) and D (product).** This skill instances the
+maturity model as TWO orthogonal tiers, and both roll into one `overallLevel`:
+- **The Bar (B1–B11)** — the *trustworthy-operable UI* tier. It maps mainly to the
+  human-facing / observability dimensions above (`observability_audit`, `human_steering`,
+  `tool_authority`, `cost_latency`). B raises the level of the **surface**.
+- **The DEPTH tier (D1–D11, `DEPTH.md`)** — the *durable-grounded-governed agent product*
+  tier, CONDITIONAL on data-grounded / document-producing / multi-model / long-running apps.
+  It maps to the deeper runtime dimensions the Bar barely touches: `loop_engineering` (D1) ·
+  `state_memory` (D3/D6/D11) · `context_engineering` (D2/D4/D8) · `security_permissions` +
+  `tool_authority` (D5/D9) · `parallel_delegation` / `deployment_reliability` (D3/D9) ·
+  `observability_audit` (D10). D raises the level of the **product**.
+
+The two are orthogonal: an app can be **22/22 on B and near-0 on D** (a beautiful, honest UI
+over a shallow, single-shot agent — high on the surface dims, floored on `loop_engineering` /
+`state_memory`), which is why a high `overallLevel` (L3+ Stateful Workroom and up) requires
+the D-tier, not just the Bar. A Bar-only pass compresses toward the lower levels
+(Tool User / Workflow Agent); the DEPTH tier is what carries an assessment into
+Stateful Workroom → Agent OS → Governed Agent Organization. Emit both tiers'
+`dimensionScores` (keyed `b1..b11` and `d1..d11`) into the one `assessment-schema.json`
+document.
+
 ---
 
 ## The platform chain

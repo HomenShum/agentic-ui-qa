@@ -34,6 +34,8 @@ Each dimension scored 0–2 per pass; lowest = next revamp target:
 
 B8 is the meta-dimension: if a Haiku-class agent can't complete the core journeys from your app's profile alone, the friction list *is* your revamp spec.
 
+**The conditional DEPTH tier (D1–D11).** The Bar scores whether the UI is *trustworthy and operable*. [`DEPTH.md`](DEPTH.md) adds an orthogonal second tier — D1 agentic runtime depth · D2 grounded web research + claim lineage · D3 durable execution + recovery · D4 claim-level data lineage · D5 uploaded-data safety + privacy lifecycle · D6 conversation + durable memory · D7 dynamic model routing · D8 document ingestion breadth · D9 collaboration + governance · D10 output semantic quality · D11 repeat-user workflow + retention — scoring whether the thing *under* the UI is a durable, grounded, governed agent PRODUCT. It is **conditional** (applies only to data-grounded / document-producing / multi-model / long-running agentic apps; a simple bot scores the rest `N/A`) and **orthogonal** to the Bar: an app can be 22/22 on B and near-0 on D — a beautiful, honest UI over a shallow, single-shot agent. Run it via journey A7. B raises the level of the surface; D raises the level of the product.
+
 ## Detect → fix, not just detect
 
 A low Bar score isn't the end of the pass — [`REVAMP.md`](REVAMP.md) is the fix playbook: a proven pipeline (ground in the real component → 3–4 design directions → adversarial judge → self-contained interactive mockup with every honest state → pixel-critique loop → implementation spec → gated implementation) plus per-surface checklists for trace/provenance UIs, agent chat, proposal/diff review, status & latency feel, layout, and content quality. [`examples/trace-revamp/`](examples/trace-revamp/) is the full worked case: a production trace tab taken from flat text dump to a provenance rail with a tri-signature seal and three honest states — mockup and engineer-ready spec included.
@@ -41,6 +43,19 @@ A low Bar score isn't the end of the pass — [`REVAMP.md`](REVAMP.md) is the fi
 For **B9 specifically**, [`PRETTIFY.md`](PRETTIFY.md) is the presentation-only mode: it explodes visual craft into a machine-measurable **VISUAL RUBRIC (V1–V9)** scored by [`scripts/prettify-audit.mjs`](scripts/prettify-audit.mjs) (distinct font-sizes, off-grid spacing rate, palette sprawl, per-node WCAG contrast, radius/shadow variety, alignment, motion), then drives a **prettify loop** — audit → presentation-only token/CSS candidates → vision-judge against the rubric → apply the winner → re-audit + pixel-verify + **re-run B1–B10 for zero regression**. The inviolable constraint: prettification is *additive to trust, never a tradeoff* — a restyle may touch only tokens/spacing/type/color/radius/shadow/motion, and an a11y-tree-snapshot diff plus a masked honest-state pixel diff prove it never moved a testid, softened a degraded state, or hid provenance. Beauty that costs trust is a P0.
 
 Once a fix is gate-green, [`HANDOFF.md`](HANDOFF.md) ships it: the [BetterPRHandoff](https://www.npmjs.com/package/@homenshum/easier-to-read-submissions) protocol applied to a QA finding — per-surface changelog lanes, a verified demo, a live-DOM "shipped" grep (a green CI badge is the author's layer wearing a costume), an ASCII runtime diagram for multi-layer fixes, and a QA packet for handoffs — each phase conditional on what the fix touched, with an *independent* layer required before the word "shipped." For a landed revamp or a demo deliverable, [`PROOF.md`](PROOF.md) is the heavy generator for the verified-demo phase: a storyboarded before/after narrated clip (empty → action → loading → result, animated cursor, on-screen verdicts) via [FeatureClipStudio](https://github.com/HomenShum) (Playwright → Remotion → ffmpeg → vision-judge). Same honesty floor: a before/after that shows only the happy path and hides the honest degraded state is a fake success — a P0, not a highlight reel.
+
+## Platform
+
+This skill is the *runner* in a larger chain — define the standard → run it → attack it →
+judge its taste → give it a reference to copy → auto-gate the proof → ship and prove →
+prevent regressions in the next app → learn from the corpus. [`PLATFORM.md`](PLATFORM.md)
+maps the whole chain: where the Bar nests (the `agent-era-maturity-model` rubric it
+instances) and how the lifecycle modules — [`REDTEAM.md`](REDTEAM.md) (attack),
+[`BAR-DEFAULTS.md`](BAR-DEFAULTS.md) (prevent), [`GATING.md`](GATING.md) (auto-gate),
+[`HANDOFF.md`](HANDOFF.md) / [`PROOF.md`](PROOF.md) (ship + prove), and
+[`TASTE.md`](TASTE.md) (learn) — fit around it. Every layer names a first-party prior-art
+implementation (see REFERENCES.md → *First-party references*); you can run the skill with
+none of them and add each as you need it.
 
 ## What's inside
 
@@ -52,6 +67,12 @@ REDTEAM.md          journey A6 as a real adversarial battery (not a checklist): 
                     attribution, scope escape, observed-content injection, silent-mutate),
                     each with a machine PASS condition, the deterministic/LLM/manual
                     three-judge design, and confirmed-break→P0 ledger wiring
+DEPTH.md            the conditional DEPTH tier (D1–D11): scores whether the agent UNDER
+                    the UI is a durable, grounded, governed PRODUCT (tool-loop depth, web
+                    claim lineage, durable/resumable jobs, cell-level data lineage, upload
+                    safety, durable memory, model routing, doc ingestion, governance,
+                    output eval, repeat-user retention) — orthogonal to B1–B11, applies
+                    only to data-grounded/document/multi-model/long-running apps, run via A7
 REFERENCES.md       42 link-verified references — OSS trace UIs, agentic-UX writing,
                     product mechanisms — each mapped to the Bar dimension it informs
 profiles/           per-app anchors: URLs, auth, gates, provenance signals, journeys,
@@ -61,6 +82,11 @@ BAR-DEFAULTS.md     shift-left: day-one conventions that make a NEW app born sco
                     writes, testid/aria contract, clean-route scaffold, CI ui_ux_qa gate)
 PLATFORM.md         where the Bar nests (agent-era-maturity-model rubric + JSON schema)
                     and the platform chain: adversary, taste-judge, auto-gate, ship+prove
+GATING.md           the auto-gate: an out-of-process verdict the loop can't self-close —
+                    a Stop-hook / CI check + optional deploy guard (proofloop/NodeProof lineage)
+TASTE.md            the learning layer: three additive adapters over the QA ledger — taste
+                    memory (calibrate the B9 judge), a learn-from-wontfix finding gate,
+                    a per-pass trace→Bar-delta→repair loop; skip any and behavior is unchanged
 PRETTIFY.md         the presentation-only polish subsystem: B9 exploded into the
                     VISUAL RUBRIC V1–V9 (machine-measurable), the prettify loop
                     (audit → candidates → vision-judge → apply → re-audit + re-run
@@ -79,6 +105,10 @@ scripts/prettify-audit.mjs machine VISUAL-RUBRIC scorecard (font-sizes, off-grid
                            palette sprawl, WCAG contrast, radius/shadow, alignment,
                            motion) — advisory, always exit 0; feeds the PRETTIFY loop
 scripts/live-signal.mjs    raw-HTML signal grep — never say "deployed" without it
+scripts/qa-gate.mjs        the auto-gate binary (GATING.md): reads the memory ledger,
+                           returns the done/needs-verification/not-done/blocked verdict,
+                           fail-closed when the state file is absent
+ci/qa-gate.yml             drop-in CI job wiring qa-gate.mjs as a named ui_ux_qa check
 ```
 
 The three included profiles (NodeSlide, NodeRoom Live, NodeBench AI) are real, working examples against production apps — read them to see what a filled profile looks like.

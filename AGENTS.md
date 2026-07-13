@@ -38,6 +38,9 @@ Code, Codex, Cursor, Gemini CLI, aider, OpenHands, or a custom harness.
 | Pixel capture | `scripts/pixels.cjs <config.json>` (Playwright resolved from a `repo`) | required for pixel proof |
 | Live-deploy proof | `scripts/live-signal.mjs <url> <signal>` (raw-HTML grep, trap U9) | required before "deployed" |
 | B9 visual-craft measurement | `scripts/prettify-audit.mjs <url\|config.json>` → VISUAL RUBRIC V1–V9 signals (advisory, exit 0); then `PRETTIFY.md` loop | no-vision model runs the audit + deterministic fixes, DEFERS the vision-judge |
+| Adversarial red-team (journey A6) | `REDTEAM.md` — the typed-attack battery (consent bypass, fake-success, fabricated attribution, scope escape, observed-content injection, silent-mutate), each with a machine PASS condition | run the §3 A6 floor checklist inline; a confirmed break is still a P0 |
+| Deploy / done gate | `scripts/qa-gate.mjs <config.json>` (see `GATING.md`) → done/needs-verification/not-done/blocked from the memory ledger; fail-closed when state absent | required before "done"/"deployed" — the loop can't self-close this verdict |
+| Verified before/after proof clip | `PROOF.md` (FeatureClipStudio: Playwright → Remotion → ffmpeg → vision-judge) for HANDOFF's verified-demo phase | DOM-check + pixel-verify the honest states manually; a clip hiding the degraded path is a P0 |
 | Shell | your exec tool | required — the scripts and gates need it |
 | File search when reads truncate | grep/rg with offsets | required fallback (trap U8) |
 

@@ -76,6 +76,11 @@ This core file is the RUNNER. Around it, one module per lifecycle phase (full ma
    an app could pass a Bar dim by printing the right string, that dim is UNMET: score what
    the artifact proves, not what the UI asserts. (Solo-founder rule: an app must not be
    able to GAME its own scorecard — scores are held-out and honest.)
+8. **Capability-honest labeling.** A control or label must not imply a capability the app
+   lacks. A "Web" toggle that only toggles model egress (not search/retrieval) is a B1/B2
+   dishonesty finding — label it for what it actually does ("External model · <provider>"),
+   not for a capability the runtime never performs. Verify the claim against the network tab,
+   not the label text (see trap U12).
 
 ## 2. Tool decision tree (in order)
 
@@ -118,6 +123,17 @@ implementation). Every app runs the same archetypes:
   forced fake-success, fabricated attribution, scope escape, injection via observed content,
   silent-mutate) each with a machine-checkable PASS condition, judged by the deterministic/
   LLM/manual three-tier design; any confirmed break files a P0 (§9).
+- **A7 Agentic depth** (durable tool-user) — the DEPTH probe, run ONLY for apps where the
+  D-tier applies (data-grounded / document-producing / multi-model / long-running agentic;
+  see `DEPTH.md`'s applicability gate). Probe whether the agent is a REAL iterative tool-loop
+  (the execution trace shows N distinct iteration receipts + a repair stage, not one
+  completion span), grounds web claims with per-claim lineage (`{url, retrievedAt, excerpt,
+  boundElementIds}`), runs durable/resumable jobs (reload mid-run → the job resumes by server
+  `jobId`, progress from server events not a client timer), exposes claim-level data lineage
+  (click a number → `{sourceId, columnRef, rowRange}`), keeps a durable reload-surviving
+  conversation, and surfaces VISIBLE output-quality checks (deterministic eval findings that
+  each carry an artifact). Every A7 signal is a VISIBLE agent-checkable artifact, never an
+  invisible "the LLM did it." Scores land as D1–D11 (`DEPTH.md`), not the Bar.
 
 ## 4. The Agentic UI Bar (score 0–2 each; the revamp target list)
 
@@ -175,6 +191,24 @@ URL; (4) examples are suggestions, not auto-opened state; (5) public routes
 proof is excellent once requested, but it must not be the first impression. Fix via
 `REVAMP.md` S7.
 
+## 4b. The Agentic DEPTH tier (D1–D11, conditional)
+
+The Bar (B1–B11) scores whether the UI is **trustworthy and operable**. `DEPTH.md` (next to
+this file) adds an orthogonal second tier scoring whether the thing UNDER that UI is a
+**durable, grounded, governed agent PRODUCT**: **D1** agentic runtime depth · **D2** grounded
+web research + claim lineage · **D3** durable execution + recovery · **D4** claim-level data
+lineage · **D5** uploaded-data safety + privacy lifecycle · **D6** conversation + durable
+memory · **D7** dynamic model routing · **D8** document ingestion breadth · **D9**
+collaboration + governance · **D10** output semantic quality · **D11** repeat-user workflow +
+retention. Same 0/1/2 scale + the same invariants (no artifact no claim; VISIBLE
+agent-checkable signal, never an invisible "the LLM did it"; capability-honest labeling).
+**DEPTH is CONDITIONAL** — it applies only to data-grounded / document-producing /
+multi-model / long-running agentic apps; a simple stateless to-do bot legitimately skips most
+dims (score them `N/A`, not `0`). The two tiers are **orthogonal**: an app can score **22/22
+on B and near-0 on D** — a beautiful, honest, well-gated UI over a shallow, single-shot agent.
+B raises the level of the surface; D raises the level of the product. Run it via journey A7;
+score with `DEPTH.md`.
+
 ## 5. Universal traps (check BEFORE debugging; profile adds app-specific ones)
 
 - **U1 Screenshot freeze.** In-app browser/CDP screenshots can hang 30s+ (worse with GIF
@@ -201,6 +235,13 @@ proof is excellent once requested, but it must not be the first impression. Fix 
 - **U11 App-controlled theme.** Many shells ignore `prefers-color-scheme` (theme = in-app
   toggle + data attribute). For dark pixels, click the app's toggle; VERIFY the PNG is
   actually dark before trusting it.
+- **U12 Label-implies-capability lie.** A control's TEXT is not proof of what it does. A "Web"
+  / "browse" / "search" toggle may only toggle model egress with no retrieval behind it; a
+  "Roles" or "spend cap" control may be UI the server never enforces. Don't trust the label —
+  verify the capability against the network tab (an actual retrieval/fetch request), the
+  server-enforcement path, or the provenance surface. A label that implies a capability the
+  runtime lacks is a B1/B2 dishonesty finding (§1 rule 8), not a copy nit. (Extends into the
+  D-tier as capability-honest labeling — `DEPTH.md`.)
 
 ## 6. Finding format · 7. Revamp loop · 8. Definition of done
 
