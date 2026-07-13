@@ -1,6 +1,6 @@
 ---
 name: agentic-ui-qa
-description: Universal QA + dogfooding protocol for Homen's agentic application UIs (NodeBench AI, NodeRoom Live, NodeSlide/parity-studio, and future apps). Use when asked to QA, dogfood, verify, regression-test, or "revamp the agent UI" of ANY app — it drives the UI end to end as personas, verifies every claim with artifacts, scores the app against the Agentic UI Bar, and runs the bounded fix-revamp loop. Written so cheap models can execute it literally.
+description: Universal QA + dogfooding protocol for agentic application UIs (worked profiles included for NodeBench AI, NodeRoom Live, NodeSlide/parity-studio; template for any app). Use when asked to QA, dogfood, verify, regression-test, or "revamp the agent UI" of ANY app — it drives the UI end to end as personas, verifies every claim with artifacts, scores the app against the Agentic UI Bar, and runs the bounded fix-revamp loop. Agent- and model-agnostic — a literal floor any small model can execute, an additive ceiling that scales with stronger models.
 ---
 
 # Agentic UI QA & Dogfood Protocol (universal core)
@@ -8,8 +8,28 @@ description: Universal QA + dogfooding protocol for Homen's agentic application 
 Mission: drive a real product UI end to end the way users and AGENTS will, verify every
 claim with an artifact, root-cause every failure, score the app against the Agentic UI
 Bar, and revamp the lowest-scoring dimension — loop until the UI is one any coding agent
-(including cheap models) can operate end to end. Follow this literally; when blocked,
-use the STOP rule. Do not improvise beyond it.
+(including cheap models) can operate end to end.
+
+This protocol is **agent-agnostic** (Claude Code, Codex, Cursor, Gemini CLI, aider,
+OpenHands — anything that can read markdown, run shell commands, and drive a browser or
+Playwright) and **model-tier adaptive**:
+
+**Capability contract**
+- **FLOOR (small/cheap models):** execute this file LITERALLY. Numbered steps, exact
+  commands, machine-checkable signals. Do not improvise beyond it; when blocked, use the
+  STOP rule. If you cannot view images, rely on pixels.cjs machine checks (asserts,
+  mojibake, overflow, console errors, exit codes) and state that limitation in the report.
+- **CEILING (powerful models):** everything here is your floor, not your cap. ADD on top:
+  (a) extend A6 with adversarial variations the journeys don't list — then contribute the
+  good ones back to the profile; (b) root-cause findings all the way to the mechanism and
+  propose the smallest real fix, not a triage note; (c) design the revamp for the lowest
+  Bar dimension against REFERENCES.md, with 2–3 scored options; (d) parallelize
+  independent journeys when your harness supports it; (e) critique the rendered pixels as
+  a designer, not just a checker; (f) after the pass, improve THIS skill/profile with what
+  you learned (new traps, sharper VERIFYs) — the protocol should compound with every run.
+- **Invariants that never scale away, at any tier:** no artifact no claim · fail closed ·
+  provenance is ground truth · scope discipline · never print secrets. A stronger model
+  earns wider action, never looser honesty.
 
 ## 0. Resolve the app profile FIRST
 
@@ -39,10 +59,14 @@ use the STOP rule. Do not improvise beyond it.
 
 ## 2. Tool decision tree (in order)
 
-1. **Text/state assertions** → accessibility tree (`read_page`) or JS eval
-   (`document.body.innerText`, `input:checked`, `document.characterSet`, computed styles).
+1. **Text/state assertions** → your agent's browser tools: accessibility tree if you have
+   one (e.g. `read_page`), else JS eval through any browser bridge (MCP, CDP, Playwright)
+   — `document.body.innerText`, `input:checked`, `document.characterSet`, computed styles.
+   No browser tools at all? Drive everything through scripts/pixels.cjs (clicks + asserts).
 2. **Pixel proof** → `node scripts/pixels.cjs <config.json>` (this skill's folder), then
-   **Read the PNG and look**. NEVER depend on in-app browser screenshot actions (trap U1).
+   **view the PNG with your agent's image input and actually look**. If your model cannot
+   view images, use pixels.cjs machine checks (asserts/mojibake/overflow/console/exit code)
+   and say so in the report. NEVER depend on in-app browser screenshot actions (trap U1).
    pixels.cjs needs a `repo` field (any repo with playwright installed) — see its header.
 3. **Prod-is-live proof** → `node scripts/live-signal.mjs <url> <signal>...` (raw-HTML grep;
    trap U9 for the SPA-shell caveat).
@@ -106,8 +130,9 @@ complete A0–A2 from the profile alone, B8 < 2 and the friction list is the rev
   grep the app's global/chrome CSS for the class before blaming the component.
 - **U7 Concurrent writers.** Other agents may edit the tree mid-pass. Check `git status`
   + file mtimes before gating; re-run gates on the CURRENT tree; never trust an earlier green.
-- **U8 Truncated file reads.** Session hooks may truncate Read to 1 line. Page big files
-  with Grep `-n` + `offset`/`head_limit`.
+- **U8 Truncated file reads.** Some agent harnesses (hooks, context managers) truncate or
+  paginate file reads. If a read comes back suspiciously short, page the file with your
+  search tool (grep -n + offset/limit) instead of trusting the truncation.
 - **U9 SPA shell trap.** Raw prod HTML may be a ~1KB shell. Raw grep proves presence only;
   absence needs a rendered-DOM assert (pixels.cjs `assert`).
 - **U10 First-run gate.** Fresh/headless sessions land on onboarding/login/modal surfaces
@@ -139,7 +164,11 @@ next revamp target named · zero artifact-less claims (re-read and delete any).
 
 ## 9. Validating THIS skill (dogfood the dogfooder)
 
-After material edits to core or profile: cold-run a **Haiku** agent on A0 with ONLY the
-skill+profile as input, require its report in §6 format PLUS a "SKILL FRICTION" list, and
-fold every friction back in. A skill a cheap model cannot follow is itself a finding.
-(Precedent: this loop already ran once on NodeSlide — J0 PASS, 4 frictions found and fixed.)
+After material edits to core or profile: cold-run the CHEAPEST model available in your
+agent stack (Haiku-class, mini-class, Flash-class) on A0 with ONLY the skill+profile as
+input, require its report in §6 format PLUS a "SKILL FRICTION" list, and fold every
+friction back in. A skill the cheapest model cannot follow is itself a finding (B8 for
+the skill). If you are a powerful model, ALSO do the inverse: after your own pass, list
+what you needed that the text didn't give you — that gap goes to the profile too.
+(Precedent: this loop already ran once on NodeSlide — a Haiku cold-run PASSED J0 and
+surfaced 4 frictions, all folded back in.)

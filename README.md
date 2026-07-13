@@ -1,8 +1,10 @@
 # agentic-ui-qa
 
-**A Claude Code skill that QA-tests and dogfoods agentic application UIs until any coding agent — including cheap models — can drive them end to end.**
+**An agent-agnostic QA + dogfooding protocol for agentic application UIs — until any coding agent, on any model, can drive them end to end.**
 
-Not a test framework. A *protocol*: persona journeys, artifact-only verification, a scored quality bar for agentic UX, and a bounded fix-revamp loop — written so literally that a Haiku-class model can execute it cold. Validated exactly that way: a Haiku agent ran the smoke journey against a production app with only these files as input, passed, and its friction list was folded back in.
+Not a test framework. A *protocol*: persona journeys, artifact-only verification, a scored quality bar for agentic UX, and a bounded fix-revamp loop. It ships as a Claude Code skill but runs anywhere an agent can read markdown, run shell commands, and drive a browser or Playwright — Codex, Cursor, Gemini CLI, aider, OpenHands, your own harness (`AGENTS.md` is the generic entry point).
+
+**It scales in both directions.** The floor: written so literally that a Haiku-class model can execute it cold — validated exactly that way (a Haiku agent ran the smoke journey against a production app with only these files as input, passed, and its friction list was folded back in). The ceiling: powerful models are explicitly told what to ADD — adversarial journey extensions, mechanism-level root-cause fixes, reference-driven revamp design with scored options, designer-grade pixel critique, and improving the protocol itself after every pass. The honesty invariants (no artifact no claim, fail closed, provenance is ground truth) never scale away at any tier — a stronger model earns wider action, never looser honesty.
 
 ## Why this exists
 
@@ -47,6 +49,8 @@ The three included profiles (NodeSlide, NodeRoom Live, NodeBench AI) are real, w
 
 ## Install
 
+**Claude Code** (auto-discovered as a skill):
+
 ```bash
 # user-level (all projects)
 git clone https://github.com/HomenShum/agentic-ui-qa ~/.claude/skills/agentic-ui-qa
@@ -55,7 +59,9 @@ git clone https://github.com/HomenShum/agentic-ui-qa ~/.claude/skills/agentic-ui
 git clone https://github.com/HomenShum/agentic-ui-qa .claude/skills/agentic-ui-qa
 ```
 
-Then in Claude Code: *"QA my app with agentic-ui-qa"* — the skill resolves (or makes you create) the app profile first, runs the journeys, scores the Bar, and reports findings with evidence paths.
+Then: *"QA my app with agentic-ui-qa"* — the skill resolves (or makes you create) the app profile first, runs the journeys, scores the Bar, and reports findings with evidence paths.
+
+**Codex / Cursor / Gemini CLI / aider / anything else:** clone it anywhere and point your agent at it — `AGENTS.md` at the repo root is the entry prompt (it routes to `SKILL.md`). The YAML frontmatter in SKILL.md is Claude metadata; every other agent can ignore it — the protocol is plain markdown + two dependency-light Node scripts (Playwright resolved from any repo that has it).
 
 `pixels.cjs` needs Playwright in any repo on disk — point the config's `"repo"` field at one.
 

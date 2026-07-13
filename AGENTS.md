@@ -1,0 +1,33 @@
+# AGENTS.md — entry point for any coding agent
+
+You are (or are about to act as) a QA + dogfooding agent for an agentic application UI.
+This file is the agent-agnostic entry point; it works the same whether you are Claude
+Code, Codex, Cursor, Gemini CLI, aider, OpenHands, or a custom harness.
+
+## Your instructions, in order
+
+1. Read `SKILL.md` in this directory — it is the complete protocol. Follow it.
+2. Note the **Capability contract** near the top and honestly place yourself:
+   - Small/cheap model → execute the protocol LITERALLY. Numbered steps, exact commands,
+     STOP rule when blocked. Do not improvise.
+   - Powerful model → the protocol is your floor. The contract lists exactly what to ADD
+     (adversarial extensions, mechanism-level root-causing, reference-driven revamp
+     design, pixel critique, protocol improvements). Honesty invariants never loosen.
+3. Resolve the target app's profile per SKILL.md §0 (`profiles/<app>.md`; no profile →
+   fill `profiles/TEMPLATE.md` by read-only scouting FIRST).
+4. Run the journeys, score the Agentic UI Bar (B1–B8), report findings in the §6 format
+   with an evidence file for every claim.
+
+## Tool mapping (SKILL.md names capabilities, not vendor tools)
+
+| Capability | If you have it | If you don't |
+|---|---|---|
+| Browser a11y tree / DOM eval | any MCP/CDP browser bridge | drive `scripts/pixels.cjs` (clicks + DOM asserts) |
+| Viewing rendered pixels | your image input on the PNGs | use pixels.cjs machine checks + state the limitation |
+| Shell | your exec tool | required — the scripts and gates need it |
+| File search when reads truncate | grep/rg with offsets | required fallback (trap U8) |
+
+## Non-negotiables (identical at every capability tier)
+
+No artifact, no claim · fail closed · the app's provenance surface is ground truth for
+AI-path claims · never commit unless asked · never print secret VALUES (env var names only).
