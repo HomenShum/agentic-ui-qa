@@ -94,6 +94,11 @@ renders the **DEGRADED** face, not a live one.
 and because the badge is a pure function of a derived receipt, it **cannot lie** (the
 anti-gaming rule made structural). Cross-reference `REVAMP.md` S1 for the full trace UI.
 
+**Make trace scale a day-one invariant:** adopt `TRACE-WATERFALL.md`. Small runs stay
+compact; durable runs become a hierarchical, virtualized waterfall with server cursor
+pagination, truthful open-span timing, exact source binding, and a responsive expanded view.
+Do not discover at production volume that the trace mounts one card per operation.
+
 **qa-gate check:** the `ProvenanceBadge` component has no literal cost/token/digest
 strings; a degraded fixture renders `$0.000` + amber + zero digest; a live fixture renders
 `cost>0`. `[data-testid=provenance]` present on every AI-result surface.
