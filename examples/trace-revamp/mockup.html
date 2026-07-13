@@ -1,0 +1,877 @@
+<meta charset="utf-8">
+<title>NodeSlide — Trace tab (Agent Prism rail + Countersigned seal)</title>
+<style>
+/* ============================================================
+   NodeSlide Trace tab — MERGED
+   FRAME  = Agent Prism edition: six-node provenance rail, color
+            handoff (terracotta human hops -> indigo agent hops ->
+            terracotta), typed badges, Oklch token layer, mono
+            numerics, masthead, Depth control, theme toggle,
+            Run A/B switch, honest dashed-amber rail break.
+   GRAFT  = Countersigned tri-signature validation SEAL, rendered
+            as the RECEIPT node's terminal detail: three signer
+            lines in three inks (Agent indigo / Validator green /
+            Human terracotta) with a perforated ticket edge.
+   Every value maps to a real AgentTrace / ValidationResult field.
+   Terracotta = human ink · Indigo = agent ink.
+   ============================================================ */
+:root{
+  /* --- surfaces / ink (light) --- */
+  --ap-background: 1 0 0;              /* ns-surface #fff */
+  --ap-page:       0.975 0.002 260;   /* ns-bg #fafafa */
+  --ap-raised:     0.968 0.002 260;   /* ns-raised #f3f4f6 */
+  --ap-foreground: 0.21 0.034 264.665;/* ns-ink #111827 / gray.900 */
+  --ap-faint:      0.55 0.019 258;    /* ns-faint #667085 */
+  --ap-border:     0.928 0.006 264.531;/* gray.200 */
+  --ap-border-subtle: 0.955 0.004 264;/* gray.100 */
+  --ap-border-strong: 0.872 0.010 258.338;/* gray.300 */
+  --ap-mono-ink:   0.37 0.020 264;    /* gray.700 — calm numerics */
+
+  /* --- human (terracotta) --- */
+  --ap-human:        0.681 0.132 41.5;/* #d97757 */
+  --ap-human-strong: 0.553 0.122 40.2;/* #a8583f */
+  --ap-human-soft:   0.958 0.020 40;
+
+  /* --- agent (indigo) --- */
+  --ap-agent:        0.552 0.163 271.4;/* #5e6ad2 */
+  --ap-agent-strong: 0.500 0.160 271;
+  --ap-agent-soft:   0.963 0.018 271;
+
+  /* --- status (anchored to ns-positive/warning/danger) --- */
+  --ap-success:      0.520 0.110 163; /* ns-positive #047857 */
+  --ap-success-soft: 0.965 0.020 163;
+  --ap-warning:      0.553 0.132 54.6;/* ns-warning #b45309 */
+  --ap-warning-soft: 0.965 0.028 60;
+  --ap-danger:       0.577 0.223 27.3;/* ns-danger #dc2626 */
+  --ap-danger-soft:  0.962 0.028 25;
+
+  /* --- per-event-type triads (avatar/badge-bg/badge-fg/timeline) --- */
+  --consent-bg: 0.962 0.018 46;  --consent-fg: 0.560 0.120 46;  --consent-tl: 0.700 0.128 46;
+  --read-bg:    0.966 0.016 262; --read-fg:    0.520 0.150 262; --read-tl:    0.610 0.150 262;
+  --plan-bg:    0.963 0.018 271; --plan-fg:    0.505 0.160 271; --plan-tl:    0.590 0.160 271;
+  --edits-bg:   0.961 0.020 278; --edits-fg:   0.495 0.165 278; --edits-tl:   0.570 0.165 278;
+  --validate-bg:0.958 0.020 40;  --validate-fg:0.553 0.122 40;  --validate-tl:0.681 0.132 40;
+  --receipt-bg: 0.955 0.022 33;  --receipt-fg: 0.535 0.128 33;  --receipt-tl: 0.655 0.138 33;
+
+  --shadow-sm: 0 1px 3px oklch(0.2 0.03 264 / 0.09), 0 1px 2px oklch(0.2 0.03 264 / 0.05);
+  --shadow-seal: 0 1px 2px oklch(0.2 0.03 264 / 0.06), 0 6px 18px oklch(0.2 0.03 264 / 0.10);
+  --mono: ui-monospace,'JetBrains Mono','SF Mono',Menlo,'Cascadia Mono',monospace;
+  --sans: -apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;
+}
+@media (prefers-color-scheme: dark){ :root{
+  --ap-background: 0.185 0.006 258;   /* ns-surface #14181d */
+  --ap-page:      0.145 0.006 258;    /* ns-bg #0c0e11 */
+  --ap-raised:    0.235 0.007 258;    /* ns-raised #1e242b */
+  --ap-foreground:0.955 0.004 260;
+  --ap-faint:     0.66 0.014 258;
+  --ap-border:    0.315 0.010 260;
+  --ap-border-subtle: 0.27 0.008 260;
+  --ap-border-strong: 0.40 0.014 260;
+  --ap-mono-ink:  0.80 0.012 260;
+
+  --ap-human:        0.712 0.135 42;
+  --ap-human-strong: 0.775 0.120 44;
+  --ap-human-soft:   0.30 0.045 40;
+
+  --ap-agent:        0.660 0.150 270;
+  --ap-agent-strong: 0.735 0.140 270;
+  --ap-agent-soft:   0.285 0.060 271;
+
+  --ap-success:      0.680 0.130 163; --ap-success-soft: 0.30 0.050 163;
+  --ap-warning:      0.720 0.135 66;  --ap-warning-soft: 0.32 0.060 60;
+  --ap-danger:       0.660 0.180 25;  --ap-danger-soft:  0.32 0.070 25;
+
+  --consent-bg: 0.30 0.045 46;  --consent-fg: 0.800 0.110 50;  --consent-tl: 0.720 0.128 46;
+  --read-bg:    0.285 0.060 262;--read-fg:    0.780 0.130 265; --read-tl:    0.680 0.150 264;
+  --plan-bg:    0.285 0.062 271;--plan-fg:    0.775 0.135 272; --plan-tl:    0.670 0.155 271;
+  --edits-bg:   0.285 0.062 278;--edits-fg:   0.775 0.135 279; --edits-tl:   0.660 0.155 278;
+  --validate-bg:0.30 0.045 40;  --validate-fg:0.795 0.110 46;  --validate-tl:0.720 0.128 42;
+  --receipt-bg: 0.30 0.048 33;  --receipt-fg: 0.800 0.115 40;  --receipt-tl: 0.715 0.130 36;
+
+  --shadow-sm: 0 1px 3px oklch(0 0 0 / 0.4), 0 1px 2px oklch(0 0 0 / 0.3);
+  --shadow-seal: 0 1px 2px oklch(0 0 0 / 0.4), 0 6px 20px oklch(0 0 0 / 0.45);
+}}
+:root[data-theme="light"]{
+  --ap-background:1 0 0; --ap-page:0.975 0.002 260; --ap-raised:0.968 0.002 260;
+  --ap-foreground:0.21 0.034 264.665; --ap-faint:0.55 0.019 258;
+  --ap-border:0.928 0.006 264.531; --ap-border-subtle:0.955 0.004 264; --ap-border-strong:0.872 0.010 258.338;
+  --ap-mono-ink:0.37 0.020 264;
+  --ap-human:0.681 0.132 41.5; --ap-human-strong:0.553 0.122 40.2; --ap-human-soft:0.958 0.020 40;
+  --ap-agent:0.552 0.163 271.4; --ap-agent-strong:0.500 0.160 271; --ap-agent-soft:0.963 0.018 271;
+  --ap-success:0.520 0.110 163; --ap-success-soft:0.965 0.020 163;
+  --ap-warning:0.553 0.132 54.6; --ap-warning-soft:0.965 0.028 60;
+  --ap-danger:0.577 0.223 27.3; --ap-danger-soft:0.962 0.028 25;
+  --consent-bg:0.962 0.018 46; --consent-fg:0.560 0.120 46; --consent-tl:0.700 0.128 46;
+  --read-bg:0.966 0.016 262; --read-fg:0.520 0.150 262; --read-tl:0.610 0.150 262;
+  --plan-bg:0.963 0.018 271; --plan-fg:0.505 0.160 271; --plan-tl:0.590 0.160 271;
+  --edits-bg:0.961 0.020 278; --edits-fg:0.495 0.165 278; --edits-tl:0.570 0.165 278;
+  --validate-bg:0.958 0.020 40; --validate-fg:0.553 0.122 40; --validate-tl:0.681 0.132 40;
+  --receipt-bg:0.955 0.022 33; --receipt-fg:0.535 0.128 33; --receipt-tl:0.655 0.138 33;
+  --shadow-sm:0 1px 3px oklch(0.2 0.03 264 / 0.09), 0 1px 2px oklch(0.2 0.03 264 / 0.05);
+  --shadow-seal:0 1px 2px oklch(0.2 0.03 264 / 0.06), 0 6px 18px oklch(0.2 0.03 264 / 0.10);
+}
+:root[data-theme="dark"]{
+  --ap-background:0.185 0.006 258; --ap-page:0.145 0.006 258; --ap-raised:0.235 0.007 258;
+  --ap-foreground:0.955 0.004 260; --ap-faint:0.66 0.014 258;
+  --ap-border:0.315 0.010 260; --ap-border-subtle:0.27 0.008 260; --ap-border-strong:0.40 0.014 260;
+  --ap-mono-ink:0.80 0.012 260;
+  --ap-human:0.712 0.135 42; --ap-human-strong:0.775 0.120 44; --ap-human-soft:0.30 0.045 40;
+  --ap-agent:0.660 0.150 270; --ap-agent-strong:0.735 0.140 270; --ap-agent-soft:0.285 0.060 271;
+  --ap-success:0.680 0.130 163; --ap-success-soft:0.30 0.050 163;
+  --ap-warning:0.720 0.135 66; --ap-warning-soft:0.32 0.060 60;
+  --ap-danger:0.660 0.180 25; --ap-danger-soft:0.32 0.070 25;
+  --consent-bg:0.30 0.045 46; --consent-fg:0.800 0.110 50; --consent-tl:0.720 0.128 46;
+  --read-bg:0.285 0.060 262; --read-fg:0.780 0.130 265; --read-tl:0.680 0.150 264;
+  --plan-bg:0.285 0.062 271; --plan-fg:0.775 0.135 272; --plan-tl:0.670 0.155 271;
+  --edits-bg:0.285 0.062 278; --edits-fg:0.775 0.135 279; --edits-tl:0.660 0.155 278;
+  --validate-bg:0.30 0.045 40; --validate-fg:0.795 0.110 46; --validate-tl:0.720 0.128 42;
+  --receipt-bg:0.30 0.048 33; --receipt-fg:0.800 0.115 40; --receipt-tl:0.715 0.130 36;
+  --shadow-sm:0 1px 3px oklch(0 0 0 / 0.4), 0 1px 2px oklch(0 0 0 / 0.3);
+  --shadow-seal:0 1px 2px oklch(0 0 0 / 0.4), 0 6px 20px oklch(0 0 0 / 0.45);
+}
+
+*{box-sizing:border-box}
+html,body{margin:0}
+body{
+  font-family:var(--sans);
+  background:
+    radial-gradient(120% 80% at 85% -10%, oklch(var(--ap-agent) / 0.06), transparent 60%),
+    oklch(var(--ap-page));
+  color:oklch(var(--ap-foreground));
+  -webkit-font-smoothing:antialiased;
+  min-height:100vh;
+  padding:32px 20px 64px;
+  overflow-x:hidden;
+}
+.stage{max-width:920px;margin:0 auto;display:grid;grid-template-columns:1fr;gap:22px}
+@media(min-width:860px){.stage{grid-template-columns:minmax(0,1fr) 340px;align-items:start}}
+
+/* ---- editorial framing (page chrome, not inspector) ---- */
+.frame-note{max-width:420px}
+.eyebrow{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:oklch(var(--ap-faint));font-weight:600;margin:0 0 10px}
+.frame-note h1{font-size:26px;line-height:1.15;margin:0 0 14px;font-weight:650;letter-spacing:-.02em;text-wrap:balance}
+.frame-note h1 em{font-style:normal;color:oklch(var(--ap-human))}
+.frame-note p{font-size:14px;line-height:1.6;color:oklch(var(--ap-faint));margin:0 0 14px;max-width:52ch}
+.legend{display:flex;flex-direction:column;gap:9px;margin-top:22px;padding-top:20px;border-top:1px solid oklch(var(--ap-border))}
+.legend-row{display:flex;align-items:center;gap:10px;font-size:12.5px;color:oklch(var(--ap-faint))}
+.lg-marker{width:12px;height:12px;flex:0 0 auto;transform:rotate(45deg);border-radius:2px}
+.lg-marker.human{background:oklch(var(--ap-human))}
+.lg-marker.agent{background:transparent;border:1.5px solid oklch(var(--ap-agent))}
+.lg-marker.brk{background:transparent;border:1.5px dashed oklch(var(--ap-warning))}
+.prov{margin-top:20px;font-size:11px;line-height:1.55;color:oklch(var(--ap-faint) / .85)}
+.prov code{font-family:var(--mono);font-size:10.5px}
+
+/* ============================================================
+   INSPECTOR — faithful 340px NodeSlide panel
+   ============================================================ */
+.inspector{
+  width:340px;max-width:100%;
+  background:oklch(var(--ap-background));
+  border:1px solid oklch(var(--ap-border));
+  border-radius:14px;
+  box-shadow:var(--shadow-sm);
+  overflow:hidden;
+  font-size:13px;
+}
+.insp-tabs{
+  display:flex;gap:2px;padding:8px 10px 0;border-bottom:1px solid oklch(var(--ap-border-subtle));
+}
+.insp-tab{
+  display:inline-block;font:inherit;font-size:12px;font-weight:550;border:0;background:transparent;cursor:default;
+  color:oklch(var(--ap-faint));padding:8px 11px 10px;border-bottom:2px solid transparent;border-radius:6px 6px 0 0;
+}
+.insp-tab.current{color:oklch(var(--ap-foreground));border-bottom-color:oklch(var(--ap-human))}
+
+/* run banner */
+.banner{padding:13px 15px 14px;border-bottom:1px solid oklch(var(--ap-border));display:flex;flex-direction:column;gap:9px}
+.banner-top{display:flex;align-items:center;gap:8px}
+.statusdot{width:8px;height:8px;border-radius:50%;flex:0 0 auto}
+.banner-title{font-weight:600;font-size:13px;letter-spacing:-.01em}
+.banner-ver{font-family:var(--mono);font-size:11px;color:oklch(var(--ap-mono-ink));margin-left:auto;font-variant-numeric:tabular-nums}
+.banner-meta{display:flex;flex-wrap:wrap;gap:6px 12px;align-items:baseline}
+.metanum{font-family:var(--mono);font-size:11.5px;color:oklch(var(--ap-mono-ink));font-variant-numeric:tabular-nums;letter-spacing:-.01em}
+.metanum b{font-weight:600}
+.attrib{
+  display:inline-flex;align-items:flex-start;gap:5px;font-family:var(--mono);font-size:11px;
+  font-variant-numeric:tabular-nums;letter-spacing:-.01em;padding:3px 7px;border-radius:5px;width:100%;
+  overflow-wrap:anywhere;word-break:break-word;line-height:1.5;
+}
+.attrib.live{color:oklch(var(--ap-agent-strong));background:oklch(var(--ap-agent-soft) / .6)}
+.attrib.fallback{color:oklch(var(--ap-warning));background:oklch(var(--ap-warning-soft) / .7)}
+.attrib .dot{width:5px;height:5px;border-radius:50%;flex:0 0 auto;margin-top:5px}
+.attrib.live .dot{background:oklch(var(--ap-agent))}
+.attrib.fallback .dot{background:oklch(var(--ap-warning))}
+
+/* controls bar */
+.controls{display:flex;align-items:center;gap:8px;padding:10px 15px;border-bottom:1px solid oklch(var(--ap-border-subtle));flex-wrap:wrap}
+.seg{display:inline-flex;padding:2px;background:oklch(var(--ap-raised));border:1px solid oklch(var(--ap-border));border-radius:8px}
+.seg button{font:inherit;font-size:11px;font-weight:550;border:0;background:transparent;color:oklch(var(--ap-faint));padding:4px 9px;border-radius:6px;cursor:pointer;transition:background .12s,color .12s}
+.seg button[aria-pressed="true"]{background:oklch(var(--ap-background));color:oklch(var(--ap-foreground));box-shadow:var(--shadow-sm)}
+.seg-label{font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:oklch(var(--ap-faint));font-weight:600}
+.iconbtn{margin-left:auto;display:inline-flex;align-items:center;justify-content:center;width:30px;height:30px;border-radius:8px;border:1px solid oklch(var(--ap-border));background:oklch(var(--ap-raised));color:oklch(var(--ap-foreground));cursor:pointer}
+.iconbtn svg{width:15px;height:15px}
+.traceswitch{display:inline-flex;gap:2px;padding:2px;background:oklch(var(--ap-raised));border:1px solid oklch(var(--ap-border));border-radius:8px}
+.traceswitch button{font:inherit;font-size:11px;font-weight:600;border:0;background:transparent;color:oklch(var(--ap-faint));padding:4px 8px;border-radius:6px;cursor:pointer;font-family:var(--mono)}
+.traceswitch button[aria-pressed="true"]{background:oklch(var(--ap-background));color:oklch(var(--ap-foreground));box-shadow:var(--shadow-sm)}
+
+/* ---- the spine ---- */
+.spine{padding:6px 0 12px}
+.node{position:relative;display:grid;grid-template-columns:30px 1fr;cursor:pointer;border:1px solid transparent;border-radius:0;transition:background .12s}
+.node:hover{background:oklch(var(--ap-raised) / .5)}
+.node[aria-expanded="true"]{background:oklch(var(--ap-raised));border-color:oklch(var(--ap-border-strong))}
+.node:focus-visible{outline:2px solid oklch(var(--ap-agent) / .8);outline-offset:-2px}
+.rail{position:relative}
+.seg-top,.seg-bot{position:absolute;left:14px;width:2px;background:oklch(var(--seg,var(--ap-border-strong)))}
+.seg-top{top:0;height:23px}
+.seg-bot{top:23px;bottom:0}
+.node:last-child .seg-bot{display:none}
+.seg-top.broken{background:none;border-left:2px dashed oklch(var(--ap-warning));width:0;left:14px}
+.seg-top.broken::after{content:"";position:absolute;left:-13px;top:2px;width:26px;height:19px;background:oklch(var(--ap-warning-soft) / .8);border-radius:4px;z-index:-1}
+.marker{position:absolute;left:9px;top:16px;width:12px;height:12px;transform:rotate(45deg);border-radius:2px;z-index:2}
+.marker.human{background:oklch(var(--mk));box-shadow:0 0 0 3px oklch(var(--ap-background))}
+.marker.agent{background:oklch(var(--ap-background));border:2px solid oklch(var(--mk));box-shadow:0 0 0 2px oklch(var(--ap-background))}
+.marker.terminal{width:14px;height:14px;left:8px;top:15px}
+.marker.outline{background:oklch(var(--ap-background));border:2px dashed oklch(var(--mk))}
+
+.ncontent{padding:12px 14px 12px 4px;min-width:0}
+.nhead{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.badge{display:inline-flex;align-items:center;gap:5px;padding:2px 8px 2px 6px;border-radius:20px;font-size:10.5px;font-weight:600;letter-spacing:.01em;white-space:nowrap}
+.badge svg{width:12px;height:12px;flex:0 0 auto}
+.nlabel{font-weight:600;font-size:13px;letter-spacing:-.01em}
+.seal-chip{margin-left:auto;font-family:var(--mono);font-size:10px;color:oklch(var(--ap-mono-ink));background:oklch(var(--ap-raised));border:1px solid oklch(var(--ap-border-strong));border-radius:5px;padding:2px 6px;max-width:150px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-variant-numeric:tabular-nums;letter-spacing:-.01em}
+.seal-chip.empty{border-style:dashed;color:oklch(var(--ap-faint));background:transparent}
+.nsummary{margin:6px 0 0;font-size:12px;line-height:1.5;color:oklch(var(--ap-faint))}
+.chev{width:14px;height:14px;color:oklch(var(--ap-faint));transition:transform .15s;flex:0 0 auto}
+.node[aria-expanded="true"] .chev{transform:rotate(90deg)}
+
+/* ---- details view (attribute table) ---- */
+.details{grid-column:2;padding:2px 14px 14px 4px;display:none}
+.node[aria-expanded="true"] .details{display:block;animation:fade .16s ease}
+@keyframes fade{from{opacity:0;transform:translateY(-3px)}to{opacity:1;transform:none}}
+.attrtable{border:1px solid oklch(var(--ap-border));border-radius:9px;overflow:hidden;background:oklch(var(--ap-background))}
+.attrrow{display:grid;grid-template-columns:minmax(0,86px) minmax(0,1fr);gap:0;border-bottom:1px solid oklch(var(--ap-border-subtle))}
+.attrrow:last-child{border-bottom:0}
+.attrrow.stacked{grid-template-columns:1fr}
+.akey{font-size:10.5px;color:oklch(var(--ap-faint));padding:7px 9px;letter-spacing:.02em;font-weight:550;border-right:1px solid oklch(var(--ap-border-subtle))}
+.stacked .akey{border-right:0;padding-bottom:2px}
+.aval{font-size:12px;color:oklch(var(--ap-foreground));padding:7px 9px;line-height:1.5;min-width:0}
+.stacked .aval{padding-top:2px}
+.aval.mono{font-family:var(--mono);color:oklch(var(--ap-mono-ink));font-variant-numeric:tabular-nums;letter-spacing:-.01em;overflow-wrap:anywhere;word-break:break-word}
+.list{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:6px}
+.list li{position:relative;padding-left:16px;font-size:12px;line-height:1.45;color:oklch(var(--ap-foreground))}
+.list.ord{counter-reset:step}
+.list.ord li{counter-increment:step}
+.list.ord li::before{content:counter(step);position:absolute;left:0;top:0;font-family:var(--mono);font-size:10px;color:oklch(var(--ap-faint));font-weight:600}
+.list.dot li::before{content:"";position:absolute;left:2px;top:7px;width:5px;height:5px;border-radius:1px;transform:rotate(45deg);background:oklch(var(--ap-agent) / .6)}
+.list.grd li::before{content:"";position:absolute;left:2px;top:7px;width:5px;height:5px;border-radius:50%;background:oklch(var(--ap-success) / .7)}
+
+.pills{display:flex;flex-wrap:wrap;gap:6px}
+.pill{display:inline-flex;align-items:center;gap:4px;font-size:10.5px;font-weight:600;padding:3px 8px;border-radius:20px;font-family:var(--mono);letter-spacing:-.01em}
+.pill svg{width:11px;height:11px}
+.pill.ok{color:oklch(var(--ap-success));background:oklch(var(--ap-success-soft) / .7)}
+.pill.warn{color:oklch(var(--ap-warning));background:oklch(var(--ap-warning-soft) / .7)}
+.pill.err{color:oklch(var(--ap-danger));background:oklch(var(--ap-danger-soft) / .7)}
+.pill.muted{color:oklch(var(--ap-faint));background:oklch(var(--ap-raised))}
+
+/* receipt invoice block (quiet economic receipt) */
+.invoice{display:grid;grid-template-columns:max-content minmax(0,1fr);gap:2px 10px;padding:9px 11px;background:oklch(var(--ap-raised) / .6);border-radius:8px;border:1px solid oklch(var(--ap-border-subtle))}
+.invoice .ik{font-size:10.5px;color:oklch(var(--ap-faint));align-self:center}
+.invoice .iv{font-family:var(--mono);font-size:12px;text-align:right;color:oklch(var(--ap-mono-ink));font-variant-numeric:tabular-nums;letter-spacing:-.01em;min-width:0;overflow-wrap:anywhere;word-break:break-word}
+.invoice .iv.live{color:oklch(var(--ap-agent-strong))}
+.invoice .iv.warn{color:oklch(var(--ap-warning))}
+.consent-quote{font-size:11.5px;line-height:1.5;color:oklch(var(--ap-human-strong));border-left:2px solid oklch(var(--ap-human) / .5);padding:4px 0 4px 10px;font-style:italic}
+.consent-derived{font-size:11.5px;line-height:1.5;color:oklch(var(--ap-foreground))}
+
+/* ============================================================
+   THE SEAL — grafted Countersigned tri-signature stamp.
+   Lives ONLY in the expanded Receipt node: the terminal proof
+   at the bottom of the custody chain. Exactly one loud object.
+   ============================================================ */
+.sealcard{
+  margin-top:12px;position:relative;
+  background:oklch(var(--ap-raised) / .55);
+  border:1px solid oklch(var(--ap-border));
+  border-top:2px solid oklch(var(--ap-agent));
+  border-bottom:2px solid oklch(var(--ap-agent));
+  border-radius:4px;
+  box-shadow:var(--shadow-seal);
+  padding:12px 13px 5px;
+}
+.sealcard.fallback{
+  border-style:dashed;
+  border-color:oklch(var(--ap-warning));
+  border-top-color:oklch(var(--ap-warning));
+  border-bottom-color:oklch(var(--ap-warning));
+  background:oklch(var(--ap-background));
+}
+.sealcard.failed{border-color:oklch(var(--ap-danger));border-top-color:oklch(var(--ap-danger));border-bottom-color:oklch(var(--ap-danger))}
+.sealcard-title{
+  display:flex;align-items:center;justify-content:space-between;gap:8px;
+  font-size:10px;letter-spacing:.12em;text-transform:uppercase;
+  color:oklch(var(--ap-faint));font-weight:700;margin-bottom:10px;
+}
+.sealcard-title .stamp{
+  font-family:var(--sans);font-size:10px;letter-spacing:.04em;font-style:italic;font-weight:600;text-transform:none;
+  color:oklch(var(--ap-warning));border:1px solid oklch(var(--ap-warning));border-radius:4px;
+  padding:1px 6px;display:inline-flex;align-items:center;gap:4px;white-space:nowrap;flex:none;
+}
+.sealcard-title .stamp svg{width:11px;height:11px}
+.sealcard.failed .stamp{color:oklch(var(--ap-danger));border-color:oklch(var(--ap-danger))}
+.signer{display:flex;gap:9px;padding:7px 0;border-top:1px solid oklch(var(--ap-border-subtle))}
+.signer:first-of-type{border-top:none}
+.signer .glyph{flex:none;width:16px;height:16px;display:grid;place-items:center;margin-top:1px}
+.signer .glyph svg{width:15px;height:15px}
+.signer .sbody{flex:1;min-width:0}
+.signer .srole{font-size:10px;letter-spacing:.1em;text-transform:uppercase;font-weight:700;font-family:var(--sans)}
+.signer .sval{font-family:var(--mono);font-size:12px;line-height:1.35;margin-top:2px;color:oklch(var(--ap-foreground));overflow-wrap:anywhere;word-break:break-word}
+.signer .ssub{font-size:11px;color:oklch(var(--ap-faint));margin-top:3px;line-height:1.35}
+.signer .ssub.annot{font-style:italic}
+.signer .ssub.mono{font-family:var(--mono);font-variant-numeric:tabular-nums;letter-spacing:-.01em}
+.signer.agent .glyph,.signer.agent .srole{color:oklch(var(--ap-agent-strong))}
+.signer.validator .glyph,.signer.validator .srole{color:oklch(var(--ap-success))}
+.signer.human .glyph,.signer.human .srole{color:oklch(var(--ap-human))}
+.signer.human .sval{color:oklch(var(--ap-human-strong))}
+.digest-line{display:flex;align-items:center;gap:6px;margin-top:5px}
+.digest-line .hash{
+  font-family:var(--mono);font-size:11px;color:oklch(var(--ap-mono-ink));
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+  background:oklch(var(--ap-raised));border-radius:5px;padding:3px 7px;flex:1;min-width:0;
+  font-variant-numeric:tabular-nums;letter-spacing:-.01em;cursor:pointer;
+}
+.copy{flex:none;border:1px solid oklch(var(--ap-border));background:oklch(var(--ap-raised));color:oklch(var(--ap-faint));border-radius:5px;width:24px;height:24px;cursor:pointer;display:grid;place-items:center;transition:color .15s,background .15s,border-color .15s}
+.copy svg{width:13px;height:13px}
+.copy:hover{color:oklch(var(--ap-agent-strong));border-color:oklch(var(--ap-agent) / .5)}
+.copy.copied{color:oklch(var(--ap-success));border-color:oklch(var(--ap-success) / .5)}
+.ticks{display:flex;gap:6px;flex-wrap:wrap;margin-top:5px}
+.tick{font-family:var(--mono);font-size:10.5px;color:oklch(var(--ap-success));display:inline-flex;align-items:center;gap:3px;font-variant-numeric:tabular-nums}
+.tick.off{color:oklch(var(--ap-danger))}
+.sealcard-edge{height:8px;margin:9px -13px -5px;background-image:radial-gradient(circle at 6px 8px, oklch(var(--ap-raised)) 5px, transparent 5.5px);background-size:12px 8px;background-repeat:repeat-x;background-position:0 0}
+.sealcard.fallback .sealcard-edge{background-image:radial-gradient(circle at 6px 8px, oklch(var(--ap-background)) 5px, transparent 5.5px)}
+.sissue{display:flex;gap:7px;padding:6px 0;border-top:1px solid oklch(var(--ap-border-subtle));font-size:11.5px;line-height:1.4}
+.sissue .chip{font-family:var(--mono);font-size:9px;text-transform:uppercase;letter-spacing:.05em;padding:1px 5px;border-radius:4px;flex:none;height:fit-content;color:oklch(var(--ap-danger));background:oklch(var(--ap-danger-soft) / .7)}
+.sissue .chip.warning{color:oklch(var(--ap-warning));background:oklch(var(--ap-warning-soft) / .7)}
+
+/* tech provenance drawer under the seal */
+.provbox{margin-top:12px}
+.provbox .plabel{font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:oklch(var(--ap-faint));font-weight:600;margin-bottom:6px;display:flex;align-items:center;gap:6px}
+.provbox .plabel .cnt{font-family:var(--mono);font-size:10px;background:oklch(var(--ap-raised));border-radius:5px;padding:1px 5px;letter-spacing:0}
+.prov-row{display:grid;grid-template-columns:66px minmax(0,1fr) auto;gap:8px;align-items:center;padding:5px 0;border-top:1px solid oklch(var(--ap-border-subtle));font-size:11px}
+.prov-row:first-of-type{border-top:none}
+.prov-row .k{font-family:var(--mono);color:oklch(var(--ap-faint))}
+.prov-row .v{font-family:var(--mono);color:oklch(var(--ap-mono-ink));overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-variant-numeric:tabular-nums;letter-spacing:-.01em}
+.prov-empty{font-size:11px;color:oklch(var(--ap-faint));line-height:1.5;font-style:italic}
+
+.footnote{padding:11px 15px 14px;border-top:1px solid oklch(var(--ap-border-subtle));font-size:10.5px;line-height:1.5;color:oklch(var(--ap-faint) / .9)}
+.footnote code{font-family:var(--mono);font-size:10px}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}
+
+button:focus-visible,[tabindex]:focus-visible{outline:2px solid oklch(var(--ap-agent) / .9);outline-offset:2px}
+@media (prefers-reduced-motion: reduce){*{animation:none !important;transition:none !important}}
+</style>
+
+<div class="stage">
+  <div class="frame-note">
+    <p class="eyebrow">NodeSlide · Inspector</p>
+    <h1>The <em>Trace</em> tab, as a chain of custody</h1>
+    <p>Every AI edit to a deck leaves a receipt. This panel renders one <code style="font-family:var(--mono);font-size:12px">AgentTrace</code> as six sealed nodes on a provenance rail — who authorized, what the agent read, planned and wrote, and the human-owned proof that binds it. A degraded link can never hide.</p>
+    <p>The rail leads the eye down to one loud terminal object: the <b style="color:oklch(var(--ap-human))">Receipt</b> node opens onto a <b>tri-signature seal</b> — <b style="color:oklch(var(--ap-agent-strong))">Agent</b> (model + candidate digest) countersigned by the <b style="color:oklch(var(--ap-success))">Validator</b> (ok · publish · clean) and awaiting the <b style="color:oklch(var(--ap-human))">Human</b>.</p>
+    <p>Switch traces to compare a <b style="color:oklch(var(--ap-agent-strong))">live GLM 5.2 edit</b> against a <b style="color:oklch(var(--ap-warning))">deterministic fallback</b> where the model route timed out. Watch the rail break, honestly, at the exact hop it degraded — and the seal downgrade to a dashed-amber <b style="color:oklch(var(--ap-warning))">provisional</b> stamp.</p>
+    <div class="legend">
+      <div class="legend-row"><span class="lg-marker human"></span> Filled diamond — human-owned hop (consent · validate · receipt)</div>
+      <div class="legend-row"><span class="lg-marker agent"></span> Hollow diamond — agent-owned hop (read · plan · edits)</div>
+      <div class="legend-row"><span class="lg-marker brk"></span> Dashed amber break — attribution degraded at this hop</div>
+    </div>
+    <p class="prov">Frame vocabulary adapted from <b>Agent Prism</b> by Evil Martians (MIT) — Oklch semantic tokens, typed badge+avatar per event, tabular mono numerics, row→attribute-table detail. The terminal <b>Countersigned</b> seal is grafted as the Receipt node's proof. Re-anchored to NodeSlide's terracotta/indigo inks; the OTEL span-tree waterfall is rejected in favor of a fixed six-node custody spine.</p>
+  </div>
+
+  <aside class="inspector" aria-label="NodeSlide Trace tab — Agent Prism rail + Countersigned seal">
+    <div class="insp-tabs" aria-label="Inspector sections">
+      <span class="insp-tab" aria-hidden="true">Content</span>
+      <span class="insp-tab" aria-hidden="true">Sources</span>
+      <span class="insp-tab current" aria-current="true">Trace</span>
+    </div>
+    <div id="banner"></div>
+    <div class="controls">
+      <span class="seg-label">Depth</span>
+      <div class="seg" id="densitySeg" role="group" aria-label="Detail density">
+        <button data-density="human" aria-pressed="true">Human</button>
+        <button data-density="pro" aria-pressed="false">Pro</button>
+        <button data-density="tech" aria-pressed="false">Tech</button>
+      </div>
+      <button class="iconbtn" id="themeBtn" aria-label="Toggle color theme" title="Toggle light / dark"></button>
+    </div>
+    <div class="controls" style="border-bottom:1px solid oklch(var(--ap-border))">
+      <span class="seg-label">Run</span>
+      <div class="traceswitch" id="traceSwitch" role="group" aria-label="Select trace">
+        <button data-trace="A" aria-pressed="true">A · live</button>
+        <button data-trace="B" aria-pressed="false">B · fallback</button>
+        <button data-trace="C" aria-pressed="false">C · failed</button>
+      </div>
+    </div>
+    <div class="spine" id="spine"></div>
+    <div class="footnote" id="footnote"></div>
+    <div id="srLive" class="sr-only" aria-live="polite" role="status"></div>
+  </aside>
+</div>
+
+<script>
+(function(){
+"use strict";
+
+/* ---------- inline icons (1.5px stroke, currentColor) ---------- */
+var IC = {
+  consent:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="m8.5 12.5 2.5 2.5 4.5-5"/></svg>',
+  read:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>',
+  plan:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12h-8"/><path d="M21 6h-8"/><path d="M21 18h-8"/><path d="M3 6v4c0 1.1.9 2 2 2h3"/><path d="M3 10v6c0 1.1.9 2 2 2h3"/></svg>',
+  edits:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>',
+  validate:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67 0C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/><path d="m9 12 2 2 4-4"/></svg>',
+  receipt:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 22V4a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v18l-3-2-2 2-2-2-2 2-2-2z"/><path d="M9 7h6"/><path d="M9 11h6"/></svg>',
+  check:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>',
+  warn:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m21.7 18-8-14a2 2 0 0 0-3.4 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.7-3Z"/><path d="M12 9v4"/><path d="M12 17h.01"/></svg>',
+  chev:'<svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>',
+  sun:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>',
+  moon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>',
+  /* --- seal glyphs: diamond (agent) / check (validator) / circle (human) --- */
+  diamond:'<svg viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M12 2 22 12 12 22 2 12Z"/></svg>',
+  circle:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="8"/></svg>',
+  cross:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"/></svg>',
+  copy:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg>',
+  tri:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M10.3 4 2.4 18a2 2 0 0 0 1.7 3h15.8a2 2 0 0 0 1.7-3L13.7 4a2 2 0 0 0-3.4 0Z"/><path d="M12 9v4M12 17h.01"/></svg>'
+};
+
+/* ---------- real trace data (bound to AgentTrace / ValidationResult) ---------- */
+var TRACES = {
+  A: {
+    id:'trace_a1', deckId:'deck_wc', patchId:'patch_7f2e19',
+    status:'awaiting_review',
+    summary:'OpenRouter GLM 5.2 proposed 5 scoped operations for review.',
+    provider:'openrouter', model:'z-ai/glm-5.2',
+    costMicroUsd:2000, inputTokens:2650, outputTokens:150,
+    createdAt:0, completedAt:6000,
+    context:['Slide 02 — The moment to solve','Source: FIFA World Cup overview (1 source, current)'],
+    plan:['Read locked write scope for slide 02','Read slide context and its 1 source','Draft 5 scoped replace-text ops','Validate clocks, scope, locks, and geometry','Return candidate for human review'],
+    toolCalls:['Called GLM 5.2 through the maintained pi-ai OpenRouter provider after exact edit consent','Parsed and validated GLM 5.2 JSON'],
+    guardrails:['Scope / writeScope enforced','Operation cap ≤ 8','Normalized geometry','Source-aware content','Stable external IDs','Deterministic validation'],
+    planningInputDigest:'a41f8e2bc90d7f1345aa02e9b76c4d18',
+    planningSnapshotDigest:'0b7c15da934e6f28ac31d0057be49a6f',
+    candidateDigest:'candidate_validation_6a3f10ac3145d30da955728f7093d204',
+    shadowComparisonExpected:true,
+    shadowControlsDigest:'shadow_controls_5f2e19b7c0a41d38',
+    consentNarrative:'Human authorized an exact-scope edit to slide 02 and consented to send that slide + its source to OpenRouter.',
+    consentVerbatim:false,
+    validation:{ok:true,publishOk:true,cleanOk:true,deckVersion:2,issues:[],toolchainVersion:'nodeslide.slidelang/v1'}
+  },
+  B: {
+    id:'trace_b1', deckId:'deck_wc', patchId:null,
+    status:'completed',
+    summary:'Used the deterministic fallback because the GLM 5.2 route timed out.',
+    provider:'openrouter', model:'z-ai/glm-5.2 (deterministic fallback)',
+    costMicroUsd:0, inputTokens:null, outputTokens:null,
+    createdAt:0, completedAt:1000,
+    context:['Full deck brief (6–8 slide narrative request)','No per-slide source binding at creation time'],
+    plan:['Opening / 01 — Title & thesis','02 — The moment to solve','03 — Why now','04 — How it works','05 — Proof & traction','06 — The ask','Close / 07 — Contact & next step'],
+    toolCalls:['Planned six-to-eight slide narrative','Built normalized deck','Validated snapshot'],
+    guardrails:['Normalized geometry','Source-aware content','Stable external IDs','Deterministic validation'],
+    planningInputDigest:null,
+    planningSnapshotDigest:'e2d40199fa7c6b3811005ac9df20e4b7',
+    candidateDigest:null,
+    shadowComparisonExpected:false,
+    shadowControlsDigest:null,
+    consentNarrative:'The user consented to send the full brief to OpenRouter.',
+    consentVerbatim:true,
+    fallback:true,
+    validation:{ok:true,publishOk:true,cleanOk:true,deckVersion:1,issues:[],toolchainVersion:'nodeslide.slidelang/v1'}
+  },
+  C: {
+    id:'trace_c1', deckId:'deck_wc', patchId:'patch_9d4c02',
+    status:'failed',
+    summary:'OpenRouter GLM 5.2 returned 6 operations; deterministic validation rejected the candidate.',
+    provider:'openrouter', model:'z-ai/glm-5.2',
+    costMicroUsd:2400, inputTokens:2710, outputTokens:180,
+    createdAt:0, completedAt:5200,
+    context:['Slide 02 — The moment to solve','Source: FIFA World Cup overview (1 source, current)'],
+    plan:['Read locked write scope for slide 02','Read slide context and its 1 source','Draft 6 scoped replace-text ops','Validate clocks, scope, locks, and geometry','Return candidate for human review'],
+    toolCalls:['Called GLM 5.2 through the maintained pi-ai OpenRouter provider after exact edit consent','Parsed and validated GLM 5.2 JSON'],
+    guardrails:['Scope / writeScope enforced','Operation cap ≤ 8','Normalized geometry','Source-aware content','Stable external IDs','Deterministic validation'],
+    planningInputDigest:'a41f8e2bc90d7f1345aa02e9b76c4d18',
+    planningSnapshotDigest:'0b7c15da934e6f28ac31d0057be49a6f',
+    candidateDigest:'candidate_validation_1b8e42fa77c0d9e3aa41027f5c6b3d90',
+    shadowComparisonExpected:true,
+    shadowControlsDigest:'shadow_controls_5f2e19b7c0a41d38',
+    consentNarrative:'Human authorized an exact-scope edit to slide 02 and consented to send that slide + its source to OpenRouter.',
+    consentVerbatim:false,
+    validation:{ok:false,publishOk:false,cleanOk:true,deckVersion:1,issues:[
+      {severity:'error',code:'scope.violation',message:'Operation 4 writes outside the locked writeScope for slide 02',slideId:'slide_02'},
+      {severity:'error',code:'geometry.overflow',message:'Body text box exceeds slide bounds after replace-text',slideId:'slide_02'}
+    ],toolchainVersion:'nodeslide.slidelang/v1'}
+  }
+};
+
+/* ---------- formatters (display only; full values preserved in raw fields) ---------- */
+function esc(s){return String(s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];});}
+function fmtCost(t){var m=t.costMicroUsd; if(m===0) return '$0.000';return '$'+(m/1e6).toFixed(3);}
+function fmtTok(n){return n==null?'—':n.toLocaleString('en-US');}
+function fmtDur(t){var s=(t.completedAt-t.createdAt)/1000;return s.toFixed(1)+'s';}
+function seal(v){if(!v)return null;return v.length>26?v.slice(0,26)+'…':v;}
+/* digest shortener that keeps a readable prefix + head/tail of the hex body */
+function shortHash(h){
+  if(!h) return '';
+  var m=h.match(/^([a-z_]*?)([0-9a-f]{6,})$/i);
+  if(m && m[2].length>12) return m[1]+m[2].slice(0,6)+'…'+m[2].slice(-4);
+  return h.length>22?h.slice(0,14)+'…'+h.slice(-4):h;
+}
+
+var state={density:'human',trace:'A',theme:null,open:{A:'receipt',B:'receipt',C:'receipt'}};
+function rank(){return {human:0,pro:1,tech:2}[state.density];}
+var pro=function(){return rank()>=1;}, tech=function(){return rank()>=2;};
+
+/* ---------- node definitions (fixed order = accountability order) ---------- */
+var NODES=['consent','read','plan','edits','validate','receipt'];
+var META={
+  consent:{label:'Consent',family:'human',icon:IC.consent,tl:'--consent-tl',bg:'--consent-bg',fg:'--consent-fg'},
+  read:{label:'Read',family:'agent',icon:IC.read,tl:'--read-tl',bg:'--read-bg',fg:'--read-fg'},
+  plan:{label:'Plan',family:'agent',icon:IC.plan,tl:'--plan-tl',bg:'--plan-bg',fg:'--plan-fg'},
+  edits:{label:'Edits',family:'agent',icon:IC.edits,tl:'--edits-tl',bg:'--edits-bg',fg:'--edits-fg'},
+  validate:{label:'Validate',family:'human',icon:IC.validate,tl:'--validate-tl',bg:'--validate-bg',fg:'--validate-fg'},
+  receipt:{label:'Receipt',family:'human',icon:IC.receipt,tl:'--receipt-tl',bg:'--receipt-bg',fg:'--receipt-fg'}
+};
+
+/* one-line summary per node from real fields */
+function summ(node,t){
+  switch(node){
+    case 'consent':return t.consentNarrative;
+    case 'read':return t.context.length+' context reference'+(t.context.length>1?'s':'')+' read'+(t.fallback?' — attribution route degraded':'');
+    case 'plan':return t.plan.length+'-step plan drafted';
+    case 'edits':return t.fallback?'Deck built deterministically ('+t.toolCalls.length+' tool calls)':t.toolCalls.length+' tool calls · '+t.guardrails.length+' guardrails · '+(t.patchId||'no patch');
+    case 'validate':return t.validation.ok?'Deterministic validation passed (v'+t.validation.deckVersion+')':(t.validation.issues.length+' validation issue'+(t.validation.issues.length>1?'s':'')+' — candidate rejected');
+    case 'receipt':
+      if(t.fallback) return 'Provisional seal — machine only, not signable';
+      if(t.validation && !t.validation.ok) return 'Validation failed — blocked, not signable';
+      return t.status==='awaiting_review'?'Countersigned by machine — awaiting your signature':'Countersigned';
+  }
+}
+
+/* seal chip owned by node (rail-level, quiet) */
+function nodeSeal(node,t){
+  if(node==='read') return {v:t.planningInputDigest,label:'planningInputDigest'};
+  if(node==='plan') return {v:t.planningSnapshotDigest,label:'planningSnapshotDigest'};
+  if(node==='receipt') return {v:t.candidateDigest,label:'candidateDigest'};
+  return null;
+}
+
+function markerClass(node,t){
+  var m=META[node];
+  var cls='marker '+m.family;
+  if(node==='receipt'){
+    cls+=' terminal';
+    if(t.status==='awaiting_review') cls+=' outline';
+  }
+  return cls;
+}
+
+/* ---------- copy control ---------- */
+function copyBtn(fullVal){
+  return '<button class="copy" data-copy="'+esc(fullVal)+'" title="Copy full digest" aria-label="Copy full digest">'+IC.copy+'</button>';
+}
+
+/* ============================================================
+   THE SEAL — tri-signature validation stamp.
+   State-honest: live -> signed machine chain awaiting human;
+   fallback -> dashed-amber PROVISIONAL, no invented hash;
+   failed -> red, issues listed, human blocked.
+   ============================================================ */
+function buildSeal(t){
+  var v=t.validation;
+  var fb=!!t.fallback;
+  var failed=v && !v.ok;
+  var cls='sealcard'+(failed?' failed':fb?' fallback':'');
+  var title,stamp='';
+  if(failed){ title='Validation failed'; stamp='<span class="stamp"><span style="color:oklch(var(--ap-danger))">'+IC.tri+'</span>blocked</span>'; }
+  else if(fb){ title='Countersigned receipt'; stamp='<span class="stamp" title="Interpretation, not a stored status enum">'+IC.tri+'provisional</span>'; }
+  else { title='Countersigned receipt'; }
+
+  /* --- AGENT (indigo, filled diamond) --- */
+  var agentVal, agentExtra='';
+  if(fb){
+    agentVal='deterministic fallback';
+    agentExtra='<div class="ssub annot">no candidate receipt — hash not invented</div>';
+  } else {
+    agentVal=esc(t.model);
+    if(t.candidateDigest){
+      if(pro()){
+        agentExtra='<div class="digest-line"><span class="hash" data-copy="'+esc(t.candidateDigest)+'" title="click to copy — '+esc(t.candidateDigest)+'">'+esc(shortHash(t.candidateDigest))+'</span>'+copyBtn(t.candidateDigest)+'</div>';
+      } else {
+        agentExtra='<div class="ssub annot">candidateDigest sealed · raise depth to reveal</div>';
+      }
+    }
+  }
+  var agent='<div class="signer agent"><span class="glyph">'+IC.diamond+'</span><div class="sbody">'
+    +'<div class="srole">Agent</div><div class="sval">'+agentVal+'</div>'+agentExtra+'</div></div>';
+
+  /* --- VALIDATOR (green, check) — honestly green even on fallback: deterministic validation genuinely ran --- */
+  var validator;
+  if(failed){
+    var issues=(v.issues||[]).map(function(is){
+      var chipCls=(is.severity==='warning'||is.severity==='info')?'chip warning':'chip';
+      var loc=is.slideId?' <span style="color:oklch(var(--ap-faint))">('+esc(is.slideId)+')</span>':'';
+      return '<div class="sissue"><span class="'+chipCls+'">'+esc(is.severity)+'</span><span>'+esc(is.message||is.code)+loc+'</span></div>';
+    }).join('');
+    validator='<div class="signer validator" style="display:block"><div style="display:flex;gap:9px">'
+      +'<span class="glyph" style="color:oklch(var(--ap-danger))">'+IC.cross+'</span>'
+      +'<div class="sbody"><div class="srole" style="color:oklch(var(--ap-danger))">Validator</div>'
+      +'<div class="ssub">'+(v.issues||[]).length+' issue(s) · deck v'+esc(v.deckVersion)+'</div></div></div>'+issues+'</div>';
+  } else {
+    var toolchain=tech()?'<div class="ssub mono">'+esc(v.toolchainVersion)+'</div>':'';
+    validator='<div class="signer validator"><span class="glyph">'+IC.check+'</span><div class="sbody">'
+      +'<div class="srole">Validator</div>'
+      +'<div class="ticks">'
+      +'<span class="tick">'+IC.check+' ok</span>'
+      +'<span class="tick'+(v.publishOk?'':' off')+'">'+(v.publishOk?IC.check:IC.cross)+' publish</span>'
+      +'<span class="tick'+(v.cleanOk?'':' off')+'">'+(v.cleanOk?IC.check:IC.cross)+' clean</span>'
+      +'</div>'
+      +'<div class="ssub">deck v'+esc(v.deckVersion)+'</div>'+toolchain
+      +'</div></div>';
+  }
+
+  /* --- HUMAN (terracotta, hollow circle) — derived strictly from status; never asserts a sign-off the record does not hold --- */
+  var humanVal,humanSub='';
+  if(failed){ humanVal='Blocked — not signable'; }
+  else if(fb){ humanVal='Not yet signable'; humanSub='no candidate to countersign'; }
+  else if(t.status==='awaiting_review'){ humanVal='Awaiting your review'; humanSub='machine countersigned · human has not'; }
+  else if(t.status==='completed'){ humanVal='Signed'; }
+  else { humanVal=esc(t.status); }
+  var human='<div class="signer human"><span class="glyph">'+IC.circle+'</span><div class="sbody">'
+    +'<div class="srole">Human</div><div class="sval">'+esc(humanVal)+'</div>'
+    +(humanSub?'<div class="ssub annot">'+esc(humanSub)+'</div>':'')
+    +'</div></div>';
+
+  return '<div class="'+cls+'"><div class="sealcard-title"><span>'+esc(title)+'</span>'+stamp+'</div>'
+    +agent+validator+human
+    +'<div class="sealcard-edge" aria-hidden="true"></div></div>';
+}
+
+/* tech-only provenance drawer under the seal */
+function buildProvenance(t){
+  var rows=[];
+  if(t.candidateDigest) rows.push(['candidate',t.candidateDigest]);
+  if(t.planningInputDigest) rows.push(['plan.input',t.planningInputDigest]);
+  if(t.planningSnapshotDigest) rows.push(['plan.snap',t.planningSnapshotDigest]);
+  if(t.shadowControlsDigest) rows.push(['shadow.ctl',t.shadowControlsDigest]);
+  var body;
+  if(rows.length){
+    body=rows.map(function(r){
+      return '<div class="prov-row"><span class="k">'+esc(r[0])+'</span>'
+        +'<span class="v" title="'+esc(r[1])+'">'+esc(shortHash(r[1]))+'</span>'+copyBtn(r[1])+'</div>';
+    }).join('');
+  } else {
+    body='<div class="prov-empty">No standalone provenance digests recorded for this '+(t.fallback?'fallback run — the deterministic build produced no candidate receipt.':'trace.')+'</div>';
+  }
+  return '<div class="provbox"><div class="plabel">Provenance <span class="cnt">'+rows.length+'</span></div>'+body+'</div>';
+}
+
+/* ---------- detail attribute tables per node ---------- */
+function detail(node,t){
+  var m=META[node],h='',after='';
+  function row(k,v,mono){return '<div class="attrrow"><div class="akey">'+esc(k)+'</div><div class="aval'+(mono?' mono':'')+'">'+v+'</div></div>';}
+  function stacked(k,v){return '<div class="attrrow stacked"><div class="akey">'+esc(k)+'</div><div class="aval">'+v+'</div></div>';}
+
+  if(node==='consent'){
+    h+=row('status',esc(t.status),true);
+    if(t.consentVerbatim){
+      h+='<div class="attrrow stacked"><div class="akey">consent (recorded)</div><div class="aval"><div class="consent-quote">“'+esc(t.consentNarrative)+'”</div></div></div>';
+    } else {
+      h+='<div class="attrrow stacked"><div class="akey">consent</div><div class="aval"><div class="consent-derived">'+esc(t.consentNarrative)+'</div><span class="pill muted" style="margin-top:7px">derived from consent gate · consentVerbatim: false</span></div></div>';
+    }
+  }
+  else if(node==='read'){
+    var items=t.context.map(function(c){return '<li>'+esc(c)+'</li>';}).join('');
+    h+=stacked('context[]','<ul class="list dot">'+items+'</ul>');
+    if(pro()){var s=t.planningInputDigest; h+=row('planningInputDigest', s?esc(s):'<span style="color:oklch(var(--ap-faint))">— not sealed (route degraded)</span>', !!s);}
+  }
+  else if(node==='plan'){
+    var pitems=t.plan.map(function(p){return '<li>'+esc(p)+'</li>';}).join('');
+    h+=stacked('plan[]','<ol class="list ord">'+pitems+'</ol>');
+    if(pro()) h+=row('planningSnapshotDigest',esc(t.planningSnapshotDigest),true);
+  }
+  else if(node==='edits'){
+    var tc=t.toolCalls.map(function(c){return '<li>'+esc(c)+'</li>';}).join('');
+    h+=stacked('toolCalls[]','<ul class="list dot">'+tc+'</ul>');
+    var gr=t.guardrails.map(function(c){return '<li>'+esc(c)+'</li>';}).join('');
+    h+=stacked('guardrails[]','<ul class="list grd">'+gr+'</ul>');
+    h+=row('patchId', t.patchId?esc(t.patchId):'<span style="color:oklch(var(--ap-faint))">— none (creation run)</span>', !!t.patchId);
+  }
+  else if(node==='validate'){
+    var v=t.validation;
+    var pills='<div class="pills">'
+      +'<span class="pill '+(v.ok?'ok':'err')+'">'+(v.ok?IC.check:IC.warn)+' ok</span>'
+      +'<span class="pill '+(v.publishOk?'ok':'err')+'">'+(v.publishOk?IC.check:IC.warn)+' publishOk</span>'
+      +'<span class="pill '+(v.cleanOk?'ok':'err')+'">'+(v.cleanOk?IC.check:IC.warn)+' cleanOk</span></div>';
+    h+=stacked('validation',pills);
+    if(v.issues.length===0){
+      h+=stacked('issues[]','<span class="pill muted">none</span>');
+    } else {
+      h+=stacked('issues[]', v.issues.map(function(i){var msg=(i&&typeof i==='object')?(i.message||i.code||''):i;return '<span class="pill err">'+IC.warn+' '+esc(msg)+'</span>';}).join(' '));
+    }
+    h+=row('deckVersion',esc('v'+v.deckVersion),true);
+    if(pro()) h+=row('toolchainVersion',esc(v.toolchainVersion),true);
+  }
+  else if(node==='receipt'){
+    /* quiet economic receipt (the invoice) ... */
+    var tokStr = (t.inputTokens==null)?'— → —':(fmtTok(t.inputTokens)+' → '+fmtTok(t.outputTokens));
+    var costStr = t.fallback?'$0.000 · no tokens billed':fmtCost(t);
+    var inv='<div class="invoice">'
+      +'<div class="ik">tokens</div><div class="iv">'+tokStr+'</div>'
+      +'<div class="ik">cost</div><div class="iv'+(t.fallback?' warn':' live')+'">'+esc(costStr)+'</div>'
+      +'<div class="ik">duration</div><div class="iv">'+fmtDur(t)+'</div></div>';
+    h+=stacked('receipt',inv);
+    /* ... then the ONE loud object: the tri-signature seal */
+    after+=buildSeal(t);
+    if(tech()) after+=buildProvenance(t);
+  }
+  return '<div class="attrtable">'+h+'</div>'+after;
+}
+
+/* ---------- render ---------- */
+function renderBanner(t){
+  var live=!t.fallback;
+  var statusColor = t.status==='failed'||t.status==='cancelled' ? 'var(--ap-danger)'
+    : t.status==='awaiting_review' ? 'var(--ap-human)' : 'var(--ap-success)';
+  var attribCls = live?'live':'fallback';
+  var el=document.getElementById('banner');
+  el.className='banner';
+  el.innerHTML=''
+    +'<div class="banner-top">'
+      +'<span class="statusdot" style="background:oklch('+statusColor+')"></span>'
+      +'<span class="banner-title">'+esc(({awaiting_review:'Awaiting review',completed:'Completed',failed:'Failed',cancelled:'Cancelled'})[t.status]||t.status)+'</span>'
+      +'<span class="banner-ver">deck v'+t.validation.deckVersion+'</span>'
+    +'</div>'
+    +'<div class="banner-meta">'
+      +'<span class="metanum"><b>'+fmtDur(t)+'</b> run</span>'
+      +'<span class="metanum"><b>'+esc(fmtCost(t))+'</b>'+(t.fallback?' · no tokens':'')+'</span>'
+    +'</div>'
+    +'<div class="attrib '+attribCls+'" title="provider · model attribution">'
+      +'<span class="dot"></span>'+esc(t.provider)+' · '+esc(t.model)
+    +'</div>';
+}
+
+function renderSpine(t){
+  var spine=document.getElementById('spine');
+  spine.innerHTML='';
+  NODES.forEach(function(node,i){
+    var m=META[node];
+    var prev=i>0?META[NODES[i-1]]:null;
+    var broken = t.fallback && node==='read';
+    var openNow = state.open[state.trace]===node;
+
+    var wrap=document.createElement('div');
+    wrap.className='node';
+    wrap.setAttribute('role','button');
+    wrap.setAttribute('tabindex','0');
+    wrap.setAttribute('aria-expanded',openNow?'true':'false');
+    wrap.dataset.node=node;
+
+    // rail
+    var topSeg = i>0 ? '<div class="seg-top'+(broken?' broken':'')+'" style="'+(broken?'':'--seg:var('+prev.tl+')')+'"></div>' : '';
+    var botSeg = '<div class="seg-bot" style="--seg:var('+m.tl+')"></div>';
+    var mk='<div class="'+markerClass(node,t)+'" style="--mk:var('+m.tl+')"></div>';
+
+    var sl=nodeSeal(node,t);
+    var sealHtml='';
+    if(pro() && sl){
+      if(sl.v) sealHtml='<span class="seal-chip" title="'+esc(sl.label)+': '+esc(sl.v)+'">'+esc(seal(sl.v))+'</span>';
+      else sealHtml='<span class="seal-chip empty" title="'+esc(sl.label)+' — not sealed">— unsealed</span>';
+    }
+
+    var badgeBg = m.family==='human'?'--ap-human-soft':'--ap-agent-soft';
+    var badgeFg = m.family==='human'?'--ap-human-strong':'--ap-agent-strong';
+    var badge='<span class="badge" style="background:oklch(var('+badgeBg+'));color:oklch(var('+badgeFg+'))">'+m.icon+esc(m.label)+'</span>';
+
+    wrap.innerHTML=''
+      +'<div class="rail">'+topSeg+botSeg+mk+'</div>'
+      +'<div class="ncontent">'
+        +'<div class="nhead">'+badge+sealHtml+IC.chev+'</div>'
+        +'<p class="nsummary">'+esc(summ(node,t))+'</p>'
+      +'</div>'
+      +'<div class="details">'+ (openNow?detail(node,t):'') +'</div>';
+
+    function toggle(){
+      var cur=state.open[state.trace];
+      state.open[state.trace] = (cur===node)?null:node;
+      renderSpine(t);
+      var n=spine.querySelector('[data-node="'+node+'"]'); if(n) n.focus();
+    }
+    wrap.addEventListener('click',toggle);
+    wrap.addEventListener('keydown',function(e){
+      if(e.target!==wrap) return;               // inner controls (copy) keep their own keys
+      if(e.key==='Enter'||e.key===' '){e.preventDefault();toggle();}
+    });
+
+    spine.appendChild(wrap);
+
+    // wire copy controls inside this node (stopPropagation so node never toggles)
+    Array.prototype.forEach.call(wrap.querySelectorAll('[data-copy]'),function(elm){
+      elm.addEventListener('click',function(e){
+        e.stopPropagation();
+        var val=elm.getAttribute('data-copy');
+        var btn=elm.classList.contains('copy')?elm:(elm.parentNode&&elm.parentNode.querySelector('.copy'));
+        function done(){
+          if(btn){btn.classList.add('copied');btn.innerHTML=IC.check;}
+          var lv=document.getElementById('srLive'); if(lv) lv.textContent='Digest copied to clipboard';
+          setTimeout(function(){ if(btn){btn.classList.remove('copied');btn.innerHTML=IC.copy;} },1200);
+        }
+        if(navigator.clipboard&&navigator.clipboard.writeText) navigator.clipboard.writeText(val).then(done,done);
+        else done();
+      });
+      elm.addEventListener('keydown',function(e){ if(e.key==='Enter'||e.key===' ') e.stopPropagation(); });
+    });
+  });
+}
+
+function renderFootnote(t){
+  var el=document.getElementById('footnote');
+  if(t.validation && !t.validation.ok){
+    el.innerHTML='Deterministic validation <b style="color:oklch(var(--ap-danger))">rejected</b> the candidate: '+t.validation.issues.length+' blocking issue(s) at the <b>Validate</b> hop. The seal turns <b style="color:oklch(var(--ap-danger))">red</b> — the <b style="color:oklch(var(--ap-agent-strong))">Agent</b> produced a candidate, the <b style="color:oklch(var(--ap-danger))">Validator</b> countersignature is withheld and lists what failed, and the <b style="color:oklch(var(--ap-human))">Human</b> line reads <i>blocked — not signable</i>. Nothing reaches your signature until the deck validates clean.';
+  } else if(t.fallback){
+    el.innerHTML='Rail breaks to a dashed amber gap at the <b style="color:oklch(var(--ap-warning))">Read</b> hop: the GLM 5.2 route timed out, so <code>provider·model</code> attribution is degraded. The Receipt seal downgrades to a dashed-amber <b style="color:oklch(var(--ap-warning))">provisional</b> stamp — Agent shows <i>no candidate receipt</i>, the Validator is still honestly green (deterministic validation ran), and the Human line reads <i>not yet signable</i>. The <b>deck is valid; the attribution is not.</b>';
+  } else {
+    el.innerHTML='Live GLM 5.2 edit, sealed end-to-end. The Receipt seal shows the <b style="color:oklch(var(--ap-agent-strong))">Agent</b> line with a real <code>candidateDigest</code> (click to copy), a green <b style="color:oklch(var(--ap-success))">Validator</b> countersignature, and a terracotta <b style="color:oklch(var(--ap-human))">Human</b> line still <i>awaiting your review</i> — the machine countersigned; you have not.';
+  }
+}
+
+function render(){
+  var t=TRACES[state.trace];
+  renderBanner(t);
+  renderSpine(t);
+  renderFootnote(t);
+}
+
+/* ---------- controls ---------- */
+document.getElementById('densitySeg').addEventListener('click',function(e){
+  var b=e.target.closest('button'); if(!b)return;
+  state.density=b.dataset.density;
+  Array.prototype.forEach.call(this.querySelectorAll('button'),function(x){x.setAttribute('aria-pressed',x===b?'true':'false');});
+  render();
+});
+document.getElementById('traceSwitch').addEventListener('click',function(e){
+  var b=e.target.closest('button'); if(!b)return;
+  state.trace=b.dataset.trace;
+  Array.prototype.forEach.call(this.querySelectorAll('button'),function(x){x.setAttribute('aria-pressed',x===b?'true':'false');});
+  render();
+});
+
+var themeBtn=document.getElementById('themeBtn');
+function applyTheme(){
+  var dark = state.theme==null ? window.matchMedia('(prefers-color-scheme: dark)').matches : state.theme==='dark';
+  if(state.theme) document.documentElement.setAttribute('data-theme',state.theme);
+  themeBtn.innerHTML = dark?IC.sun:IC.moon;
+}
+themeBtn.addEventListener('click',function(){
+  var dark = state.theme==null ? window.matchMedia('(prefers-color-scheme: dark)').matches : state.theme==='dark';
+  state.theme = dark?'light':'dark';
+  applyTheme();
+});
+
+applyTheme();
+render();
+})();
+</script>

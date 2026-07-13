@@ -110,9 +110,16 @@ The LOWEST dimensions become the next revamp targets — that is the "revamp unt
 | B6 | Status & latency feel | immediate echo, staged honest progress, honest timeout; no fake spinners |
 | B7 | Recoverability | versions/undo/restore exist and work after AI actions |
 | B8 | Agent operability | a cheap model can drive it: stable labels/aria, deterministic selectors, no hidden-hover-only paths, keyboard-complete |
+| B9 | Visual craft | reads as designed tooling, not AI slop: real hierarchy, one signature element, disciplined color (hue classifies, never decorates), mono for data, both themes actually work — judged on RENDERED PIXELS |
+| B10 | Conversation & content quality | agent chat/copy earns trust: verdict-first responses, tool-calls visible, honest error voice (cause + next step), sources marked or flagged `[source needed]`, no sycophancy, formatting disciplined |
 
 B8 is the meta-dimension this whole skill exists for: if a Haiku-class agent cannot
 complete A0–A2 from the profile alone, B8 < 2 and the friction list is the revamp spec.
+B9 requires viewing rendered PNGs — a model without image input must score B9 as
+DEFERRED(no-vision) and hand it to a vision-capable pass, never guess it from the DOM.
+When a Bar dimension scores low, `REVAMP.md` (next to this file) is the playbook that
+takes it from finding → redesign → implemented fix — surface by surface (trace UI, agent
+chat, proposal review, status/latency, layout, content).
 
 ## 5. Universal traps (check BEFORE debugging; profile adds app-specific ones)
 

@@ -28,8 +28,14 @@ Each dimension scored 0–2 per pass; lowest = next revamp target:
 | B6 | Status & latency feel — immediate echo, staged honest progress, honest timeouts |
 | B7 | Recoverability — versions/undo/restore work after AI actions |
 | B8 | **Agent operability** — a cheap model can drive the UI from the docs alone |
+| B9 | **Visual craft** — reads as designed tooling, not AI slop; judged on rendered pixels |
+| B10 | **Conversation & content quality** — chat and copy earn trust: verdict-first, honest errors, sources marked |
 
 B8 is the meta-dimension: if a Haiku-class agent can't complete the core journeys from your app's profile alone, the friction list *is* your revamp spec.
+
+## Detect → fix, not just detect
+
+A low Bar score isn't the end of the pass — [`REVAMP.md`](REVAMP.md) is the fix playbook: a proven pipeline (ground in the real component → 3–4 design directions → adversarial judge → self-contained interactive mockup with every honest state → pixel-critique loop → implementation spec → gated implementation) plus per-surface checklists for trace/provenance UIs, agent chat, proposal/diff review, status & latency feel, layout, and content quality. [`examples/trace-revamp/`](examples/trace-revamp/) is the full worked case: a production trace tab taken from flat text dump to a provenance rail with a tri-signature seal and three honest states — mockup and engineer-ready spec included.
 
 ## What's inside
 
