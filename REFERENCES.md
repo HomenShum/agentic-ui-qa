@@ -20,6 +20,10 @@ swept + verified alive 2026-07 (corrected URLs applied where the original moved)
 - [OpenTelemetry Generative AI attributes](https://opentelemetry.io/docs/specs/semconv/registry/attributes/gen-ai/) — provider/model/token/tool telemetry and sensitive-content considerations. Maps to B1, B2, B5, D7.
 - [Langfuse observability overview](https://langfuse.com/docs/observability/overview) — LLM trace reference for nested generations, tool calls, retrievals, and evaluation. Maps to B2, B8, D1, D2.
 - [Langfuse data model](https://langfuse.com/docs/observability/data-model) — observation hierarchy, timing, input/output, token, and cost model. Maps to B2, D1, D3.
+- [assistant-ui: Mem0 Memory Chat](https://www.assistant-ui.com/examples/mem0) — visible persistent memory, retrieval, management, and privacy controls. Maps to B1, B6, B8, D6 and compact trace activity.
+- [assistant-ui: Artifacts](https://www.assistant-ui.com/examples/artifacts) — iterative generated output in a sandboxed side panel beside the conversation. Maps to B3, B6, B9, D10.
+- [assistant-ui: Generative UI](https://www.assistant-ui.com/examples/generative-ui) — typed tool renderers, streamed arguments/status, and human-completed tool results. Maps to B3, B5, B6, B8, B9, D1.
+- [Yonom/assistant-ui-langgraph-fastapi](https://github.com/Yonom/assistant-ui-langgraph-fastapi) — assistant-ui + assistant-stream + LangGraph + FastAPI integration reference. Maps to B6, B8, D1, D3.
 
 ---
 

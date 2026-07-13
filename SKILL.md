@@ -113,7 +113,8 @@ implementation). Every app runs the same archetypes:
   classify every run LIVE / DEGRADED / FAILED per the profile's signals table; any run
   claiming live attribution with zero cost = P0 dishonesty. For runs above 12 operations,
   apply `TRACE-WATERFALL.md`; at 101+ records, verify virtualization, subtree collapse,
-  minimap fidelity, and cursor pagination rather than trusting a screenshot.
+  minimap fidelity, and cursor pagination rather than trusting a screenshot. Always run
+  the compact/expanded 4-span, 10-span, and 100-span fixtures.
 - **A4 Output & sharing** (presenter): export/publish/present/share paths produce real
   artifacts or honest capability warnings; no silent failures.
 - **A5 Themes & access** (accessibility auditor): light/dark (per trap U11 the shell may

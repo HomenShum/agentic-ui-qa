@@ -60,6 +60,18 @@ The trace remains operable at 1,000+ records.
 - Closing the expanded view restores the prior editor state and selection.
 - The trace is read-only. Mutation approval belongs in the proposal/review surface, even when an approval event is visible in the trace.
 
+### Compact sidebar contract
+
+Do not squeeze the desktop waterfall into a 280–360px rail. In the unexpanded agent/chat sidebar:
+
+- Show status, provider/model, cost/tokens, duration, record/error/source counts, and at most six readable activity rows.
+- Keep the root span plus the newest work when more than six spans exist. State exactly how many earlier steps are hidden or still available through server pagination.
+- Render tool, model, retrieval, validation, memory, and human-input steps as compact typed rows with honest streaming/error/completed states.
+- Use one explicit **Full timeline** action to open the hierarchical waterfall. Preserve the selected run, filters, and editor state.
+- Keep generated artifacts in a neighboring preview/workspace rather than embedding them inside trace rows. Trace rows link to the artifact/tool result and its evidence.
+- Memory retrieval/storage is visible and manageable as agent activity, with privacy controls; it is not silently injected context.
+- Human tool UI (forms, date selection, approvals) reports its pending/result state and sends the user result back as a distinct event.
+
 ## Accessibility and agent operability
 
 - Use `role="tree"` and `role="treeitem"`, accurate `aria-level`, `aria-expanded`, and explicit accessible names for collapse controls.
@@ -80,7 +92,7 @@ Every scalable trace revamp must exercise and artifact these cases:
 
 1. Honest zero-record state.
 2. One-span success and one-span failure.
-3. Short run with no oversized empty canvas and no clipped final axis label.
+3. Exact 4-span, 10-span, and 100-span fixtures in compact and expanded modes; verify row caps, hidden-count honesty, no oversized empty canvas, and no clipped final axis label.
 4. Nested model → tool → retrieval → validation chain.
 5. Parallel tools with overlapping spans.
 6. Open durable run that survives reload and resumes from server events.
@@ -104,4 +116,4 @@ Record DOM node count and interaction latency for the 1,000-span fixture. A scre
 
 ## Reference vocabulary
 
-Use Tinybird and Grafana Tempo as visual references for hierarchical span waterfalls, OpenTelemetry as the semantic contract, Langfuse as an LLM-observability reference, Agent Prism as the human-readable custody layer, and NodeRoom as the product reference for source-aware agent traces. Borrow mechanisms, not brand skins.
+Use Tinybird and Grafana Tempo as visual references for hierarchical span waterfalls, OpenTelemetry as the semantic contract, Langfuse as an LLM-observability reference, Agent Prism as the human-readable custody layer, and NodeRoom as the product reference for source-aware agent traces. Use assistant-ui's Mem0, Artifacts, and Generative UI examples for inspectable memory, side-by-side artifact iteration, typed tool rows, streaming state, and human tool results. Use the assistant-ui + LangGraph + FastAPI example as an integration reference for preserving streamed backend events across the frontend boundary. Borrow mechanisms, not brand skins.
