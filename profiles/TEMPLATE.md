@@ -16,6 +16,7 @@ A row you cannot fill is itself a finding (the app is under-documented for agent
 | Test gate | |
 | Playwright available in repo? (pixels.cjs `repo` field) | |
 | Evidence dir convention | `<scratchpad>/qa-<app>-<YYYYMMDD-HHmm>/` |
+| Memory dir (SKILL §9; append-only ledger) | `<app-repo>/.qa/memory/` (default) |
 
 ## Provenance surface (ground truth for AI claims — SKILL §1.2)
 | Question | Answer |

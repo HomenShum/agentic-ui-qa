@@ -68,13 +68,19 @@ Then: *"QA my app with agentic-ui-qa"* — the skill resolves (or makes you crea
 ## The loop
 
 ```
-scout repo → fill profile → run journeys A0–A6 (persona-driven, artifact-verified)
+scout repo → fill profile → REGRESSION SWEEP from memory (re-verify every past fixed P0/P1)
+→ run journeys A0–A6 (persona-driven, artifact-verified)
 → score the Bar → fix findings (root-cause, bounded retries, gates green)
 → revamp lowest dimension (consult REFERENCES.md) → re-run → re-score
-→ cold-run a cheap model on the skill itself; fold its friction list back in
+→ append run + findings to memory → cold-run a cheap model on the skill itself;
+  fold its friction list back in
 ```
 
 That last step is the point: the skill dogfoods itself. A protocol a cheap model can't follow is itself a finding.
+
+## Memory (remember every failure)
+
+Same lineage as [proofloop](https://github.com/HomenShum/proofloop-fork)'s "remember every failure": each app keeps an **append-only QA ledger in its own repo** (`.qa/memory/` — runs.jsonl + findings.jsonl, managed by the dependency-free `scripts/qa-memory.mjs`). Findings are fingerprinted so re-discoveries dedupe across runs; every finding ever marked *fixed* at P0/P1 becomes a **permanent regression check** at the start of every future pass — the corpus only grows. `history` shows Bar-score drift across passes, honestly. Memory lives with the app, not in this skill clone, so your QA history stays as private as your repo.
 
 ## Provenance
 

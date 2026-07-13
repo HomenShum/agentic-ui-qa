@@ -160,9 +160,34 @@ re-run the affected journeys → re-score. Repeat.
 
 **Done when:** every journey PASS/FAIL(refs)/BLOCKED/SKIPPED(reason) · evidence dir maps
 1:1 to claims · gates green on current tree (exit lines pasted) · Bar scored with the
-next revamp target named · zero artifact-less claims (re-read and delete any).
+next revamp target named · memory written (§9: regression sweep ran at start; add-run +
+every finding appended at end) · zero artifact-less claims (re-read and delete any).
 
-## 9. Validating THIS skill (dogfood the dogfooder)
+## 9. Memory (remember every failure — the corpus only grows)
+
+Each app keeps an append-only QA memory in ITS OWN repo (default `<app-repo>/.qa/memory/`,
+overridable via the profile's "Memory dir" row) — runs.jsonl + findings.jsonl, managed by
+`node scripts/qa-memory.mjs` (see its header; dependency-free). It is deliberately in the
+app repo, not this skill clone: QA history travels with, and stays as private as, the app.
+
+**At pass START (before any new exploration):**
+1. `qa-memory.mjs init --dir <memory-dir>` (idempotent), then `regressions` — every
+   previously-FIXED P0/P1 is a MANDATORY re-verify step. Re-verify each; on failure append
+   the finding again with `status:"regressed"` (never delete the fixed event) and treat it
+   as a fresh P0/P1.
+2. `open` — prior open findings are your backlog context; do not re-file them as new.
+
+**At pass END:**
+3. Every §6 finding block → `add-finding` (the fingerprint dedupes across runs: a KNOWN
+   fp means re-discovery, not a new finding — say so in the report).
+4. The pass itself → `add-run` with `{executor, journeys:{A0:"PASS",...}, bar:{B1:2,...},
+   gates, evidenceDir}`. `history` then shows Bar-score drift across passes — score drift
+   must be HONEST (a lower score after a stricter pass is progress, not regression).
+
+**Rules:** ledgers are append-only (state changes = new events, same fp) · never shrink
+the regression list · a finding fixed without a re-verify artifact stays "open".
+
+## 10. Validating THIS skill (dogfood the dogfooder)
 
 After material edits to core or profile: cold-run the CHEAPEST model available in your
 agent stack (Haiku-class, mini-class, Flash-class) on A0 with ONLY the skill+profile as

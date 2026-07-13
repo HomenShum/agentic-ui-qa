@@ -15,8 +15,14 @@ Code, Codex, Cursor, Gemini CLI, aider, OpenHands, or a custom harness.
      design, pixel critique, protocol improvements). Honesty invariants never loosen.
 3. Resolve the target app's profile per SKILL.md §0 (`profiles/<app>.md`; no profile →
    fill `profiles/TEMPLATE.md` by read-only scouting FIRST).
-4. Run the journeys, score the Agentic UI Bar (B1–B8), report findings in the §6 format
+4. Open the app's QA memory per SKILL.md §9 (`scripts/qa-memory.mjs`, default
+   `<app-repo>/.qa/memory/`): run the regression sweep FIRST — every previously-fixed
+   P0/P1 is a mandatory re-verify before new exploration.
+5. Run the journeys, score the Agentic UI Bar (B1–B8), report findings in the §6 format
    with an evidence file for every claim.
+6. Persist at pass end: `add-finding` for every finding (fingerprints dedupe
+   re-discoveries) and `add-run` with journeys + Bar scores. The ledger is append-only;
+   the regression corpus only grows.
 
 ## Tool mapping (SKILL.md names capabilities, not vendor tools)
 
