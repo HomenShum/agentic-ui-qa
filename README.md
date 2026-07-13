@@ -40,6 +40,8 @@ B8 is the meta-dimension: if a Haiku-class agent can't complete the core journey
 
 A low Bar score isn't the end of the pass — [`REVAMP.md`](REVAMP.md) is the fix playbook: a proven pipeline (ground in the real component → 3–4 design directions → adversarial judge → self-contained interactive mockup with every honest state → pixel-critique loop → implementation spec → gated implementation) plus per-surface checklists for trace/provenance UIs, agent chat, proposal/diff review, status & latency feel, layout, and content quality. [`examples/trace-revamp/`](examples/trace-revamp/) is the full worked case: a production trace tab taken from flat text dump to a provenance rail with a tri-signature seal and three honest states — mockup and engineer-ready spec included.
 
+For durable and high-cardinality agents, [`TRACE-WATERFALL.md`](TRACE-WATERFALL.md) defines the scalable trace contract: adaptive compact/waterfall views, truthful OpenTelemetry time semantics, exact span-to-source evidence, virtualization, cursor pagination, minimaps, responsive expansion, and a 1,000-record QA matrix.
+
 For **B9 specifically**, [`PRETTIFY.md`](PRETTIFY.md) is the presentation-only mode: it explodes visual craft into a machine-measurable **VISUAL RUBRIC (V1–V9)** scored by [`scripts/prettify-audit.mjs`](scripts/prettify-audit.mjs) (distinct font-sizes, off-grid spacing rate, palette sprawl, per-node WCAG contrast, radius/shadow variety, alignment, motion), then drives a **prettify loop** — audit → presentation-only token/CSS candidates → vision-judge against the rubric → apply the winner → re-audit + pixel-verify + **re-run B1–B10 for zero regression**. The inviolable constraint: prettification is *additive to trust, never a tradeoff* — a restyle may touch only tokens/spacing/type/color/radius/shadow/motion, and an a11y-tree-snapshot diff plus a masked honest-state pixel diff prove it never moved a testid, softened a degraded state, or hid provenance. Beauty that costs trust is a P0.
 
 Once a fix is gate-green, [`HANDOFF.md`](HANDOFF.md) ships it: the [BetterPRHandoff](https://www.npmjs.com/package/@homenshum/easier-to-read-submissions) protocol applied to a QA finding — per-surface changelog lanes, a verified demo, a live-DOM "shipped" grep (a green CI badge is the author's layer wearing a costume), an ASCII runtime diagram for multi-layer fixes, and a QA packet for handoffs — each phase conditional on what the fix touched, with an *independent* layer required before the word "shipped." For a landed revamp or a demo deliverable, [`PROOF.md`](PROOF.md) is the heavy generator for the verified-demo phase: a storyboarded before/after narrated clip (empty → action → loading → result, animated cursor, on-screen verdicts) via [FeatureClipStudio](https://github.com/HomenShum) (Playwright → Remotion → ffmpeg → vision-judge). Same honesty floor: a before/after that shows only the happy path and hides the honest degraded state is a fake success — a P0, not a highlight reel.
@@ -73,8 +75,10 @@ DEPTH.md            the conditional DEPTH tier (D1–D11): scores whether the ag
                     safety, durable memory, model routing, doc ingestion, governance,
                     output eval, repeat-user retention) — orthogonal to B1–B11, applies
                     only to data-grounded/document/multi-model/long-running apps, run via A7
-REFERENCES.md       42 link-verified references — OSS trace UIs, agentic-UX writing,
+REFERENCES.md       link-verified references — OSS trace UIs, agentic-UX writing,
                     product mechanisms — each mapped to the Bar dimension it informs
+TRACE-WATERFALL.md  scalable agent-trace visual and QA contract: hierarchy, time axis,
+                    citations, virtualization, pagination, and responsive expansion
 profiles/           per-app anchors: URLs, auth, gates, provenance signals, journeys,
                     app-specific traps. TEMPLATE.md for new apps (fill first, then QA)
 BAR-DEFAULTS.md     shift-left: day-one conventions that make a NEW app born scoring

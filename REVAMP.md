@@ -64,6 +64,11 @@ everything else quiet. Refs: Agent Prism (adopted), Langfuse, Perplexity citatio
 Worked example: `examples/trace-revamp/` (mockup + spec — rail + tri-signature seal,
 three honest states).
 
+For durable or high-cardinality runs, the rail is only the summary layer. Apply
+`TRACE-WATERFALL.md`: adaptive compact-to-waterfall presentation, OpenTelemetry-grade
+hierarchy and time semantics, span-bound citations, virtualization, cursor pagination,
+and an expanded observability workspace that does not permanently consume the app canvas.
+
 ### S2 · Agent chat / copilot UI (B3 B6 B9 B10)
 Checklist: roles visually distinct (human ink vs agent ink — two-ink systems work) ·
 tool-calls/actions VISIBLE and collapsible, never silent · streaming with staged honest
