@@ -50,7 +50,11 @@ expand "Web:…" disclosure → OpenRouter·GLM 5.2 radio → consent checkbox �
   display:none ≥1100px — cost a real bug on the custody rail).
 - Concurrent Codex writers are common on this tree (U7) — always re-gate.
 
-## Last Bar score (2026-07-12 baseline, from the live World Cup session + Trace redesign work)
-| B1 | B2 | B3 | B4 | B5 | B6 | B7 | B8 | date | notes |
-|---|---|---|---|---|---|---|---|---|---|
-| 2 | 2 | 2 | 2 | 2 | 1 | 2 | 1 | 2026-07-12 | B6: create-path 30s timeout falls back (raise budget/stream). B8: first-run modal + collapsed consent disclosure cost cheap agents steps (T10/T4 now documented; UI could expose consent flatter). Next revamp targets: B6, B8. |
+## Last Bar score
+| B1 | B2 | B3 | B4 | B5 | B6 | B7 | B8 | B9 | B10 | date | notes |
+|---|---|---|---|---|---|---|---|---|---|---|---|
+| 2 | 2 | 2 | 2 | 2 | 1 | 2 | 1 | 2 | 2 | 2026-07-13 | **Opus full pass — 18/20** (report: `parity-studio/artifacts/nodeslide-bar-opus-2026-07-13/`; recorded in `parity-studio/.qa/memory/`). B1–B8 driven headlessly with atomic artifacts; **B9/B10 scored from evidence** on the 13th. B9=2: shell is designed-tooling-grade (three-pane discipline, terracotta-classifies ink, serif/sans/mono, honest micro-copy) — one flat surface = the trace-tab detail (redesign in flight, `REVAMP examples/trace-revamp`). B10=2: verdict-first, consent-transparent copy, `[source needed]` discipline; one blemish = F2 raw-error leak. **NEW: live GLM edit path degraded on prod** — 3 samples = 1 graceful fallback + 2 raw Convex Server Error after 70–120s; 0 clean live edits. Honesty held in all cases (P1 reliability, not P0). Consent-off egress network-verified = 0. **Revamp targets: B6, B8.** 5 findings in the ledger (F1 P1 · F2/F3/F4/trace-flat P2). |
+| 2 | 2 | 2 | 2 | 2 | 1 | 2 | 1 | — | — | 2026-07-12 | Baseline from live World Cup session + Trace redesign (B9/B10 predate this row). B6: create-path 30s timeout falls back. B8: first-run modal + collapsed consent disclosure cost cheap agents steps. |
+
+## Verified prod selectors (2026-07-13, for scripted drives)
+Create dialog "Shape a new story": `[data-testid=deck-title]` (input; ALSO on editor header — F3 dup), brief `textarea[placeholder*="evidence-led"]`, provider `input[type=radio][value=deterministic|openrouter_free]`, consent `[data-testid=provider-consent]`, access code `[data-testid=preview-access-code]`, submit `getByRole('button',{name:/Create deck/i})`. Composer: submit `[aria-label="Propose edit"]`, consent checkbox = enabled checkbox after openrouter radio, prod label "Web: off" (local source: "External model: off"). Tabs when inspector EXPANDED = text buttons AI/Design/Comments/Versions/Data/Trace (not `[aria-label="Open X"]`, which is the collapsed rail). Ownership is session-bound: reuse the SAME browser context for create→edit (raw deck URLs hit Safe Recovery).
