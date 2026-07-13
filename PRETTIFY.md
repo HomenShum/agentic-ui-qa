@@ -60,6 +60,31 @@ score" shape as SKILL §7, scoped to presentation.
 
 ---
 
+## 1b. Polish smells — the "reads as unfinished" checklist (vision-judge)
+
+V1–V9 catch *measurable* defects (font-size sprawl, off-grid spacing, contrast). These are the
+STRUCTURAL / interaction smells a machine won't flag but that still separate a **top app** from a
+nearly-done one. Each is individually minor; together they read as "not quite finished." Run this
+list by name during the vision-judge step (§3); a surface with **2+ smells is not world-class
+regardless of its V1–V9 score** — the machine rubric and this checklist are AND-ed, not averaged.
+
+| Smell | Why it hurts | Fix pattern |
+|---|---|---|
+| **Primary input not the hero** | the main text/composer input competes with surrounding controls at equal visual weight → "where do I act?" is ambiguous on first glance | elevate the input (size / border / focus ring); tuck secondary controls (model / scope / tools) INTO or just below it; collapse advanced options behind a disclosure (the ChatGPT/Claude composer) |
+| **Panel = undifferentiated long scroll** | an inspector/settings panel stacks many heterogeneous sections with no grouping, priority, or collapse → overwhelming, nothing findable | group into a few NAMED collapsible sections ordered by frequency of use (Content → Data → Appearance → Advanced) |
+| **Unlabeled controls** | numeric steppers / bare inputs / icon-only buttons with no label → the user can't tell what a naked "18" changes (radius? opacity?) | label every control (tooltip at minimum); no naked value fields |
+| **Delimited-string editing for structured data** | editing rows/series as a comma-separated text field instead of a grid → error-prone, screams "prototype" | a minimal editable cell table (add/remove rows, typed cells) for anything tabular (chart data, key/value pairs) |
+| **Scrollbars on small controls** | a 5-button toolbar or chip row that scrolls horizontally instead of fitting/wrapping | wrap or size-to-fit; a scrollbar on a small control is a smell, not a feature |
+| **Dead-space / undersized primary surface** | the main canvas/artifact floats tiny in a large empty frame → weak focal point, wasted space | larger default fit or a denser frame; the primary artifact should dominate its area |
+| **Sub-baseline text on real content** | body/label text below ~12px (metadata) / ~14px (controls) / ~16px (primary input) — not just chrome | enforce the type-size floor on CONTENT, not only the shell (ties to V1) |
+| **Page-level overflow / clipping** | content forces the page wider than the viewport → the edge clips (this one IS machine-checkable) | `min-width: 0` on panes + an overflow guard on the shell; no pane forces page scroll; cross-check `prettify-audit` `hOverflow` |
+
+For each captured surface, ask the eight by name and record any hit as a finding with the offending
+selector + the fix pattern. Provenance: distilled from a live design audit of an agentic deck editor
+(composer focus, inspector density, comma-string chart data, unlabeled steppers, toolbar scrollbar,
+canvas dead-space, sub-baseline text) — each a real "not-quite-world-class" tell caught by eye, not
+by metric.
+
 ## 2. `scripts/prettify-audit.mjs` — the measurement half
 
 Dependency-free (resolves Playwright from a `repo` field exactly like `pixels.cjs`).
