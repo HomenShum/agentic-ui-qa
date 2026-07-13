@@ -112,6 +112,7 @@ The LOWEST dimensions become the next revamp targets — that is the "revamp unt
 | B8 | Agent operability | a cheap model can drive it: stable labels/aria, deterministic selectors, no hidden-hover-only paths, keyboard-complete |
 | B9 | Visual craft | reads as designed tooling, not AI slop: real hierarchy, one signature element, disciplined color (hue classifies, never decorates), mono for data, both themes actually work — judged on RENDERED PIXELS |
 | B10 | Conversation & content quality | agent chat/copy earns trust: verdict-first responses, tool-calls visible, honest error voice (cause + next step), sources marked or flagged `[source needed]`, no sycophancy, formatting disciplined |
+| B11 | First-run & progressive disclosure | the landing presents the user's PRIMARY intent (one dominant composer / clear first action), not the app's machinery; complexity reveals progressively — navigator, canvas, inspector, validation, trace appear only AFTER creation begins; clean canonical + public routes; NO leaked debug/QA/legacy query params (`?qa=`, `?domain=`, `?deck=…`) or auto-loaded internal state; an example is an explicit suggestion, not an auto-opened workspace |
 
 B8 is the meta-dimension this whole skill exists for: if a Haiku-class agent cannot
 complete A0–A2 from the profile alone, B8 < 2 and the friction list is the revamp spec.
@@ -120,6 +121,28 @@ DEFERRED(no-vision) and hand it to a vision-capable pass, never guess it from th
 When a Bar dimension scores low, `REVAMP.md` (next to this file) is the playbook that
 takes it from finding → redesign → implemented fix — surface by surface (trace UI, agent
 chat, proposal review, status/latency, layout, content).
+
+**B9 has a measured, driven subsystem: `PRETTIFY.md`.** Instead of a one-line vibe, run
+`node scripts/prettify-audit.mjs <url|config.json>` to explode B9 into the VISUAL RUBRIC
+V1–V9 (type-scale, spacing/grid, color/token, hierarchy, contrast, radius/shadow,
+alignment, state polish, motion) with machine signals + offending selectors, then run the
+PRETTIFY LOOP (audit → presentation-only candidates → vision-judge → apply → re-audit +
+pixel-verify + **re-run B1–B10 for zero regression**). Prettify is presentation-only and
+ADDITIVE to trust — beauty that costs trust/operability is a P0, not an improvement.
+
+**B11 is the acquisition dimension** — agentic apps chronically fail it because the team
+lives in the editor/proof surfaces and lets them leak onto the landing (auto-loaded
+workspace, inspector open on a trace, QA/legacy query params in the URL). ChatGPT/Claude
+are the reference: blank calm surface → one dominant composer → model/web/file controls
+inside the composer → recents/templates as secondary → the full editor/inspector/trace
+only after creation begins. **Test B11 as a NET-NEW visitor:** clear site storage + open
+the CANONICAL root (no query params) and assert — (1) the first paint is an intent-first
+composer, not a workspace/editor dump; (2) navigator/canvas/inspector are NOT mounted
+pre-creation; (3) no `?qa=`/`?domain=`/`?deck=` or other internal params appear in the
+URL; (4) examples are suggestions, not auto-opened state; (5) public routes
+(`/share/*`, `/present/*`) are clean. Leaked proof machinery on the landing is a P1: the
+proof is excellent once requested, but it must not be the first impression. Fix via
+`REVAMP.md` S7.
 
 ## 5. Universal traps (check BEFORE debugging; profile adds app-specific ones)
 

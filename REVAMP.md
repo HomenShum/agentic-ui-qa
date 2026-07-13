@@ -5,6 +5,16 @@ low-scoring dimension or an ugly surface ("the trace UI looks bad", "the chat fe
 dead") through redesign to an implemented, gate-verified change. It encodes a pipeline
 that was proven end to end on a production Trace tab — see `examples/trace-revamp/`.
 
+**Two modes — pick before you start.** REVAMP (this file) is the **structural** mode:
+surfacing hidden fields, adding a proposal/diff affordance, restructuring layout,
+rewriting copy — the DOM/content itself changes. `PRETTIFY.md` is the **presentation-only**
+mode: when structure/copy/provenance are already right and the surface just reads as
+un-designed, run its VISUAL RUBRIC (V1–V9) + `scripts/prettify-audit.mjs` + the token/CSS
+restyle loop — it may touch only tokens/spacing/type/color/radius/shadow/motion and must
+re-run B1–B10 for zero regression (beauty that costs trust = P0). A REVAMP that lands a
+new component ends with a PRETTIFY pass; a PRETTIFY pass that discovers a missing state or
+hidden field escalates back here to S1–S6.
+
 ## Capability tiers (same contract as SKILL.md)
 - **FLOOR:** you don't design. You apply an existing spec/mockup from `examples/` or one
   a stronger model produced, implement it exactly, run the gates, pixel-verify the named
@@ -88,6 +98,33 @@ product's voice (never bare stack traces, never apologies-as-content) · unverif
 figures marked (`[source needed]` pattern — a live model can be INSTRUCTED to do this;
 test for it in A2) · labels name user outcomes, not internals · same action = same word
 everywhere (Publish button → "Published" toast).
+
+### S7 · First-run / landing / progressive disclosure (B11 · A0)
+Goal: the landing is the user's INTENT, not the app's machinery — the ChatGPT/Claude
+clean-slate. The proof (trace, inspector, validation) is excellent once requested; it must
+not be the first impression.
+Checklist: canonical `/` = a calm, near-blank surface with ONE dominant composer stating
+the core job ("What do you want to create?") · model / web / upload / structured-spec
+controls live INSIDE the composer (they ARE the B1 consent surface) · recents / templates /
+examples are secondary suggestions — an example is a link that *starts* a flow, never an
+auto-opened workspace · navigator, canvas, inspector, validation, and trace mount ONLY
+after creation begins · clean routes: `/` home, `/deck/:id` studio, `/share/:slug` +
+`/present/:slug` public — and NO `?qa=` / `?domain=` / `?deck=…` or other internal query
+params on canonical entry · on entering a deck the inspector starts COLLAPSED (open AI /
+Design / Trace on demand).
+Root-cause pattern (very common in internally-built agentic apps): an editor-first root
+route that bootstraps a sample workspace and writes its id into the URL, and defaults the
+inspector open on a proof tab. Precedent: NodeSlide's root auto-loads a golden deck +
+opens the inspector on Trace (App.tsx / NodeSlideStudio.tsx). Fix = split the root: a
+dedicated Home for `/`, lazy-mount the studio only under `/deck/:id`, strip inert/QA/legacy
+params from canonical entry, gate first-run reveal on real intent, not on load.
+Machine check (floor-runnable, in A0's net-new-visitor step): clear storage → open the
+canonical root → assert `location.search` has no internal params, the editor/inspector
+containers are absent from the DOM, and exactly one composer is present. Refs: ChatGPT /
+Claude landing (progressive disclosure), NN/g "Progressive Disclosure".
+Guardrail: this is a STRUCTURAL revamp (routes + mount order) — keep B1–B5 intact
+(consent still gates egress from the new composer) and the first creation still lands as a
+reviewable proposal (B3). End with a PRETTIFY pass on the new Home.
 
 ## Non-negotiables at every tier
 Bind to real fields; honest states are mandatory in every mockup; both themes; charset

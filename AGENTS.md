@@ -30,6 +30,9 @@ Code, Codex, Cursor, Gemini CLI, aider, OpenHands, or a custom harness.
 |---|---|---|
 | Browser a11y tree / DOM eval | any MCP/CDP browser bridge | drive `scripts/pixels.cjs` (clicks + DOM asserts) |
 | Viewing rendered pixels | your image input on the PNGs | use pixels.cjs machine checks + state the limitation |
+| Pixel capture | `scripts/pixels.cjs <config.json>` (Playwright resolved from a `repo`) | required for pixel proof |
+| Live-deploy proof | `scripts/live-signal.mjs <url> <signal>` (raw-HTML grep, trap U9) | required before "deployed" |
+| B9 visual-craft measurement | `scripts/prettify-audit.mjs <url\|config.json>` → VISUAL RUBRIC V1–V9 signals (advisory, exit 0); then `PRETTIFY.md` loop | no-vision model runs the audit + deterministic fixes, DEFERS the vision-judge |
 | Shell | your exec tool | required — the scripts and gates need it |
 | File search when reads truncate | grep/rg with offsets | required fallback (trap U8) |
 
