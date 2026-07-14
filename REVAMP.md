@@ -40,9 +40,10 @@ hidden field escalates back here to S1–S6.
    FIRST line, all CSS/JS inline, no external requests, system fonts + mono stack).
    Bind ONLY to real data-model fields — invent nothing. Render EVERY honest state:
    live / degraded / failed / empty, both themes, working density-or-mode toggles.
-5. **Pixel-critique loop.** Render to PNG (scripts/pixels.cjs) → actually LOOK →
-   blocker/major/minor issues → fix in place → re-render. A green exit code is not a
-   design review; mojibake, dead toggles, and unreachable states hide in pixels.
+5. **Pixel-critique loop.** Render desktop/tablet/mobile × light/dark → actually LOOK →
+   blocker/major/minor issues → fix → re-render. A green exit code or zero-overflow assert
+   is not a design review; clipped navigation, false hierarchy, dead controls, and dishonest
+   state styling hide in pixels.
 6. **Write the implementation spec** for the real component: binding table (every UI
    element → exact data field), state-honest matrix, tokens to reuse (the app's own
    variables — no new build layers), what NOT to regress, tests to add. Flag every
@@ -60,7 +61,7 @@ digests, validator verdict + version) · status-honest states (live=attributed &
 fallback=visibly degraded amber + zeroed cost + NO invented hash, failed=issues listed,
 "not signable") · mono for every hash/cost/token/model-id · progressive density
 (plain-language → operator → full provenance + raw) · one loud terminal proof object,
-everything else quiet. Refs: Agent Prism (adopted), Langfuse, Perplexity citations.
+everything else quiet. Refs: Agent Prism, Langfuse, Perplexity citations.
 Worked example: `examples/trace-revamp/` (mockup + spec — rail + tri-signature seal,
 three honest states).
 
@@ -68,14 +69,18 @@ For durable or high-cardinality runs, the rail is only the summary layer. Apply
 `TRACE-WATERFALL.md`: adaptive compact-to-waterfall presentation, OpenTelemetry-grade
 hierarchy and time semantics, span-bound citations, virtualization, cursor pagination,
 and an expanded observability workspace that does not permanently consume the app canvas.
+The collapsed side rail keeps a named Activity/Trace control plus current running/error signal;
+the compact summary shows bounded recent activity and an honest hidden count; the full timeline
+owns search/filter/grouping and selected-span detail. Moving between all three preserves state.
 
 ### S2 · Agent chat / copilot UI (B3 B6 B9 B10)
-Checklist: roles visually distinct (human ink vs agent ink — two-ink systems work) ·
-tool-calls/actions VISIBLE and collapsible, never silent · streaming with staged honest
-status, immediate echo of the user's ask · context/scope chips show what the agent can
-read vs write · agent output that would MUTATE anything lands as a proposal affordance,
-not applied text · empty state teaches the first ask. Refs: assistant-ui, Vercel AI
-Elements, CopilotKit, Gradio agent metadata protocol.
+Checklist: composer/input is the visual hero · model, effort, consent, source, and memory
+controls sit at secondary weight without becoming hidden or ambiguous · the preflight and
+receipt show the same exact configuration · roles are distinct · tool calls/actions are visible
+and collapsible · streaming status comes from real events · scope chips name read vs write ·
+persistent memory shows source/time/scope/retention with edit/delete/disable · citations sit by
+the claims they support · mutations land as proposals, not applied text. Refs: assistant-ui
+Mem0/Artifacts/Generative UI, Vercel AI Elements, CopilotKit, Gradio.
 
 ### S3 · Proposal / diff review (B3 B7)
 Checklist: before/after comparison (side-by-side minimum; slider/overlay for spatial
@@ -86,16 +91,19 @@ review has NO strong public reference (REFERENCES.md gap) — building a good on
 category-defining, not catch-up.
 
 ### S4 · Status & latency feel (B6)
-The felt-responsiveness pattern: echo the ask <100ms · escalate label honestly (~900ms:
-"Reading context…" → "Drafting…") · hard timeout with an honest message that still
-reconciles a late result · NEVER fake progress bars or invented step names · degraded
-path is labeled at the moment it happens, not discovered later.
+Echo the ask <100ms, then render only server-observed milestones. Long jobs need durable
+queued/running/waiting-for-human/retrying/paused/cancel-requested/canceled/failed/completed
+states, a `jobId`, and a timestamped last checkpoint that survives reload. A timeout or stale/
+missing event becomes **stalled/reconnecting/unknown** and stops optimistic animation; never
+reach 100% before a terminal receipt. Late results reconcile visibly. Never fake bars or stages.
 
 ### S5 · Layout / responsiveness (A5 B9)
-Viewport matrix from the profile · no horizontal overflow at any tier · panels either
-visible or explicitly toggleable (nothing display:none with no path back — check the
-app's chrome CSS for class collisions, trap U6) · density belongs to the user, not the
-viewport alone.
+Artifact desktop/tablet/mobile × light/dark. Navigation overflow must use an intentional,
+agent-operable pattern: horizontally scrollable tabs with an edge cue, priority items plus a
+labeled More menu, or a drawer — never clipped labels or `display:none` with no path back.
+Preserve the active item, focus, order, badges, and reopen path across breakpoints; test touch and
+keyboard. Panels are visible or explicitly toggleable, and density remains user-controlled.
+No horizontal overflow is a floor signal only; it cannot pass layout without pixel inspection.
 
 ### S6 · Content & copy (B10)
 Agent responses: verdict first, then reasoning · errors state cause + next step in the
@@ -105,34 +113,29 @@ test for it in A2) · labels name user outcomes, not internals · same action = 
 everywhere (Publish button → "Published" toast).
 
 ### S7 · First-run / landing / progressive disclosure (B11 · A0)
-Goal: the landing is the user's INTENT, not the app's machinery — the ChatGPT/Claude
-clean-slate. The proof (trace, inspector, validation) is excellent once requested; it must
-not be the first impression.
-Checklist: canonical `/` = a calm, near-blank surface with ONE dominant composer stating
-the core job ("What do you want to create?") · model / web / upload / structured-spec
-controls live INSIDE the composer (they ARE the B1 consent surface) · recents / templates /
-examples are secondary suggestions — an example is a link that *starts* a flow, never an
-auto-opened workspace · navigator, canvas, inspector, validation, and trace mount ONLY
-after creation begins · clean routes: `/` home, `/deck/:id` studio, `/share/:slug` +
-`/present/:slug` public — and NO `?qa=` / `?domain=` / `?deck=…` or other internal query
-params on canonical entry · on entering a deck the inspector starts COLLAPSED (open AI /
-Design / Trace on demand).
-Root-cause pattern (very common in internally-built agentic apps): an editor-first root
-route that bootstraps a sample workspace and writes its id into the URL, and defaults the
-inspector open on a proof tab. Precedent: NodeSlide's root auto-loads a golden deck +
-opens the inspector on Trace (App.tsx / NodeSlideStudio.tsx). Fix = split the root: a
-dedicated Home for `/`, lazy-mount the studio only under `/deck/:id`, strip inert/QA/legacy
-params from canonical entry, gate first-run reveal on real intent, not on load.
-Machine check (floor-runnable, in A0's net-new-visitor step): clear storage → open the
-canonical root → assert `location.search` has no internal params, the editor/inspector
-containers are absent from the DOM, and exactly one composer is present. Refs: ChatGPT /
-Claude landing (progressive disclosure), NN/g "Progressive Disclosure".
-Guardrail: this is a STRUCTURAL revamp (routes + mount order) — keep B1–B5 intact
-(consent still gates egress from the new composer) and the first creation still lands as a
-reviewable proposal (B3). End with a PRETTIFY pass on the new Home.
+Goal: the landing is the user's intent, not the app's machinery. Proof surfaces are excellent
+once requested; they are not the first impression.
+
+Checklist: canonical `/` is calm and gives one dominant composer/input the most area, contrast,
+and direct language · model, effort, consent, source/upload, and memory controls use secondary
+weight inside or adjacent to it, remain keyboard-reachable, and name their exact pre-submit
+state · suggestions/recents/templates follow the composer and never auto-open a workspace ·
+workspace navigation, artifact surface, inspector, validation, and trace mount only after intent
+· canonical and public routes carry no internal fixture/debug state · after creation, the
+activity side rail begins compact/collapsed with a visible status and reopen control.
+
+A common root cause is an editor-first root that bootstraps sample/internal state, writes it into
+the URL, and opens proof machinery by default. Split home from addressable workspace routes,
+lazy-mount the workspace after real intent, and keep public read/present routes clean. Route names
+and component boundaries are app-owned; put app-specific prescriptions in its profile.
+
+Machine check: clear storage → open canonical root → assert no internal params, no editor/
+inspector containers, exactly one primary composer/input, and named secondary controls. Pixel
+check all six viewport/theme states to prove the input remains the hero. Keep B1–B5 intact and
+make first creation land as a reviewable proposal; end with PRETTIFY.
 
 ## Non-negotiables at every tier
-Bind to real fields; honest states are mandatory in every mockup; both themes; charset
+Bind to real fields; honest states are mandatory in every mockup; six viewport/theme artifacts; charset
 first line; a11y floor (focus visible, reduced motion, contrast at small sizes);
 reference-not-dependency; scope discipline on the implementing diff; gates + pixel
 re-verify before "done"; memory updated (SKILL §9).

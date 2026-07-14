@@ -102,23 +102,29 @@ This core file is the RUNNER. Around it, one module per lifecycle phase (full ma
 The profile maps these to concrete steps (the NodeSlide profile's J0–J6 is the reference
 implementation). Every app runs the same archetypes:
 
-- **A0 Smoke** (first-time visitor): prod live-signal → first-run surface → main shell
-  renders (all primary panels/tabs) → light+dark pixels → one core read-only interaction.
+- **A0 Smoke** (first-time visitor): prod live-signal → first-run surface → after explicit
+  start/open, the main shell renders its primary reachable surfaces → light+dark pixels →
+  one core read-only interaction.
 - **A1 Core creation** (cautious user, most private path): create the app's primary
   artifact WITHOUT AI egress; verify honest provenance of the private path.
-- **A2 Live AI action** (technical evaluator) — THE HERO: consent/opt-in → a real model
-  acts on real data → proposal is REVIEWABLE before mutation → provenance shows model id,
-  cost > 0, tokens, receipt → accept → version/state advances.
-- **A3 Provenance audit** (governance reviewer): enumerate the activity/trace surface;
-  classify every run LIVE / DEGRADED / FAILED per the profile's signals table; any run
-  claiming live attribution with zero cost = P0 dishonesty. For runs above 12 operations,
-  apply `TRACE-WATERFALL.md`; at 101+ records, verify virtualization, subtree collapse,
-  minimap fidelity, and cursor pagination rather than trusting a screenshot. Always run
-  the compact/expanded 4-span, 10-span, and 100-span fixtures.
+- **A2 Live AI action** (technical evaluator) — THE HERO: an exact consent preflight names
+  the provider/model and, when applicable, effort, egress, sources, memory use, and write
+  scope → a real model acts on real data → the proposal is REVIEWABLE before mutation →
+  the persisted receipt echoes what was actually used (model, cost > 0, tokens, consent,
+  sources) → accept → version/state advances. Preflight/receipt mismatch = P0.
+- **A3 Provenance audit** (governance reviewer): inspect both the collapsed activity rail
+  and expanded trace; classify every run LIVE / DEGRADED / FAILED per the profile's signals
+  table. Require server-timestamped OpenTelemetry-grade spans and exact span-bound sources;
+  live attribution with zero cost = P0. Apply `TRACE-WATERFALL.md` above 12 operations.
+  Exercise 4, 10, 100, and one hundreds-of-records fixture across summary/full views; at
+  scale verify virtualization, search, filtering, grouping, subtree collapse, minimap
+  fidelity, and cursor pagination rather than trusting a screenshot.
 - **A4 Output & sharing** (presenter): export/publish/present/share paths produce real
   artifacts or honest capability warnings; no silent failures.
-- **A5 Themes & access** (accessibility auditor): light/dark (per trap U11 the shell may
-  need an in-app toggle), 3 viewports, no horizontal overflow, visible focus, reduced motion.
+- **A5 Themes & access** (accessibility auditor): render desktop/tablet/mobile × light/dark
+  (six named pixel artifacts; per trap U11 the shell may need an in-app toggle), visible
+  focus, reduced motion, and a responsive nav overflow pattern that keeps the active item
+  and every action reachable. Zero horizontal overflow is necessary, never sufficient proof.
 - **A6 Adversarial** (hostile gremlin): empty submits, double-clicks (no double-apply),
   oversized inputs, consent-off AI attempt (egress without consent = P0), mid-operation
   reload recovery. **This list is the floor.** For a real red-team pass, run `REDTEAM.md`
@@ -126,17 +132,14 @@ implementation). Every app runs the same archetypes:
   forced fake-success, fabricated attribution, scope escape, injection via observed content,
   silent-mutate) each with a machine-checkable PASS condition, judged by the deterministic/
   LLM/manual three-tier design; any confirmed break files a P0 (§9).
-- **A7 Agentic depth** (durable tool-user) — the DEPTH probe, run ONLY for apps where the
-  D-tier applies (data-grounded / document-producing / multi-model / long-running agentic;
-  see `DEPTH.md`'s applicability gate). Probe whether the agent is a REAL iterative tool-loop
-  (the execution trace shows N distinct iteration receipts + a repair stage, not one
-  completion span), grounds web claims with per-claim lineage (`{url, retrievedAt, excerpt,
-  boundElementIds}`), runs durable/resumable jobs (reload mid-run → the job resumes by server
-  `jobId`, progress from server events not a client timer), exposes claim-level data lineage
-  (click a number → `{sourceId, columnRef, rowRange}`), keeps a durable reload-surviving
-  conversation, and surfaces VISIBLE output-quality checks (deterministic eval findings that
-  each carry an artifact). Every A7 signal is a VISIBLE agent-checkable artifact, never an
-  invisible "the LLM did it." Scores land as D1–D11 (`DEPTH.md`), not the Bar.
+- **A7 Agentic depth** (durable tool-user) — run only where `DEPTH.md` applies. Probe a REAL
+  iterative tool loop (distinct receipts + repair, not one completion), per-claim web/data
+  lineage, and durable server jobs whose honest states include queued/running/waiting,
+  retrying/paused, canceled/failed/completed. Reload must resume by `jobId` from timestamped
+  server checkpoints; missing or stale events render unknown/stalled, never optimistic
+  progress. Persistent memory is visible and controllable (source, captured/last-used time,
+  scope/retention, edit/delete/disable), conversation survives reload, and every output-quality
+  finding carries evidence. Every A7 signal is VISIBLE and agent-checkable; score D1–D11.
 
 ## 4. The Agentic UI Bar (score 0–2 each; the revamp target list)
 
@@ -145,17 +148,17 @@ The LOWEST dimensions become the next revamp targets — that is the "revamp unt
 
 | # | Dimension | 2 looks like |
 |---|---|---|
-| B1 | Consent & egress honesty | private-by-default; per-action opt-in; egress named (provider+model) before it happens |
-| B2 | Attribution & provenance | every AI action shows model id, cost, tokens, and a verifiable receipt/digest |
+| B1 | Consent & egress honesty | private-by-default; exact per-action preflight names provider/model plus applicable effort, sources, memory, and write scope; receipt matches |
+| B2 | Attribution & provenance | every AI action shows model/cost/tokens, timestamped spans, exact source lineage, and a verifiable receipt/digest |
 | B3 | Propose-before-mutate | AI changes land as reviewable diffs (compare/accept/decline); nothing silent |
 | B4 | Scope boundaries | what AI may READ vs WRITE is explicit, inspectable, enforced |
-| B5 | Honest degrade | fallback/timeout/failure states are labeled and visually distinct; never a fake success |
-| B6 | Status & latency feel | immediate echo, staged honest progress, honest timeout; no fake spinners |
+| B5 | Honest degrade | fallback/timeout/failure/unknown states are labeled and visually distinct; uncertainty fails closed |
+| B6 | Status & latency feel | immediate echo plus durable server-derived states/checkpoints; stale progress stops honestly; no fake spinners |
 | B7 | Recoverability | versions/undo/restore exist and work after AI actions |
 | B8 | Agent operability | a cheap model can drive it: stable labels/aria, deterministic selectors, no hidden-hover-only paths, keyboard-complete |
 | B9 | Visual craft | reads as designed tooling, not AI slop: real hierarchy, one signature element, disciplined color (hue classifies, never decorates), mono for data, both themes actually work — judged on RENDERED PIXELS |
-| B10 | Conversation & content quality | agent chat/copy earns trust: verdict-first responses, tool-calls visible, honest error voice (cause + next step), sources marked or flagged `[source needed]`, no sycophancy, formatting disciplined |
-| B11 | First-run & progressive disclosure | the landing presents the user's PRIMARY intent (one dominant composer / clear first action), not the app's machinery; complexity reveals progressively — navigator, canvas, inspector, validation, trace appear only AFTER creation begins; clean canonical + public routes; NO leaked debug/QA/legacy query params (`?qa=`, `?domain=`, `?deck=…`) or auto-loaded internal state; an example is an explicit suggestion, not an auto-opened workspace |
+| B10 | Conversation & content quality | verdict-first responses; visible tool calls; cause + next step errors; claim-adjacent citations or `[source needed]`; no sycophancy |
+| B11 | First-run & progressive disclosure | one composer/input is the hero; model/effort/consent/source controls are secondary but reachable; workspace, activity rail, and proof surfaces reveal only after intent |
 
 **Prevent, not just detect:** `BAR-DEFAULTS.md` (next to this file) is the shift-left
 companion — the day-one conventions (egress gate, receipt-only provenance, proposal-only
@@ -168,6 +171,8 @@ B8 is the meta-dimension this whole skill exists for: if a Haiku-class agent can
 complete A0–A2 from the profile alone, B8 < 2 and the friction list is the revamp spec.
 B9 requires viewing rendered PNGs — a model without image input must score B9 as
 DEFERRED(no-vision) and hand it to a vision-capable pass, never guess it from the DOM.
+Passing an overflow assertion alone cannot earn B8, B9, or A5: inspect the six rendered
+viewport/theme states for hierarchy, reachability, clipping, legibility, and honest status.
 When a Bar dimension scores low, `REVAMP.md` (next to this file) is the playbook that
 takes it from finding → redesign → implemented fix — surface by surface (trace UI, agent
 chat, proposal review, status/latency, layout, content).
@@ -180,19 +185,16 @@ PRETTIFY LOOP (audit → presentation-only candidates → vision-judge → apply
 pixel-verify + **re-run B1–B10 for zero regression**). Prettify is presentation-only and
 ADDITIVE to trust — beauty that costs trust/operability is a P0, not an improvement.
 
-**B11 is the acquisition dimension** — agentic apps chronically fail it because the team
-lives in the editor/proof surfaces and lets them leak onto the landing (auto-loaded
-workspace, inspector open on a trace, QA/legacy query params in the URL). ChatGPT/Claude
-are the reference: blank calm surface → one dominant composer → model/web/file controls
-inside the composer → recents/templates as secondary → the full editor/inspector/trace
-only after creation begins. **Test B11 as a NET-NEW visitor:** clear site storage + open
-the CANONICAL root (no query params) and assert — (1) the first paint is an intent-first
-composer, not a workspace/editor dump; (2) navigator/canvas/inspector are NOT mounted
-pre-creation; (3) no `?qa=`/`?domain=`/`?deck=` or other internal params appear in the
-URL; (4) examples are suggestions, not auto-opened state; (5) public routes
-(`/share/*`, `/present/*`) are clean. Leaked proof machinery on the landing is a P1: the
-proof is excellent once requested, but it must not be the first impression. Fix via
-`REVAMP.md` S7.
+**B11 is the acquisition dimension** — agentic apps chronically leak editor/proof machinery
+onto the landing. The reference shape is calm surface → one dominant composer/input →
+model, effort, consent, and source controls at secondary visual weight → suggestions/recents
+after that → workspace, activity, and trace only after intent. **Test as a NET-NEW visitor:**
+clear storage + open the canonical root and assert (1) the composer/input is the visual hero;
+(2) secondary controls remain named, keyboard-reachable, and exact before submit; (3) editor/
+inspector containers are absent pre-creation; (4) no internal fixture/debug params or
+auto-loaded workspace appear; (5) examples are suggestions; (6) public routes are clean.
+After creation, the activity side rail starts compact/collapsed but visibly reachable. Leaked
+proof machinery on the landing is P1. Fix via `REVAMP.md` S7.
 
 ## 4b. The Agentic DEPTH tier (D1–D11, conditional)
 

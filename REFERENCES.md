@@ -5,25 +5,27 @@ step (SKILL.md §7): after scoring, look up the lowest dimension's section below
 the strongest prior art before designing the smallest change that raises it. All URLs
 swept + verified alive 2026-07 (corrected URLs applied where the original moved).
 
-**Adopted decision:** agent-prism is already the Trace-tab design reference for NodeSlide
-— reference-not-dependency (steal the span-tree/badge patterns, do not add the package).
+Use every entry as a mechanism reference, not an automatic dependency or brand skin.
+Profile-specific adoptions and implementation choices belong in the app profile.
 
 ---
 
-## Scalable trace waterfalls and LLM observability
+## Scalable traces, memory, artifacts, and runtime boundaries
 
-- [Tinybird templates](https://www.tinybird.co/templates/) — OpenTelemetry template reference for a compact observability starting point. Maps to B2, B8, B9 and `TRACE-WATERFALL.md`.
-- [Tinybird observability](https://www.tinybird.co/observability) — OpenTelemetry ingestion and real-time observability mechanism reference. Maps to B2, D1, D3.
+- [Tinybird OpenTelemetry template](https://www.tinybird.co/templates/opentelemetry) — OTel ingestion/query backend and high-volume data reference; pair with a real trace renderer rather than treating the template as a waterfall UI. Maps to B2, D1, D3 and `TRACE-WATERFALL.md`.
+- [Tinybird observability](https://www.tinybird.co/observability) — OpenTelemetry ingestion and real-time observability backend reference. Maps to B2, D1, D3.
+- [assistant-ui: react-o11y](https://www.assistant-ui.com/react-o11y) — experimental headless span primitives for reactive status, collapsible subtrees, trace trees, and waterfall timelines; useful as visual/mechanical prior art, not a required dependency. Maps to B2, B5, B6, B8, B9 and `TRACE-WATERFALL.md`.
 - [Grafana: traces in Grafana](https://grafana.com/docs/grafana/latest/datasources/tempo/traces-in-grafana/) — trace drilldown, latency/error investigation, and cross-signal navigation. Maps to B2, B8, B9.
 - [Grafana: trace integration](https://grafana.com/docs/grafana/latest/visualizations/explore/trace-integration/) — trace detail anatomy including spans, attributes, events, links, and filters. Maps to B2 and `TRACE-WATERFALL.md`.
 - [OpenTelemetry traces](https://opentelemetry.io/docs/concepts/signals/traces/) — semantic ground truth for spans, events, links, kinds, and status. Maps to B2, B5, D1, D3.
+- [OpenTelemetry trace semantic conventions](https://opentelemetry.io/docs/specs/semconv/general/trace/) — interoperable span attribution across services/protocols; maps to B2, B8, D1, D3 and the timestamp/schema contract in `TRACE-WATERFALL.md`.
 - [OpenTelemetry Generative AI attributes](https://opentelemetry.io/docs/specs/semconv/registry/attributes/gen-ai/) — provider/model/token/tool telemetry and sensitive-content considerations. Maps to B1, B2, B5, D7.
 - [Langfuse observability overview](https://langfuse.com/docs/observability/overview) — LLM trace reference for nested generations, tool calls, retrievals, and evaluation. Maps to B2, B8, D1, D2.
 - [Langfuse data model](https://langfuse.com/docs/observability/data-model) — observation hierarchy, timing, input/output, token, and cost model. Maps to B2, D1, D3.
-- [assistant-ui: Mem0 Memory Chat](https://www.assistant-ui.com/examples/mem0) — visible persistent memory, retrieval, management, and privacy controls. Maps to B1, B6, B8, D6 and compact trace activity.
-- [assistant-ui: Artifacts](https://www.assistant-ui.com/examples/artifacts) — iterative generated output in a sandboxed side panel beside the conversation. Maps to B3, B6, B9, D10.
-- [assistant-ui: Generative UI](https://www.assistant-ui.com/examples/generative-ui) — typed tool renderers, streamed arguments/status, and human-completed tool results. Maps to B3, B5, B6, B8, B9, D1.
-- [Yonom/assistant-ui-langgraph-fastapi](https://github.com/Yonom/assistant-ui-langgraph-fastapi) — assistant-ui + assistant-stream + LangGraph + FastAPI integration reference. Maps to B6, B8, D1, D3.
+- [assistant-ui: Mem0 Memory Chat](https://www.assistant-ui.com/examples/mem0) — persistent memory inventory with view/edit/delete and privacy control across sessions. Maps to B1, B6, B8, D6 and compact memory activity.
+- [assistant-ui: Artifacts](https://www.assistant-ui.com/examples/artifacts) — iterative sandboxed output beside the conversation; a strong summary/workspace split. Maps to B3, B6, B9, D10.
+- [assistant-ui: Generative UI](https://www.assistant-ui.com/examples/generative-ui) — typed tool renderers, streamed arguments/status, and distinct human-completed results. Maps to B3, B5, B6, B8, B9, D1.
+- [Yonom/assistant-ui-langgraph-fastapi](https://github.com/Yonom/assistant-ui-langgraph-fastapi) — assistant-stream boundary between a LangGraph/FastAPI backend and assistant-ui/Next.js frontend. Maps to B6, B8, D1; useful transport precedent for D3, but streaming alone does not prove durable jobs or reload recovery.
 
 ---
 
@@ -39,8 +41,10 @@ swept + verified alive 2026-07 (corrected URLs applied where the original moved)
 ### B2 — Attribution & provenance
 
 - **Langfuse** (https://github.com/langfuse/langfuse) — Session → trace → observation tree with model id, tokens, USD cost rolled up at every level; shareable public trace links as handable receipts.
-- **AgentPrism** (https://github.com/evilmartians/agent-prism + chronicle https://evilmartians.com/chronicles/debug-ai-fast-agent-prism-open-source-library-visualize-agent-traces) — Embeddable span-tree: per-span kind badges (llm/tool/agent/retrieval), collapsible SpanCard with raw payloads, token+cost chips per node; adapter interface renders any trace JSON. **Already adopted as NodeSlide Trace-tab design reference.**
+- **AgentPrism** (https://github.com/evilmartians/agent-prism + chronicle https://evilmartians.com/chronicles/debug-ai-fast-agent-prism-open-source-library-visualize-agent-traces) — Embeddable span-tree: per-span kind badges (llm/tool/agent/retrieval), collapsible SpanCard with raw payloads, token+cost chips per node; adapter interface renders any trace JSON.
 - **Perplexity — streaming citations** (https://docs.perplexity.ai/docs/cookbook/articles/streaming-citations/README) — Claim-level (not answer-level) provenance: numbered chips per sentence with hover source cards, attached progressively during streaming.
+- **OpenTelemetry traces + trace semantic conventions** (https://opentelemetry.io/docs/concepts/signals/traces/ + https://opentelemetry.io/docs/specs/semconv/general/trace/) — Canonical trace/span hierarchy, source timestamps, events, links, status, kind, and interoperable attributes; the data truth underneath any waterfall.
+- **assistant-ui react-o11y** (https://www.assistant-ui.com/react-o11y) — Headless reactive trace tree/waterfall with lifecycle state and real subtree collapse. Experimental; borrow the mechanism and verify scale/accessibility independently.
 - **GitHub Copilot coding agent** (https://docs.github.com/en/copilot/how-tos/copilot-on-github/use-copilot-agents/manage-and-track-agents) — Receipt-grade traceability: every commit co-authored and linked to the session log that produced it; all output lands as a draft PR.
 
 ### B3 — Propose-before-mutate
@@ -53,7 +57,7 @@ swept + verified alive 2026-07 (corrected URLs applied where the original moved)
 ### B4 — Scope boundaries (AI read vs write)
 
 - **Claude in Chrome — read/write split** (https://code.claude.com/docs/en/chrome) — Tool-call-level read/write boundary, publicly enumerated. NodeRoom analog: AI reads room state freely, any shared-canvas mutation prompts.
-- **Figma Make — point-and-edit** (https://help.figma.com/hc/en-us/articles/31304485164695-Create-and-edit-a-Figma-Make-file) — Spatial scope control: user clicks the exact element the AI may touch; simple properties get direct-manipulation controls, bigger asks go to prompt. NodeSlide analog: click-a-slide-element to constrain write scope.
+- **Figma Make — point-and-edit** (https://help.figma.com/hc/en-us/articles/31304485164695-Create-and-edit-a-Figma-Make-file) — Spatial scope control: user clicks the exact element the AI may touch; simple properties get direct-manipulation controls, bigger asks go to prompt. Canvas analog: select the exact element to constrain write scope.
 - **Linear — Agents in Linear** (https://linear.app/docs/agents-in-linear) — Delegation-vs-accountability split: agent is a swappable "delegate" field while a human stays assignee; agent access scoped per-team by admin.
 - **NN/g — The UX Reckoning** (https://www.nngroup.com/articles/ux-reset-2025/) — Constraint-first delegation: user sets explicit boundaries (scope, budget, touchables) before the run; UI reports outcomes against declared constraints.
 
@@ -62,7 +66,7 @@ swept + verified alive 2026-07 (corrected URLs applied where the original moved)
 - **Vercel AI Elements** (https://github.com/vercel/ai-elements) — `<Tool>` state machine as status chips: input-streaming → input-available → output-available / output-error — tool progress never faked.
 - **OpenLIT** (https://github.com/openlit/openlit) — Separate exceptions/failed-generation tab keeps errors from polluting averages — honest degrade at the analytics layer.
 - **Helicone** (https://github.com/Helicone/helicone) — Failed requests keep the provider's actual error body visible instead of blending into success metrics.
-- **Anthropic — Writing Effective Tools** (https://www.anthropic.com/engineering/writing-tools-for-agents) — Error messages that tell the agent what to do next; every NodeSlide MCP error string should be actionable by a cheap model.
+- **Anthropic — Writing Effective Tools** (https://www.anthropic.com/engineering/writing-tools-for-agents) — Error messages that tell the agent what to do next; every tool error should be actionable by a cheap model.
 
 ### B6 — Status & latency feel
 
@@ -70,19 +74,21 @@ swept + verified alive 2026-07 (corrected URLs applied where the original moved)
 - **Vercel AI Elements** (https://github.com/vercel/ai-elements) — `<Reasoning>` auto-opens while streaming, auto-closes on completion, prints "thought for Ns".
 - **Linear — Agent Interaction SDK** (https://linear.app/changelog/2025-07-30-agent-interaction-guidelines-and-sdk) — Platform-level status contract: acknowledged → working → done/error rendered consistently regardless of vendor. Define ONE agent-session status schema all AI features render through, not per-feature spinners.
 - **Devin — multi-pane workspace** (https://docs.devin.ai/get-started/devin-intro) — Every agent action watchable live (terminal, browser, plan panes); "what is it doing right now" is never a mystery. Take-over mechanic: human grabs the same workspace mid-run, then hands back.
+- **assistant-ui + LangGraph + FastAPI** (https://github.com/Yonom/assistant-ui-langgraph-fastapi) — Concrete streamed backend/frontend boundary. Use it for event transport shape; add persisted job identity, checkpoint replay, and idempotency before claiming durable execution.
 
 ### B7 — Recoverability
 
-- **Cursor — Checkpoints** (https://cursor.com/docs/agent/overview#checkpoints) — Pre-edit snapshot per agent turn, restore affordance pinned to the chat message that caused the mutation; explicitly separate from git so undo is cheap. NodeSlide: snapshot the deck before every agent patch.
+- **Cursor — Checkpoints** (https://cursor.com/docs/agent/overview#checkpoints) — Pre-edit snapshot per agent turn, restore affordance pinned to the chat message that caused the mutation; explicitly separate from git so undo is cheap. Snapshot the primary artifact before every agent patch.
 - **v0 — versions** (https://v0.app/docs/versions) — Version boundary = AI generation event (not manual edits); restore creates a NEW head version instead of truncating — restore is itself audited and undoable.
 - **Replit Agent — effort-based checkpoints** (https://replit.com/blog/effort-based-pricing) — Fuses recoverability with cost attribution: each checkpoint shows what was done and what it cost next to its rollback affordance. (Rollback/DB-restore details live in Replit's checkpoint docs, not this pricing post — cite docs.replit.com for that claim.)
-- **ChatGPT — Canvas versions** (https://help.openai.com/en/articles/9930697-what-is-the-canvas-feature-in-chatgpt-and-how-do-i-use-it) — Back/forward version stepper embedded in the artifact itself + change-highlighting of last-touched spans. Cautionary tale: community threads document canvas overwriting work — the failure mode NodeSlide must avoid.
+- **ChatGPT — Canvas versions** (https://help.openai.com/en/articles/9930697-what-is-the-canvas-feature-in-chatgpt-and-how-do-i-use-it) — Back/forward version stepper embedded in the artifact itself + change-highlighting of last-touched spans. Agentic editors must prevent silent overwrite.
 
 ### B8 — Agent operability
 
 - **NN/g — AI Agents as Users** (https://www.nngroup.com/articles/ai-agents-as-users/) — The B8 test protocol: audit each screen by asking "could an agent complete this task from the accessibility tree alone?" Design dual-audience: stable semantic labels + machine-readable structure.
 - **OpenLLMetry** (https://github.com/traceloop/openllmetry) — Not a UI: the gen_ai.* attribute vocabulary. Emit compliant spans and every OSS trace UI renders your runs for free; stable span names make traces machine-drivable for QA agents.
 - **assistant-ui** (https://github.com/assistant-ui/assistant-ui) — Composable primitives with stable roles (Thread, Message, Composer, ActionBar) make the chat surface agent-drivable.
+- **assistant-ui react-o11y** (https://www.assistant-ui.com/react-o11y) — Span rows expose stable status/type/depth/collapse data and composable controls; still require explicit aria/tree semantics, keyboard tests, and large-run virtualization.
 - **LlamaIndex chat-ui** (https://github.com/run-llama/chat-ui) — Annotation-typed message parts: backend event types map 1:1 to UI widgets via a stable annotation schema — deterministic rendering an agent can rely on.
 
 ---
@@ -147,9 +153,9 @@ fix) has a first-party mechanism to steal rather than re-derive.
   `BAR-DEFAULTS.md` is the bridge that maps each B1–B11 dim to a copyable default (egress gate,
   receipt-only provenance badge, proposal-only write path, clean-route scaffold, testid/aria
   contract, CI `ui_ux_qa` gate). Prevent is cheaper than detect. (Dims: B1–B11 substrate.)
-- **harness4visuals / NodeMem / NodeRL** — learn. https://github.com/HomenShum/harness4visuals
+- **harness4visuals-etl-followup / NodeMem / NodeRL** — learn. https://github.com/HomenShum/harness4visuals-etl-followup
   + https://github.com/HomenShum/NodeMem + https://github.com/HomenShum/NodeRL (MIT). *Steal:*
-  the three learning adapters `TASTE.md` layers over the QA ledger — harness4visuals mines
+  the three learning adapters `TASTE.md` layers over the QA ledger — harness4visuals ETL mines
   accept/decline/ship events into provenanced **taste memory** (reject-on-write without
   provenance) that calibrates the B9 judge; NodeMem gives the findings ledger a
   notice→gate→learn-from-`wontfix`→dedup brain that surfaces finding **classes** instead of
@@ -163,7 +169,7 @@ fix) has a first-party mechanism to steal rather than re-derive.
 
 | Name | Category | URL | License / maturity | Steal | Dims |
 |---|---|---|---|---|---|
-| AgentPrism (Evil Martians) | oss-trace-ui | https://github.com/evilmartians/agent-prism (chronicle: https://evilmartians.com/chronicles/debug-ai-fast-agent-prism-open-source-library-visualize-agent-traces) | MIT / active-oss | Span-tree with per-span kind badges, SpanCard raw payloads, token+cost chips, uniform data-adapter interface; ship-only-what-serves-the-workflow discipline (12 built, 4 shipped). Adopted as Trace-tab design reference. | B2 B5 B6 B8 |
+| AgentPrism (Evil Martians) | oss-trace-ui | https://github.com/evilmartians/agent-prism (chronicle: https://evilmartians.com/chronicles/debug-ai-fast-agent-prism-open-source-library-visualize-agent-traces) | MIT / active-oss | Span-tree with per-span kind badges, SpanCard raw payloads, token+cost chips, uniform data-adapter interface; ship-only-what-serves-the-workflow discipline (12 built, 4 shipped) | B2 B5 B6 B8 |
 | Langfuse | oss-trace-ui | https://github.com/langfuse/langfuse | MIT core (/ee enterprise; GitHub NOASSERTION) / production | Hierarchy-wide model/token/cost rollups; shareable trace links; prompt versioning with rollback | B2 B6 B7 |
 | Arize Phoenix | oss-trace-ui | https://github.com/Arize-ai/phoenix | Elastic v2 (NOASSERTION — verify before code reuse) / production | Tabbed span detail (formatted vs raw), latency waterfall, cumulative subtree token/cost, OpenInference span-kind color coding | B2 B6 |
 | Helicone | oss-trace-ui | https://github.com/Helicone/helicone | Apache-2.0 / production | Hierarchical session paths grouping multi-step runs; failed requests keep provider error body visible | B2 B5 B6 |
@@ -172,11 +178,12 @@ fix) has a first-party mechanism to steal rather than re-derive.
 | Opik (Comet) | oss-trace-ui | https://github.com/comet-ml/opik | Apache-2.0 / production | Inline eval verdicts stamped on trace rows (trace + quality receipt in one row); threads view for multi-turn runs | B2 B5 B6 |
 | OpenLLMetry (Traceloop) | pattern-library | https://github.com/traceloop/openllmetry | Apache-2.0 / active-oss | gen_ai.* span vocabulary (execute_tool child spans, token usage metrics, content-capture opt-in) — emit once, render everywhere | B1 B2 B8 |
 | assistant-ui | oss-agent-ui-kit | https://github.com/assistant-ui/assistant-ui | MIT / active-oss | makeAssistantToolUI typed tool components with args-before/result-after and human-approval pause variant | B1 B3 B6 B8 |
+| assistant-ui react-o11y | oss-trace-ui | https://www.assistant-ui.com/react-o11y | Experimental / active | Headless reactive span tree/waterfall, lifecycle data attributes, subtree collapse, shared time range; mechanism reference, not scale proof | B2 B5 B6 B8 B9 |
 | Vercel AI Elements | oss-agent-ui-kit | https://github.com/vercel/ai-elements | NOASSERTION (shadcn-registry source; check LICENSE before wholesale copy) / active-oss | Tool state-machine status chips; Reasoning collapsible with streamed-open/done-closed + duration; Context token-usage component | B2 B5 B6 |
 | CopilotKit | oss-agent-ui-kit | https://github.com/CopilotKit/CopilotKit | MIT / production | renderAndWaitForResponse human-in-the-loop; AG-UI typed event stream for canvas-state/agent-belief sync (NodeRoom) | B1 B3 B4 B6 |
 | Chainlit | oss-agent-ui-kit | https://github.com/Chainlit/chainlit | Apache-2.0 / active-oss (community-maintained) | @cl.step nested step accordions (type, streamed output, duration); AskActionMessage blocking on explicit button consent | B1 B2 B6 |
 | Gradio agent chat | oss-agent-ui-kit | https://gradio.app/guides/agents-and-tool-usage | Apache-2.0 / production | metadata-dict honest-progress protocol: pending/done status, nesting via parent_id, duration labels | B5 B6 B8 |
-| E2B Fragments | oss-agent-ui-kit | https://github.com/e2b-dev/fragments | Apache-2.0 / active-oss | Stream the spec into view BEFORE execution, then flip to live Preview — NodeSlide deck-generation flow | B3 B6 |
+| E2B Fragments | oss-agent-ui-kit | https://github.com/e2b-dev/fragments | Apache-2.0 / active-oss | Stream the spec into view BEFORE execution, then flip to live Preview — reusable artifact-generation flow | B3 B6 |
 | LlamaIndex chat-ui | oss-agent-ui-kit | https://github.com/run-llama/chat-ui | MIT / active-oss (slower cadence) | Annotation-typed message parts; per-document provenance chips keyed by stable schema (NodeBench citations) | B2 B8 |
 | OpenHands | product-reference | https://github.com/OpenHands/OpenHands | NOASSERTION (historically MIT — verify) / production | Confirmation mode + risk-tiered ConfirmRisky; multi-pane workspace making every side-effect visible in a labeled pane | B1 B3 B4 B6 |
 | Shape of AI (Emily Campbell) | pattern-library | https://www.shapeof.ai/ | concept/writing | Governors (inspectable plan with pause/override), Footprints (per-claim source chips), Identifiers (mark AI-authored content everywhere) | B1 B2 B3 B4 B5 |
@@ -214,4 +221,4 @@ fix) has a first-party mechanism to steal rather than re-derive.
 - **B4 (scope boundaries):** All strong references are proprietary product docs. Missing: OSS code implementing a declared read/write scope surface (an enforceable "AI may read X, write Y" panel), especially for a canvas/spatial editor.
 - **B7 (recoverability):** Strong product coverage, weak OSS: no open-source version-ledger/undo component library for document or canvas state after AI edits (AgentOps time-travel is trace replay, not app-state restore).
 - **B8 (agent operability):** Only writing + indirect patterns. Missing: a concrete published a11y-tree-driven test harness or agent-drivability benchmark (something like "Haiku completes the flow from the accessibility tree alone" as reusable tooling — SKILL §9 is currently the only implementation).
-- **B3 (propose-before-mutate) for spatial surfaces:** Existing refs are chat/code/doc-centric (diff hunks, suggestion layers). Missing: a reference for visual before/after diff review on a canvas/slide surface — the exact NodeSlide need.
+- **B3 (propose-before-mutate) for spatial surfaces:** Existing refs are chat/code/doc-centric (diff hunks, suggestion layers). Missing: a strong public reference for visual before/after diff review on a canvas or other spatial artifact.

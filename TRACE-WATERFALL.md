@@ -26,6 +26,9 @@ The thresholds are guidance, not a license to hide complexity. A deeply nested e
 ## Citation and evidence binding
 
 - Bind evidence to the exact retrieval or reasoning span with stable source IDs. A source list attached only to the whole run must be labeled **run-level evidence; not span-bound**.
+- Put a keyboard-focusable citation marker beside the supported claim/output, not only in a
+  distant Sources tab. Opening it reveals the bound span and source record; ordinal labels
+  such as `[3]` are display aliases, never the durable source ID.
 - Web/PDF evidence shows title, canonical URL, retrieved-at timestamp, excerpt or page range, content digest, and the claims or output elements it supports.
 - Spreadsheet/database evidence shows dataset/file identity, sheet/table, range or query, row/column bounds, and digest/version.
 - Slide/document evidence shows source artifact, page/slide/element IDs, and the generated or edited element IDs it supports.
@@ -35,6 +38,9 @@ The thresholds are guidance, not a license to hide complexity. A deeply nested e
 ## Truthful time semantics
 
 - Use server-recorded timestamps. Never invent evenly spaced bars or client-timer progress.
+- Preserve each span's start/end and every event/checkpoint timestamp at source precision;
+  normalize display to UTC or the user's zone without discarding the original. Sequence order
+  is not a timestamp. Surface clock skew or missing time as uncertainty rather than smoothing it.
 - An open span extends only to the latest observed server checkpoint and uses a distinct unfinished treatment such as hatching. It must not imply completion.
 - If duration is unknown, render a sequence tick or event marker and label the duration unknown.
 - Preserve real parallelism. Retries are separate attempts linked to the original span, not overwritten history.
@@ -49,7 +55,11 @@ The trace remains operable at 1,000+ records.
 - Fetch older/newer records with a server cursor and deduplicate by stable record ID.
 - Keep the minimap aggregated so it does not scale one DOM node per span.
 - Collapse subtrees by default at high volume and expose expand-all only with a clear performance warning.
-- Search and filters operate over loaded data; when results may be partial, say so.
+- Search, filters, and grouping cover operation name, service/agent, type, status, source, and
+  time range. Prefer server-side queries; when only loaded data is searched, label the result
+  **loaded subset** and distinguish visible, loaded, and total counts.
+- Group headers expose honest aggregate counts/duration/error/cost and can collapse without
+  losing failed, running, or selected descendants from the minimap and summary.
 - Preserve selected span, scroll position, filters, and expansion state across polling, pagination, and compact/expanded view changes.
 - A graph view can be optional for causal topology. It is not the default substitute for a time-based trace.
 
@@ -59,6 +69,13 @@ The trace remains operable at 1,000+ records.
 - One deliberate action expands the trace into a main-workspace observability view. It must not permanently consume the editing canvas.
 - Closing the expanded view restores the prior editor state and selection.
 - The trace is read-only. Mutation approval belongs in the proposal/review surface, even when an approval event is visible in the trace.
+
+### Collapsed side-rail contract
+
+When an editor collapses activity to an edge rail, keep one visible, keyboard-reachable
+Activity/Trace control with an accessible name, `aria-expanded`, current run state, and
+running/error/unread signal. Do not squeeze rows into icon width or hide the only reopen path.
+Reopening restores the selected run, filters, and scroll state without stealing canvas state.
 
 ### Compact sidebar contract
 
@@ -82,7 +99,11 @@ Do not squeeze the desktop waterfall into a 280–360px rail. In the unexpanded 
 
 ## OpenTelemetry-grade mapping
 
-Prefer a lossless mapping to trace ID, span ID, parent span ID, operation name, span kind, status, start/end timestamps, attributes, events, links, resource/service identity, and instrumentation scope. For model spans, retain provider, model, input/output tokens, cost, tool call IDs, finish reason, and reasoning controls using the OpenTelemetry Generative AI semantic conventions where available.
+Prefer a lossless mapping to trace ID, span ID, parent span ID, operation name, span kind,
+status, source-recorded start/end timestamps, timestamped events/checkpoints, links, attributes,
+resource/service identity, instrumentation scope, and semantic-convention/schema version. For
+model spans, retain provider, model, input/output tokens, cost, tool call IDs, finish reason,
+and reasoning/effort controls using the OpenTelemetry Generative AI conventions where available.
 
 Product language can be friendlier than telemetry vocabulary, but the underlying values must remain inspectable and exportable.
 
@@ -92,7 +113,9 @@ Every scalable trace revamp must exercise and artifact these cases:
 
 1. Honest zero-record state.
 2. One-span success and one-span failure.
-3. Exact 4-span, 10-span, and 100-span fixtures in compact and expanded modes; verify row caps, hidden-count honesty, no oversized empty canvas, and no clipped final axis label.
+3. Exact 4-span and 10-span compact summaries plus a 100-span hierarchical trace; transition
+   each to/from expanded mode without losing selection, filters, or state. Verify honest row
+   caps, no oversized empty canvas, and no clipped final axis label.
 4. Nested model → tool → retrieval → validation chain.
 5. Parallel tools with overlapping spans.
 6. Open durable run that survives reload and resumes from server events.
@@ -100,10 +123,15 @@ Every scalable trace revamp must exercise and artifact these cases:
 8. Human approval wait separated from active compute.
 9. Exact web citation and exact uploaded-file/data-range citation.
 10. Legacy run-level evidence clearly labeled as not span-bound.
-11. 250-span and 1,000-span fixtures: virtualization, subtree collapse, search, minimap, and cursor pagination.
-12. Compact inspector and expanded workspace at narrow/wide viewports, light/dark themes, keyboard-only use, and reduced motion.
+11. 250-span and 1,000-span fixtures: virtualization, subtree collapse, search, filtering,
+    grouping, loaded/total counts, minimap, and cursor pagination.
+12. Collapsed rail, compact inspector, and expanded workspace at desktop/tablet/mobile ×
+    light/dark (six named pixel artifacts), plus keyboard-only use and reduced motion.
 
-Record DOM node count and interaction latency for the 1,000-span fixture. A screenshot alone cannot prove scalability.
+Record DOM node count and search/filter/expand latency for the 1,000-span fixture. The app
+profile must pin the exact high-volume fixture count plus acceptable DOM and interaction-latency
+budgets; “hundreds” alone is not a pass criterion. A screenshot alone cannot prove scalability;
+zero horizontal overflow alone cannot prove visual acceptance.
 
 ## P0 failures
 
@@ -113,7 +141,15 @@ Record DOM node count and interaction latency for the 1,000-span fixture. A scre
 - The UI freezes, mounts all rows, loses selection, or cannot reach the terminal receipt on a long run.
 - A compact trace consumes the editing workspace without an intentional expand action.
 - Citations exist in storage but cannot be traced from the exact span to the supported claim/output.
+- Missing/stale checkpoints continue animating, reach 100%, or imply completion without a
+  terminal server event/receipt.
 
 ## Reference vocabulary
 
-Use Tinybird and Grafana Tempo as visual references for hierarchical span waterfalls, OpenTelemetry as the semantic contract, Langfuse as an LLM-observability reference, Agent Prism as the human-readable custody layer, and NodeRoom as the product reference for source-aware agent traces. Use assistant-ui's Mem0, Artifacts, and Generative UI examples for inspectable memory, side-by-side artifact iteration, typed tool rows, streaming state, and human tool results. Use the assistant-ui + LangGraph + FastAPI example as an integration reference for preserving streamed backend events across the frontend boundary. Borrow mechanisms, not brand skins.
+Use assistant-ui `react-o11y` and Grafana Tempo as visual/mechanical references for collapsible
+waterfalls, OpenTelemetry traces + trace semantic conventions as the data contract, Tinybird's
+OpenTelemetry template as an ingestion/backend reference, and Langfuse/Agent Prism as LLM and
+human-readable trace references. Use assistant-ui's Mem0, Artifacts, and Generative UI examples
+for inspectable memory, side-by-side artifact iteration, typed tool states, and human results;
+the LangGraph + FastAPI example illustrates streamed frontend/backend transport, not durable-job
+proof by itself. Borrow mechanisms, not brand skins; `react-o11y` is experimental.

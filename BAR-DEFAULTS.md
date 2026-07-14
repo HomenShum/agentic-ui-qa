@@ -51,37 +51,38 @@ check** (the machine assertion §13 runs so it can't silently rot).
 
 ### B1 — Consent & egress honesty  →  private-by-default egress gate
 
-**Convention.** Ship a single `<EgressGate>` primitive that ALL model/network calls route
-through. It is `private` by default; a call cannot fire until the user arms a per-action
-consent surface *inside the composer* that names the provider + model **before** egress:
+**Convention.** Ship one `<EgressGate>` that ALL model/network calls route through. It is
+`private` by default; a call cannot fire until the user arms a per-action preflight at the
+composer. The prompt/input stays visually primary while the preflight names the exact provider,
+model, effort/reasoning mode, source IDs, memory read/write, and mutation scope that apply:
 
 ```tsx
 // the ONLY door to any external model. No fetch-to-provider outside this.
 <EgressGate
   data-testid="egress-consent"
-  provider="openrouter" model="z-ai/glm-5.2"
+  preflight={{ provider, model, effort, sourceIds, memoryAccess, readScope, writeScope }}
   state="armed | private"            // private = default, blocks send
-  label="External model: OpenRouter · GLM 5.2"   // named BEFORE the call
 />
 ```
-Two-part arm (radio picks provider → checkbox confirms) so consent is a deliberate act,
-and it **re-arms per action** (consent is not sticky — trap U3 by design).
+The control shape is app-owned; the values must be explicit, reviewable, and **re-armed per
+action**. Persist a server-authored consent receipt with requested and actual values. A mismatch,
+undisclosed source, or broader memory/write scope blocks the action and fails closed.
 
-**Pre-satisfies B1=2:** private by default · per-action opt-in · egress named
-(provider+model) before it happens. Also pre-satisfies **B4** (the gate IS the read/write
-scope boundary) and is the **B11** composer's consent surface.
+**Pre-satisfies B1=2:** private by default · per-action opt-in · exact applicable
+provider/model/effort/sources/memory/scope before dispatch · actual receipt matches. Also
+pre-satisfies **B4** and is the **B11** composer's consent surface.
 
-**qa-gate check:** grep the bundle — every `fetch`/SDK call to a provider host is
-lexically inside `EgressGate`; a network probe with consent OFF shows **0** egress
-requests (consent-off egress = P0). `[data-testid=egress-consent]` present and defaults to
-`state="private"`.
+**qa-gate check:** every provider call passes the gate; consent OFF produces **0** egress;
+the preflight defaults private and its exact provider/model/effort/sources/memory/scope match
+the persisted receipt. Any mismatch or unconsented field = P0.
 
 ### B2 — Attribution & provenance  →  a receipt row the UI can only READ
 
 **Convention.** Model calls write an append-only **receipt** the UI renders but never
-authors: `{ runId, model, provider, costUsd, tokensIn, tokensOut, digest, verdict,
-route }`. The provenance component takes a receipt and renders it; there is **no code path
-that fabricates** cost/tokens/digest for display. Zero-cost + no-digest → the component
+authors: `{ runId, traceId, consentId, provider, model, effort, startedAt, endedAt,
+sourceIds, costUsd, tokensIn, tokensOut, digest, verdict, route }`. The provenance component
+takes a receipt and renders it; there is **no code path that fabricates** cost/tokens/digest
+for display. Zero-cost + no-digest → the component
 renders the **DEGRADED** face, not a live one.
 
 ```tsx
@@ -90,7 +91,8 @@ renders the **DEGRADED** face, not a live one.
 // degraded: "deterministic fallback" · $0.000 · no tokens · NO invented digest
 ```
 
-**Pre-satisfies B2=2:** model id, cost, tokens, verifiable digest on every AI action —
+**Pre-satisfies B2=2:** exact consent, model, timestamped trace, source lineage, cost, tokens,
+and verifiable digest on every AI action —
 and because the badge is a pure function of a derived receipt, it **cannot lie** (the
 anti-gaming rule made structural). Cross-reference `REVAMP.md` S1 for the full trace UI.
 
@@ -101,7 +103,8 @@ Do not discover at production volume that the trace mounts one card per operatio
 
 **qa-gate check:** the `ProvenanceBadge` component has no literal cost/token/digest
 strings; a degraded fixture renders `$0.000` + amber + zero digest; a live fixture renders
-`cost>0`. `[data-testid=provenance]` present on every AI-result surface.
+`cost>0`, consent/timestamps, and exact source IDs that open their citation records.
+`[data-testid=provenance]` is present on every AI-result surface.
 
 ### B3 — Propose-before-mutate  →  proposals are the only write path
 
@@ -151,20 +154,20 @@ success (enforced by the type split — the anti-gaming rule again).
 **qa-gate check:** degraded/failed fixtures render the amber `[data-testid=degraded]` face
 with zeroed cost; no code path renders `SuccessState` from a fallback receipt.
 
-### B6 — Status & latency feel  →  the honest 3-stage status hook
+### B6 — Status & latency feel  →  a durable honest-status state machine
 
-**Convention.** One `useHonestStatus()` hook: **echo the ask <100ms** ("Sent…") →
-**escalate the label honestly** at real milestones ("Reading context…" → "Drafting…",
-driven by actual stream events, not a timer) → **hard timeout** with a message that still
-reconciles a late result. No fabricated progress bars, no invented step names.
+**Convention.** One `useHonestStatus()` adapter: **echo <100ms**, then render server events for
+`queued`, `running`, `waiting_for_human`, `retrying`, `paused`, `cancel_requested`, `canceled`,
+`failed`, or `completed`, with `jobId`, attempt, and timestamped last checkpoint. Reload reconnects
+to the same job. Timeout/stale/missing events become `stalled | reconnecting | unknown`, stop
+optimistic animation, and still reconcile a late result. No 100% before a terminal receipt.
 
-**Pre-satisfies B6=2:** immediate echo · staged honest progress · honest timeout. (B6 is
-the chronic low scorer — shipping the hook by default is the cheapest way to bank it.)
-See `REVAMP.md` S4.
+**Pre-satisfies B6=2:** immediate echo · durable server-owned states/checkpoints · honest
+stale/timeout/cancel/retry/reload behavior. See `REVAMP.md` S4.
 
-**qa-gate check:** the composer echoes within 100ms of submit (testid flips to a pending
-state); status labels come from stream events (grep: no `setTimeout`-driven fake stages);
-a forced timeout renders the honest timeout label + still applies a late result.
+**qa-gate check:** submit echoes within 100ms; labels/checkpoints come from server events;
+reload preserves `jobId`; stale and forced-timeout fixtures fail closed; cancel/retry are
+idempotent; a late result reconciles visibly.
 
 ### B7 — Recoverability  →  versioned store with restore, from commit one
 
@@ -183,11 +186,11 @@ versions]` lists ≥1 version after any AI accept.
 This is the meta-dimension and the one most cheaply won at build time. Ship the **DOM
 contract** below and a Haiku-class agent can drive the app from the profile alone.
 
-**Testid / aria conventions (adopt verbatim — generalized from the NodeSlide profile):**
+**Testid / aria conventions (adopt verbatim — proven across worked profiles):**
 
 | Surface | Convention | Example |
 |---|---|---|
-| Primary inputs | stable `data-testid`, kebab, outcome-named (not component-named) | `data-testid="deck-title"`, `"brief-input"` |
+| Primary inputs | stable `data-testid`, kebab, outcome-named (not component-named) | `data-testid="artifact-title"`, `"prompt-input"` |
 | Consent surface | `data-testid="egress-consent"` / `"provider-consent"` | B1 gate |
 | Provenance | `data-testid="provenance"` · degraded `"degraded"` | B2/B5 |
 | Proposal | `data-testid="proposal"` with accept/decline sub-testids | B3 |
@@ -223,7 +226,8 @@ build tier runs the audit + defers the vision-judge.)
 
 **qa-gate check:** `prettify-audit.mjs` scorecard within thresholds (bounded distinct
 font-sizes, low off-grid rate, no palette sprawl, WCAG contrast at small sizes); both
-themes render (dark pixel is actually dark — trap U11).
+themes render (dark pixel is actually dark — trap U11). Pixel-review desktop/tablet/mobile ×
+light/dark; zero horizontal overflow alone cannot pass B9.
 
 ### B10 — Conversation & content quality  →  the response contract in the system prompt
 
@@ -231,40 +235,39 @@ themes render (dark pixel is actually dark — trap U11).
 **verdict-first** responses · **tool-calls visible** (collapsible, never silent) · **honest
 error voice** (cause + next step in the product's voice, never a bare stack trace) ·
 **`[source needed]`** on any unverified figure · no sycophancy · disciplined formatting.
-The renderer marks sources and surfaces tool-calls structurally so copy quality isn't left
-to vibes.
+The renderer marks tool calls structurally and puts a focusable citation beside each supported
+claim. Citation detail exposes stable source ID, title/canonical URL or file/range, retrieved-at,
+excerpt/digest, and bound claim/output IDs; a run-level source list is labeled as such.
 
 **Pre-satisfies B10=2:** chat/copy earns trust. See `REVAMP.md` S2/S6.
 
 **qa-gate check:** an A2-style live probe returns a verdict-first response with visible
 tool-calls; a forced-error case renders cause+next-step, not a raw trace; an unsourced
-figure carries `[source needed]`.
+figure carries `[source needed]`; a sourced claim opens its exact source/span record.
 
 ### B11 — First-run & progressive disclosure  →  the clean-route scaffold
 
-**Convention.** Split the root from day one — do NOT let the editor be the landing:
+**Convention.** Split the root from day one — do not let the workspace be the landing:
 
 ```
 /                     Home: calm, near-blank, ONE dominant composer ("What do you
-                      want to create?"); model/web/upload controls INSIDE it (= B1
-                      consent surface); recents/templates as secondary suggestions
-/<artifact>/:id       Studio: navigator + canvas + inspector — LAZY-mounted, only here
-/share/:slug          public read (clean)
-/present/:slug        public present (clean)
+                      want to create?"); model/effort/consent/source/memory controls
+                      are secondary but exact and reachable
+/<artifact>/:id       Addressable workspace — LAZY-mounted only after intent
+/<public-view>/:slug  clean public read/present route(s)
 ```
-Canonical `/` carries **no** internal query params (`?qa=` / `?domain=` / `?deck=…`), does
-**not** auto-load a workspace, and the inspector starts **collapsed**. An example is a link
-that *starts* a flow, never an auto-opened editor. Navigator/canvas/inspector/validation/
-trace mount only **after creation begins**.
+Canonical `/` carries no internal fixture/debug params, does not auto-load a workspace, and
+examples start a flow rather than opening hidden state. Workspace/proof surfaces mount only
+after intent. Once mounted, the activity side rail starts compact/collapsed with a visible
+status and named reopen control; responsive navigation keeps every item reachable.
 
-**Pre-satisfies B11=2:** landing shows the user's intent, not the app's machinery;
-complexity reveals progressively; clean routes, no leaked debug/QA params. See `REVAMP.md`
-S7 (the editor-first-root anti-pattern is the #1 way internally-built agentic apps fail
-B11 — designing the split up front is free; retrofitting it is a structural revamp).
+**Pre-satisfies B11=2:** landing shows intent; primary and secondary hierarchy is clear;
+workspace/proof complexity reveals progressively; routes are clean. See `REVAMP.md` S7.
 
 **qa-gate check (net-new visitor):** clear storage → open canonical `/` → assert
 `location.search` has no internal params · editor/inspector containers absent from the DOM
-· exactly one composer present.
+· exactly one primary composer/input · all secondary controls named and reachable; pixel-review
+the six viewport/theme states before accepting hierarchy.
 
 ---
 

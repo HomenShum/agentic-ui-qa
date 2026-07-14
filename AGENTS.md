@@ -18,7 +18,7 @@ Code, Codex, Cursor, Gemini CLI, aider, OpenHands, or a custom harness.
 4. Open the app's QA memory per SKILL.md §9 (`scripts/qa-memory.mjs`, default
    `<app-repo>/.qa/memory/`): run the regression sweep FIRST — every previously-fixed
    P0/P1 is a mandatory re-verify before new exploration.
-5. Run the journeys, score the Agentic UI Bar (B1–B8), report findings in the §6 format
+5. Run the journeys, score the Agentic UI Bar (B1–B11), report findings in the §6 format
    with an evidence file for every claim.
 6. Persist at pass end: `add-finding` for every finding (fingerprints dedupe
    re-discoveries) and `add-run` with journeys + Bar scores. The ledger is append-only;
