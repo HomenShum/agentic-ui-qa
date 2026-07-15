@@ -1,0 +1,35 @@
+schemaVersion: nodekit.repo/v1
+repository: HomenShum/agentic-ui-qa
+lifecycle: production
+support: active
+role: qa-protocol
+commandProfile: protocol
+
+canonicalFor:
+  - agentic-ui-qa.flight-recorder
+
+consumes:
+  - nodeplatform.repo-contract
+  - proofloop.certification
+
+commands:
+  doctor: { script: doctor, mode: finite }
+  check: { script: check, mode: finite }
+  proof: { script: proof, mode: finite }
+
+noKey:
+  status: certified
+  command: npm run proof
+  externalAccountsRequired: 0
+  disclosure: The self-check validates the protocol and script syntax locally; it does not claim an application UI passed QA.
+
+environment:
+  contractVersion: nodeplatform.env/v1
+  status: not-applicable
+
+proof:
+  command: npm run proof
+  receiptSchema: agentic-ui-qa.self-check/v1
+
+contractDeclarations: []
+architectureExceptions: []
