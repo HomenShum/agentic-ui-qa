@@ -11,6 +11,7 @@
 | Dev command + port | Zero-setup: open `catalog/task-browser.html` (static, no server) OR `npm run search -- <query>` (CLI). Rich: `pip install -r requirements.txt && npm run streamlit` → `127.0.0.1:8502` |
 | Backend / deployments | **None required.** Static HTML + JS index; Streamlit optional. NodeAgent chat panel optionally POSTs to `NODEAGENT_ENDPOINT` (contract in `docs/NODEAGENT_BRIDGE.md`) — leave empty for deterministic local catalog-agent mode |
 | Auth path for a QA agent | **NONE for the static/local corpus.** The Streamlit NodeAgent chat panel POSTs to `NODEAGENT_ENDPOINT` only if that env var is set; **leave it empty → deterministic local catalog-agent mode** that cites task ids. QA runs fully offline, no login |
+| QA run mode / mutation boundary | **READ-ONLY DIAGNOSTIC by default.** SANDBOX DOGFOOD may use the static/local corpus when asked; keep `NODEAGENT_ENDPOINT` empty unless external execution is explicitly authorized. |
 | Typecheck gate | UNKNOWN — mixed JS (catalog) + Python (Streamlit). Check `package.json`; likely no TS typecheck. `npm run validate` is the corpus-integrity gate |
 | Test gate | `npm run validate` (corpus validation) · `npm run build:catalog` (deterministic catalog regen). Grep `package.json` for a unit-test script. Persona smoke results in `docs/PERSONA_SMOKE_RESULTS.md` |
 | Playwright available in repo? | UNKNOWN — grep `package.json` for `@playwright/test`; static `task-browser.html` is browser-QA-able. Set pixels.cjs `repo` to the clone path if present |
@@ -45,7 +46,7 @@ Static/local only — point live-signal.mjs at the served static file or :8502. 
 - **A5 Themes & access (trap U11):** UNKNOWN dark-mode in static/Streamlit surfaces — inspect; test both.
 - **A6 Adversarial:** malformed deep-link (`?view=` garbage / unknown persona) → graceful fallback, not crash; NodeAgent chat asked for a score a task doesn't have → must refuse/omit (no fabricated official score); re-run `build:catalog` twice → identical output (determinism).
 
-## App-specific traps (beyond universal U1–U11)
+## App-specific traps (beyond universal U1–U13)
 - **Corpus, not an app** — QA target is data integrity + honest-score governance, not a live agent product. Findings are about provenance correctness and determinism.
 - **Honest-score doctrine is the headline** — `productPathCompletion` ≠ `officialSemanticScore`; anti-reward-hacking (`noderl`); certification loop (locked UI path + immutable verifier + proof receipt) vs exploration loop. Any proxy result dressed as an official score = P0.
 - **Local catalog-agent mode is the SAFE default** — an empty `NODEAGENT_ENDPOINT` is correct, not broken; don't file it as "AI not working." Setting the endpoint requires a real NodeAgent deployment.
@@ -57,7 +58,7 @@ Static/local only — point live-signal.mjs at the served static file or :8502. 
 - Absence of `officialSemanticScore` on most tasks is the honest-score stance, not missing data.
 - Static `task-browser.html` having no backend is by design (shareable offline).
 
-## Last Bar score (update each pass; lowest = next revamp target)
-| B1 | B2 | B3 | B4 | B5 | B6 | B7 | B8 | date | notes |
-|---|---|---|---|---|---|---|---|---|---|
-| — | — | — | — | — | — | — | — | not yet scored | SCOUTED only. Paper read: B2 (honest-score provenance, productPathCompletion-vs-officialScore, anti-reward-hacking) is the corpus's core promise — strongest and the thing to stress-test; B5 (deterministic local-agent fallback) architectural. B8 UNKNOWNs: typecheck presence, unit-test script, dark-mode, Playwright — resolve via package.json. HERO journey = A3 provenance audit + A6 "ask for a score that doesn't exist" (must refuse). Verify the 9,155/9/9 counts before quoting them. |
+## Last Bar score (update each pass; lowest = next improvement target)
+| B1 | B2 | B3 | B4 | B5 | B6 | B7 | B8 | B9 | B10 | B11 | date | notes |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| — | — | — | — | — | — | — | — | — | — | — | not yet scored | SCOUTED only. Paper read: B2 (honest-score provenance, productPathCompletion-vs-officialScore, anti-reward-hacking) is the corpus's core promise — strongest and the thing to stress-test; B5 (deterministic local-agent fallback) architectural. B8 UNKNOWNs: typecheck presence, unit-test script, dark-mode, Playwright — resolve via package.json. HERO journey = A3 provenance audit + A6 "ask for a score that doesn't exist" (must refuse). Verify the 9,155/9/9 counts before quoting them. |

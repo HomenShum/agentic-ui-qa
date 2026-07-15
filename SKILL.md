@@ -1,13 +1,13 @@
 ---
 name: agentic-ui-qa
-description: Universal QA + dogfooding protocol for agentic application UIs (worked profiles included for NodeBench AI, NodeRoom Live, NodeSlide/parity-studio; template for any app). Use when asked to QA, dogfood, verify, regression-test, or "revamp the agent UI" of ANY app — it drives the UI end to end as personas, verifies every claim with artifacts, scores the app against the Agentic UI Bar, and runs the bounded fix-revamp loop. Agent- and model-agnostic — a literal floor any small model can execute, an additive ceiling that scales with stronger models.
+description: Universal QA + dogfooding protocol for agentic application UIs, with worked profiles and a template for any app. Use when asked to QA, dogfood, verify, or regression-test an agentic UI, or explicitly improve one by revamping, decluttering, simplifying, calming, polishing, prettifying, or removing dead/no-op UI. It drives persona journeys, artifact-backed verification, the Agentic UI Bar, and bounded structural-additive, structural-subtractive, and presentation-only loops. Agent- and model-agnostic.
 ---
 
 # Agentic UI QA & Dogfood Protocol (universal core)
 
 Mission: drive a real product UI end to end the way users and AGENTS will, verify every
 claim with an artifact, root-cause every failure, score the app against the Agentic UI
-Bar, and revamp the lowest-scoring dimension — loop until the UI is one any coding agent
+Bar, and improve the lowest-scoring dimension — loop until the UI is one any coding agent
 (including cheap models) can operate end to end.
 
 This protocol is **agent-agnostic** (Claude Code, Codex, Cursor, Gemini CLI, aider,
@@ -33,15 +33,18 @@ Playwright) and **model-tier adaptive**:
 
 ## Platform & lifecycle (where this skill sits)
 
-This core file is the RUNNER. Around it, one module per lifecycle phase (full map in
+This core file is the RUNNER. Around it, modules cover fix modes and lifecycle phases (full map in
 `PLATFORM.md`):
 - **`PLATFORM.md`** — where the Bar nests (the agent-era-maturity-model rubric it instances)
   and the platform chain that surrounds it.
 - **`REDTEAM.md`** — attack: journey A6 as a real adversarial battery, not a checklist.
 - **`BAR-DEFAULTS.md`** — prevent: day-one conventions so a NEW app is born scoring high.
+- **`DECLUTTER.md`** — subtract: remove/merge/defer/repair UI promises without deleting
+  consent, provenance, honest states, recovery, or unique capabilities.
 - **`GATING.md`** (auto-gate, runs `scripts/qa-gate.mjs`) — the out-of-process verdict the
   loop cannot self-close.
-- **`HANDOFF.md`** — ship: a gate-green finding → a readable, verified PR.
+- **`HANDOFF.md`** — hand off: prepare a gate-green review packet; publish a PR only with
+  authority, and call it shipped only after deployed proof.
 - **`PROOF.md`** — prove: the narrated before/after verified-demo clip.
 - **`TASTE.md`** — calibrate/learn: taste memory + learning adapters over the QA ledger.
 
@@ -49,13 +52,21 @@ This core file is the RUNNER. Around it, one module per lifecycle phase (full ma
 
 1. Identify the target app (user said it, or infer from cwd / URL).
 2. Load its profile: `profiles/<app>.md` next to this file. Known profiles:
-   `parity-studio-nodeslide.md`, `noderoom.md`, `nodebench.md`.
+   production-target profiles include `parity-studio-nodeslide.md`, `noderoom.md`, and
+   `nodebench.md`; each profile states whether it is validated, scouted, local, or pending.
 3. **No profile? Create one before QA-ing** — copy `profiles/TEMPLATE.md`, fill it by
    scouting the repo READ-ONLY (package.json scripts, README/docs for prod URL + auth,
    src layout for surfaces, deps for playwright). A QA pass without a profile produces
    unanchored claims; the profile IS the anchor.
 4. The profile supplies: prod/dev URLs, auth path, gates, journeys, app-specific traps,
    live signals. This core file supplies everything app-agnostic.
+5. Declare the run mode from the profile before interacting: **READ-ONLY DIAGNOSTIC**,
+   **SANDBOX DOGFOOD**, or **AUTHORIZED PRODUCTION**. A sweep/audit/identify-only request is
+   READ-ONLY DIAGNOSTIC: inspect DOM/a11y/pixels/network, but do not submit, toggle persistent
+   state, accept proposals, call a live model, write data, or deploy. Mark mutation-dependent
+   journeys `SKIPPED(read-only diagnostic)`; do not manufacture a production test. Diagnostic
+   authority also does not authorize source edits: report the spec/finding and stop unless the
+   user separately asked to change or build the app.
 
 ## 1. Ground rules (non-negotiable, all apps)
 
@@ -81,6 +92,11 @@ This core file is the RUNNER. Around it, one module per lifecycle phase (full ma
    dishonesty finding — label it for what it actually does ("External model · <provider>"),
    not for a capability the runtime never performs. Verify the claim against the network tab,
    not the label text (see trap U12).
+9. **Mode semantics before dedupe.** Two controls with the same label are not duplicates
+   until their handlers, state keys, network effects, and resulting provenance are equivalent.
+   In particular, a view mode (compact/full, summary/detail) changes presentation while a
+   runtime mode (fast/deep, provider/effort/tool policy) changes execution. Preserve both or
+   rename the ambiguous one; never merge them from screenshot/text similarity alone.
 
 ## 2. Tool decision tree (in order)
 
@@ -93,9 +109,16 @@ This core file is the RUNNER. Around it, one module per lifecycle phase (full ma
    view images, use pixels.cjs machine checks (asserts/mojibake/overflow/console/exit code)
    and say so in the report. NEVER depend on in-app browser screenshot actions (trap U1).
    pixels.cjs needs a `repo` field (any repo with playwright installed) — see its header.
-3. **Prod-is-live proof** → `node scripts/live-signal.mjs <url> <signal>...` (raw-HTML grep;
-   trap U9 for the SPA-shell caveat).
-4. **Code gates** → the profile's typecheck/test commands, from the app's repo root; paste exit lines.
+3. **Declutter inventory (only for structural subtraction)** → `node scripts/clutter-audit.mjs <config.json>` for rendered
+   elements, semantic units, repeated controls, exposed clusters, passive/empty regions,
+   clipping, and protected-selector checks. It emits candidates, never usefulness verdicts;
+   complete the function ledger and runtime trace in `DECLUTTER.md` before deleting.
+4. **Prod-is-live proof** → use `node scripts/live-signal.mjs <url> <signal>...` for an
+   additive raw-response presence signal. For a removed/merged-away node, pair
+   `--rendered-present <ready>` with `--rendered-absent <removed> --stability-ms <bound>`;
+   raw HTML or a single early sample cannot prove hydrated absence (trap U9). DEFER/REPAIR/COMPACT need their disposition-specific live
+   pixels/a11y/journey assertion from `HANDOFF.md`, not a forced absence.
+5. **Code gates** → the profile's typecheck/test commands, from the app's repo root; paste exit lines.
 
 ## 3. Universal journey archetypes
 
@@ -141,10 +164,10 @@ implementation). Every app runs the same archetypes:
   scope/retention, edit/delete/disable), conversation survives reload, and every output-quality
   finding carries evidence. Every A7 signal is VISIBLE and agent-checkable; score D1–D11.
 
-## 4. The Agentic UI Bar (score 0–2 each; the revamp target list)
+## 4. The Agentic UI Bar (score 0–2 each; the improvement target list)
 
 After the journeys, score the app. 0 = absent/dishonest · 1 = present but weak · 2 = strong.
-The LOWEST dimensions become the next revamp targets — that is the "revamp until best" loop.
+The LOWEST dimensions become the next improvement targets — that is the "improve until best" loop.
 
 | # | Dimension | 2 looks like |
 |---|---|---|
@@ -168,21 +191,28 @@ app score 2 on B1–B11 from its first commit, each mapped to the dim it pre-sat
 and the platform chain around it (adversary, taste-judge, auto-gate, ship-and-prove).
 
 B8 is the meta-dimension this whole skill exists for: if a Haiku-class agent cannot
-complete A0–A2 from the profile alone, B8 < 2 and the friction list is the revamp spec.
+complete A0–A2 from the profile alone, B8 < 2 and the friction list is the improvement spec.
 B9 requires viewing rendered PNGs — a model without image input must score B9 as
 DEFERRED(no-vision) and hand it to a vision-capable pass, never guess it from the DOM.
 Passing an overflow assertion alone cannot earn B8, B9, or A5: inspect the six rendered
 viewport/theme states for hierarchy, reachability, clipping, legibility, and honest status.
-When a Bar dimension scores low, `REVAMP.md` (next to this file) is the playbook that
-takes it from finding → redesign → implemented fix — surface by surface (trace UI, agent
-chat, proposal review, status/latency, layout, content).
+When a Bar dimension scores low, choose **exactly one primary fix mode by mechanism**:
+
+| Mechanism | Primary mode | Contract |
+|---|---|---|
+| Existing UI promises should disappear, merge, defer, compact, or be repaired in place | `DECLUTTER.md` | structure may shrink; protected trust/capability/reachability contract cannot |
+| A capability, honest state, route, proposal affordance, or information architecture/layout is missing | `REVAMP.md` | structural-additive redesign with new behavior/content explicitly verified |
+| Structure, visible content, behavior, and a11y stay equivalent; only visual tokens change | `PRETTIFY.md` | presentation-only DOM/content/a11y contract unchanged |
+
+Do not blend modes inside one pass. Finish and verify the primary mode, then start a separate
+pass if the result needs another mechanism (for example, REVAMP followed by PRETTIFY).
 
 **B9 has a measured, driven subsystem: `PRETTIFY.md`.** Instead of a one-line vibe, run
 `node scripts/prettify-audit.mjs <url|config.json>` to explode B9 into the VISUAL RUBRIC
 V1–V9 (type-scale, spacing/grid, color/token, hierarchy, contrast, radius/shadow,
 alignment, state polish, motion) with machine signals + offending selectors, then run the
 PRETTIFY LOOP (audit → presentation-only candidates → vision-judge → apply → re-audit +
-pixel-verify + **re-run B1–B10 for zero regression**). Prettify is presentation-only and
+pixel-verify + **re-run B1–B11 for zero regression**). Prettify is presentation-only and
 ADDITIVE to trust — beauty that costs trust/operability is a P0, not an improvement.
 
 **B11 is the acquisition dimension** — agentic apps chronically leak editor/proof machinery
@@ -194,7 +224,8 @@ clear storage + open the canonical root and assert (1) the composer/input is the
 inspector containers are absent pre-creation; (4) no internal fixture/debug params or
 auto-loaded workspace appear; (5) examples are suggestions; (6) public routes are clean.
 After creation, the activity side rail starts compact/collapsed but visibly reachable. Leaked
-proof machinery on the landing is P1. Fix via `REVAMP.md` S7.
+proof machinery on the landing is P1. Use `DECLUTTER.md` when the fix is subtractive; use
+`REVAMP.md` S7 when the route or information architecture must be rebuilt.
 
 ## 4b. The Agentic DEPTH tier (D1–D11, conditional)
 
@@ -247,8 +278,14 @@ score with `DEPTH.md`.
   server-enforcement path, or the provenance surface. A label that implies a capability the
   runtime lacks is a B1/B2 dishonesty finding (§1 rule 8), not a copy nit. (Extends into the
   D-tier as capability-honest labeling — `DEPTH.md`.)
+- **U13 Element-count cargo cult.** A smaller DOM can be a worse product when it deletes the
+  only route, hides consent/provenance/error recovery, or moves real controls beyond keyboard
+  reach. Treat clutter counts as descriptive deltas only. A repeated label is only a candidate:
+  distinguish view-mode state from runtime-mode semantics via handlers/state/network effects.
+  Freeze the protected contract and prove task reachability before and after; use
+  `DECLUTTER.md` rather than optimizing a score.
 
-## 6. Finding format · 7. Revamp loop · 8. Definition of done
+## 6. Finding format · 7. Improvement loop · 8. Definition of done
 
 ```
 FINDING <n> · P0|P1|P2 · <area>
@@ -261,21 +298,23 @@ P1 = journey step broken with workaround. P2 = polish/copy/a11y-minor.
 **Loop (per finding, max 2 attempts then BLOCKED):** reproduce (artifact) → root-cause →
 smallest fix → profile gates → pixel re-verify the exact state → live re-verify if
 prod-facing → write the finding block.
-**Revamp (per pass):** score the Bar → pick the lowest dimension → design the smallest
-change that raises it (consult REFERENCES.md for the target dimension) → implement →
-re-run the affected journeys → re-score. Repeat.
+**Improve (per pass):** score the Bar → pick the lowest dimension → choose exactly one of
+DECLUTTER, REVAMP, or PRETTIFY by mechanism → make the smallest change that raises it → re-run the
+affected journeys → re-score. Repeat. A lower element count without protected-contract
+and task-path evidence is not an improvement.
 
 **Done when:** every journey PASS/FAIL(refs)/BLOCKED/SKIPPED(reason) · evidence dir maps
 1:1 to claims · gates green on current tree (exit lines pasted) · Bar scored with the
-next revamp target named · memory written (§9: regression sweep ran at start; add-run +
+next improvement target named · memory written (§9: regression sweep ran at start; add-run +
 every finding appended at end) · zero artifact-less claims (re-read and delete any).
 
-**Shipping a fix:** once a finding's fix is implemented and gate-green, `HANDOFF.md` (next
-to this file) takes it from §6 finding → a readable, verified PR — the BetterPRHandoff
-protocol (per-surface changelog lanes · verified demo · live-DOM "shipped" grep · ASCII
-runtime diagram · QA packet), applied conditionally on what the fix touched, with an
-independent layer (not the author) required before the word "shipped." For a landed REVAMP
-or a demo deliverable, `PROOF.md` is the heavy generator for HANDOFF's verified-demo phase:
+**Handing off a fix:** once a finding's fix is implemented and gate-green, use `HANDOFF.md`
+to prepare its review packet and, only when publication is authorized, a readable, verified
+PR. The BetterPRHandoff phases (per-surface changelog lanes · verified demo · live
+presence/absence proof · ASCII runtime diagram · QA packet) apply conditionally on what the
+fix touched, with an independent deployed layer required before the word "shipped." For a
+landed DECLUTTER/REVAMP or a demo deliverable, `PROOF.md` is the heavy generator for
+HANDOFF's verified-demo phase:
 a storyboarded before/after narrated clip (empty → action → loading → result, animated
 cursor, on-screen verdicts) via FeatureClipStudio (Playwright → Remotion → ffmpeg →
 vision-judge). Both enforce the same invariants — a before/after that hides the honest

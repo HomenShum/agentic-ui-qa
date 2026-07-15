@@ -1,9 +1,10 @@
-# HANDOFF.md — from a verified finding to a readable, shipped PR
+# HANDOFF.md — from a verified finding to an authorized, verifiable handoff
 
-SKILL.md **finds and scores**. REVAMP.md / PRETTIFY.md **fix**. This file **ships** —
-it turns a §6 finding plus its implemented fix into a pull request a reviewer (human OR
-agent) can evaluate *without running the app*, and refuses to let anyone call it "shipped"
-until an independent layer says so.
+SKILL.md **finds and scores**. DECLUTTER.md / REVAMP.md / PRETTIFY.md **fix**. This file
+governs an **authorized handoff** — it turns a §6 finding plus its implemented fix into a
+review packet and, only when publication is authorized, a pull request a reviewer (human OR
+agent) can evaluate *without running the app*. It refuses to let anyone call the result
+"shipped" until an independent live layer says so.
 
 It is the **BetterPRHandoff** protocol — the public package
 `@homenshum/easier-to-read-submissions` (live on npm) — applied to a QA finding. That
@@ -17,6 +18,12 @@ Same honesty invariants as the rest of the skill, and they never bend:
 never print secrets.** "Shipped" is a claim like any other — it needs the live-DOM/API
 artifact of Phase 3, not a green CI badge.
 
+**Authority gate:** QA, diagnostics, and local edits do **not** grant authority to commit,
+push, open or merge a PR, or deploy. Each externally visible action requires an explicit
+user instruction or a standing repository workflow that expressly authorizes that action.
+Without it, prepare the handoff artifacts and stop. Even with publication authority, reserve
+"shipped" for a result that passes Phase 3 against the deployed commit.
+
 ## Capability tiers (same contract as SKILL.md)
 - **FLOOR:** you don't design the PR narrative. You run the phases that apply, fill the
   template sections verbatim from the finding block and the evidence dir, paste the gate
@@ -29,17 +36,18 @@ artifact of Phase 3, not a green CI badge.
 
 ---
 
-## 0. When to open a handoff PR (and at what weight)
+## 0. When to prepare a handoff (and when an authorized PR may open)
 
-Open one when a finding's fix is implemented and gate-green and you're about to hand it
-off — feature branch ready for review, a Bar dimension raised, a cross-functional or agent
-reviewer involved, or you're about to say "shipped." The **weight scales with the finding**:
+Prepare one when a finding's fix is implemented and gate-green and you're about to hand it
+off — a review branch is ready, a Bar dimension rose, a cross-functional or agent reviewer
+is involved, or a release claim needs proof. Open or update the PR only if the authority gate
+above is satisfied. The **weight scales with the finding**:
 
 | Finding / fix shape | Phases that fire |
 |---|---|
 | P2 copy/token tweak, single surface, no UI motion | 1 (lane) + 3 (if prod-facing) |
 | P1 UI journey fix (one surface, one state) | 1 + **2** (verified demo) + 3 |
-| REVAMP that landed a new component / raised a Bar dim | 1 + 2 (→ **PROOF.md** narrated clip) + 3 + **4** (diagram) |
+| DECLUTTER/REVAMP structural pass that raised a Bar dim | 1 + 2 (→ **PROOF.md** narrated clip) + 3 only when a deployed surface exists; otherwise `N/A(no deployed target)`; +4 only if 2+ runtime layers changed |
 | Cross-layer fix (frontend + backend + provenance) | 1 + 2 + 3 + **4** + **5** (QA packet) |
 | Handoff to a human/agent who won't run the app | + **5** always |
 
@@ -93,40 +101,68 @@ belong in the lane** so a future regression-debugger reading recent entries sees
 provenance, not just "changed X."
 
 ### Phase 2 — Verified demo recording (any UI-touching fix)
-Two layers must BOTH pass before push — this is the same "no artifact no claim" discipline
-as the QA pass, applied to the fix:
+Two layers must BOTH pass before an authorized push — this is the same "no artifact no
+claim" discipline as the QA pass, applied to the fix:
 - **DOM/local layer:** the recorder navigates the fixed route, asserts every claim the PR
   makes (`bodyContains([...])`, `document.characterSet==='UTF-8'`, the honest-state label
   is present), records pass/fail into an evidence JSON. This is exactly `scripts/pixels.cjs`
   (already in the skill) run on the `after` state — reuse the finding's re-verify config.
-- **Independent layer:** upload the recorded MP4 to a vision model (Gemini Files API) and
-  ask it to confirm each claimed change is *visibly on screen*. Closes the DOM-passes-but-
-  off-fold gap (trap U9's cousin): a `bodyContains` can pass while the content sits past
-  the recorded viewport's fold. PARTIAL/FAIL → fix the scroll offsets, re-record.
+- **Independent layer:** first inspect/crop/redact the MP4 locally for PII, customer content,
+  tokens, secrets, and internal URLs. Upload to Gemini/another remote vision service only
+  with explicit vision-egress authority; publish/PR authority is not upload authority. With
+  no egress authority, record `SKIPPED(no vision-egress authority)` for Gemini and use an
+  approved local vision model or independent human reviewer. The independent layer confirms
+  each claimed change is *visibly on screen*, closing the DOM-passes-but-off-fold gap.
+  PARTIAL/FAIL → fix the scroll offsets, re-record.
 - **Evidence JSON** (`out/<finding-id>-evidence.json`): `{ url, viewport, createdAt,
   scenes[], checks{key→{ok,note,at}}, outputs{mp4,gif} }`. Reviewers grep
   `checks.<claim>.note` instead of watching the whole clip.
 
-For a P1 single-state fix, a bare recorded pass + Gemini confirm is enough. **For a landed
-REVAMP or a demo deliverable, escalate to PROOF.md** — the storyboarded before/after
+For a P1 single-state fix, a recorded pass plus an authorized independent confirm is enough. **For a landed
+DECLUTTER/REVAMP or a demo deliverable, escalate to PROOF.md** — the storyboarded before/after
 narrated clip (empty → action → loading → result, animated cursor, on-screen verdicts).
 PROOF.md is the heavy generator for this phase; this phase is its caller.
 
 ### Phase 3 — Live-DOM verify BEFORE the word "shipped" (Homen's non-negotiable)
 CLI exit codes, build logs, and "Deployment Ready" badges lie. Only the live URL / auth'd
-API doesn't. Reuse `scripts/live-signal.mjs` — it is exactly this gate:
+API doesn't. Use `scripts/live-signal.mjs` for additive presence or an actual removed node:
 ```bash
 git push origin <branch>
 gh api repos/<owner>/<repo>/branches/<branch> --jq '{sha:.commit.sha[0:8]}'   # push landed?
+# Additive change: prove the new server-rendered/API signal is present.
 node scripts/live-signal.mjs <live-url> "<concrete-content-signal-from-the-fix>"
+
+# REMOVE/MERGE duplicate instance: prove the app is ready AND that node is absent.
+node scripts/live-signal.mjs <live-url> --repo <repo-with-playwright> \
+  --rendered-present '[data-testid="app-ready"]' \
+  --rendered-absent '[data-testid="removed-control"]' \
+  --stability-ms <owning-surface-max-mount-ms>
 ```
-The signal must be a string the FIX introduced (a new testid, a copy change, a Bar-lifted
-label) — not a shell string that was always there. Catches: GitHub→Vercel webhook silently
-disconnected (push lands, nothing rebuilds), Next.js App Router Suspense trap (crawler sees
-the fallback shell — trap U9), CDN-cached stale HTML. If the signal isn't in the raw
-HTML/API response, **it is not shipped, regardless of the build log.** SPA caveat (U9): raw
-grep proves presence only; for a hydration-only signal, assert against rendered DOM via
-`pixels.cjs`, not raw HTML.
+For an additive change, the signal must be a string the fix introduced (a new testid, a copy
+change, a Bar-lifted label) — not a shell string that was always there. For a removed or
+merged-away instance, a missing raw string is insufficient: bundles, fallbacks, and hydration
+make raw absence ambiguous. Use `--rendered-absent` with a stable selector and pair it with
+`--rendered-present` for a visible app-ready witness; the command fails closed rather than
+passing on a blank/crashed page. Set `--stability-ms` from the owning surface's measured or
+documented maximum mount/stream delay; the script repeatedly samples readiness and absence
+through that bound. Record the bound as an evidence limitation rather than implying infinity.
+
+Route other DECLUTTER dispositions to their real live proof; do not delete a working control
+just to satisfy an absence gate:
+
+- **DEFER:** live `pixels.cjs`/a11y states prove the disclosure trigger is visible at idle,
+  the deferred control is not exposed at idle, and the same control becomes visible after
+  the named reveal click.
+- **REPAIR:** rerun the live profile journey and prove the canonical handler fires exactly
+  once with its expected state/network/receipt/provenance result.
+- **COMPACT:** live pixels plus bounding-box/overflow assertions prove the control remains
+  visible, legible, and reachable at the target viewports.
+
+These checks catch GitHub→Vercel webhook silently disconnected (push
+lands, nothing rebuilds), Next.js App Router Suspense trap (crawler sees the fallback shell
+— trap U9), CDN-cached stale HTML, and a removal that never reached the hydrated DOM. If the
+appropriate disposition-specific assertion does not pass against the live URL, **it is
+not shipped, regardless of the build log.**
 
 ### Phase 4 — ASCII runtime diagram (fix crosses 2+ runtime layers)
 Five layers, top→bottom in data-flow order, drop the ones that didn't change:
@@ -170,7 +206,8 @@ about to claim shipped. Skip for server-only or a single state already covered b
 - [ ] Gates green on the current tree: `<typecheck exit line>` · `<test exit line>`
 - [ ] Demo (Phase 2): `out/<id>-evidence.json` — DOM checks pass + vision model confirms
       on-screen. Clip: <PROOF.md link if narrated>.
-- [ ] Live (Phase 3): `live-signal.mjs <url> "<signal>"` → OK (push sha `<sha>`)
+- [ ] Live (Phase 3): disposition-specific presence/removal/defer/repair/compact proof → OK
+      against `<url>` (push sha `<sha>`), or `N/A(no deployed target)`
 - [ ] Honest states intact: degraded/failed/empty still labeled (no fake-success regression)
 - [ ] Provenance intact: model id / cost / tokens / receipt still legible (if AI path touched)
 - [ ] QA packet (Phase 5): `qa-artifacts/<id>/packet.json` — per-state verdicts attached
@@ -185,8 +222,8 @@ about to claim shipped. Skip for server-only or a single state already covered b
 
 1. **The author (you)** — runs the gates, records Phase 2, greps Phase 3. Authoritative for
    *nothing on its own* ("it works" from the author is a hypothesis, not evidence).
-2. **The independent machine layer** — the vision model on the Phase-2 clip, the live-DOM
-   grep on the prod URL, the QA-packet diff. Authoritative for **"the claimed change is
+2. **The independent machine layer** — the vision model on the Phase-2 clip, the live
+   presence/absence assertion on the prod URL, the QA-packet diff. Authoritative for **"the claimed change is
    real and on-screen / actually deployed."** This is the layer that can say no to the author.
 3. **The reviewer (human or agent)** — leaves per-state `qaVerdict` on the QA packet.
    Authoritative for **"acceptable to ship."** Only after their verdict does `qaStatus`
@@ -200,20 +237,25 @@ author's layer wearing a costume.
 
 ## 5. Definition of done + memory
 
-**Handoff done when:** every phase that fired produced its artifact (lanes prepended · Phase
-2 evidence JSON with both layers green · Phase 3 live signal OK with the push sha · diagram
-in the body if multi-layer · QA packet with per-state verdicts if handoff-grade) · the PR
-body's "Verified" checklist is fully ticked with pasted exit lines/paths, none faked · the
-finding is closed in memory (SKILL §9: `add-finding` with `status:"fixed"` **and** the
-re-verify artifact path — a fix without its artifact stays "open") · and the word "shipped"
-appears ONLY after the Phase 3 grep, never before.
+**Prepared handoff done when:** every pre-publication phase that fired produced its artifact
+(draft lanes · Phase 2 evidence JSON with both layers green · diagram if multi-layer · QA
+packet with per-state verdicts if handoff-grade) · the handoff template contains real exit
+lines/paths and explicitly leaves publish/live items pending · the finding is closed in
+memory (SKILL §9: `add-finding` with `status:"fixed"` **and** the re-verify artifact path — a
+fix without its artifact stays "open"). If publication is not authorized, stop here.
+
+**Shipped handoff done when:** the authorized commit/push/PR/merge/deploy actions completed ·
+every fired phase is complete · Phase 3 passed against the deployed commit sha · the PR
+body's "Verified" checklist is fully ticked, none faked. The word "shipped" appears ONLY
+after that Phase 3 assertion, never for a local fix, pushed branch, open PR, or green build.
 
 **Completion traceability (Homen's rule):** the PR body names the finding id and quotes the
 symptom it fixes — a future reader traces *this PR → that finding → that Bar delta* without
 archaeology. The changelog lane carries the same id, so the trace survives even after the PR
 is squashed away.
 
-**Composition:** SKILL finds → REVAMP/PRETTIFY fix → **HANDOFF ships** → PROOF.md narrates
-(Phase 2, heavy). A handoff PR is never the place to *discover* a new finding — if review
+**Composition:** SKILL finds → DECLUTTER/REVAMP/PRETTIFY fix → **HANDOFF ships when authorized
+and live-verified** → PROOF.md narrates (Phase 2, heavy). A handoff PR is never the place to
+*discover* a new finding — if review
 surfaces one, it goes back to SKILL §6 and the memory ledger as its own finding, not
 smuggled into this PR's scope (scope discipline).

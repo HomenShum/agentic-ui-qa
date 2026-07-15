@@ -12,6 +12,7 @@ A row you cannot fill is itself a finding (the app is under-documented for agent
 | Dev command + port | |
 | Backend / deployments | |
 | Auth path for a QA agent (anonymous? access code — WHICH env var + retrieval command? login?) | |
+| QA run mode / mutation boundary | `READ-ONLY DIAGNOSTIC` by default; name the safe sandbox/fixture path and what requires explicit production authorization |
 | Typecheck gate | |
 | Test gate | |
 | Playwright available in repo? (pixels.cjs `repo` field) | |
@@ -42,13 +43,13 @@ For each: numbered steps, exact selectors/labels, VERIFY signals, evidence names
 - A5 Themes & access (incl. how dark mode is actually set — trap U11):
 - A6 Adversarial:
 
-## App-specific traps (beyond universal U1–U11)
+## App-specific traps (beyond universal U1–U13)
 - 
 
 ## Known product behaviors that are NOT bugs
 - 
 
-## Last Bar score (update each pass; lowest = next revamp target)
-| B1 | B2 | B3 | B4 | B5 | B6 | B7 | B8 | date | notes |
-|---|---|---|---|---|---|---|---|---|---|
-|  |  |  |  |  |  |  |  |  |  |
+## Last Bar score (update each pass; lowest = next improvement target)
+| B1 | B2 | B3 | B4 | B5 | B6 | B7 | B8 | B9 | B10 | B11 | date | notes |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|
+|  |  |  |  |  |  |  |  |  |  |  |  |  |

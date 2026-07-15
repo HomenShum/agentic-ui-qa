@@ -1,8 +1,11 @@
 # TASTE.md — the learning layer (calibrated taste · dismissal-aware memory · reward loop)
 
-SKILL.md scores the Bar and appends every finding (§9). PRETTIFY.md measures B9 and
-vision-judges restyle candidates (§3.3). REVAMP.md redesigns the lowest dimension. All
-three are **flat** in one respect: the vision-judge scores *generic-good* not *on-brand*,
+SKILL.md scores the Bar and appends every finding (§9). Its mutually exclusive primary
+improvement modes are DECLUTTER (subtract/merge/defer existing UI), REVAMP (add missing
+capability/state/route/layout), and PRETTIFY (presentation-only with rendered structure,
+visible content, behavior, and a11y unchanged). PRETTIFY measures B9 and vision-judges
+restyle candidates (§3.3). These
+modes are **flat** in one respect: the vision-judge scores *generic-good* not *on-brand*,
 the findings ledger *re-nags* the same defect and *re-surfaces things you already declined*,
 and each revamp pass starts cold — it does not learn from the last one. This file closes
 that gap without rewriting anything. It is three **additive layers over the existing
@@ -12,7 +15,7 @@ files and `scripts/qa-memory.mjs`**, drawn from three sibling systems:
   that calibrates the B9 judge to *this studio's* design language.
 - **NodeMem** → the findings ledger gains a **notice→gate→learn-from-dismissal→dedup** brain,
   so it stops flooding and remembers "no."
-- **NodeRL** → the revamp loop becomes a **trace → reward(Bar-delta) → memory → repair**
+- **NodeRL** → the improvement loop becomes a **trace → reward(Bar-delta) → memory → repair**
   loop, so the skill compounds per pass and can emit training data down the line.
 
 **Nothing here replaces qa-memory.mjs or the JSONL ledgers.** These are *adapters* that
@@ -54,7 +57,7 @@ judge needs the studio's *durable taste* as an explicit constraint, or B9 optimi
 tasteful-generic.
 
 **The mechanism (harness4visuals ETL, LLM-free, replayable).** Mine the decisions the
-PRETTIFY/REVAMP loop *already emits* — they are the "chat transcript" analog — into scoped,
+PRETTIFY/REVAMP/DECLUTTER passes *already emit* — they are the "chat transcript" analog — into scoped,
 provenanced **taste signals**. Durable signals ARE the design language; campaign/session
 signals are transient direction that expires.
 
@@ -69,6 +72,7 @@ first-class, higher-weighted"):
 | PRETTIFY §3.3 **winner** (`argmax` selection) | positive | the applied restyle candidate = an accepted taste |
 | PRETTIFY §3.3 **losers** (shuffled candidates not picked) | negative | *why* they lost, from the judge rationale's grounded bbox+issue |
 | REVAMP §3 **direction judging** (winner + grafted/rejected ideas) | pos/neg | organizing-principle-level taste |
+| Human accept/reject of the **rendered DECLUTTER result** | pos/neg | records aesthetic preference only after safety/functional disposition was decided; automatic preserve/repair/defer/merge/remove labels are not taste signals |
 | User **dismissal** ("no, that's fine / not my taste / too much") | negative (durable) | the strongest signal — a declined polish is a durable brand rule |
 | **Export/ship** of a surface (the design got shipped) | positive (durable) | shipping is the ultimate accept |
 | Human design notes in the QA report / profile | pos/neg | verbatim, quoted as evidence |
@@ -178,7 +182,7 @@ Add a deterministic root-cause classifier (NodeMem `classifyNoteworthy` / NodeRL
 fake_success_status · timeout_no_honest_fallback · testid_missing_or_unstable · unclassified`.
 
 Then the adapter surfaces **classes, not line-items**: "5 open findings; 3 are class
-`contrast_regression_after_restyle`" → *that class* is the revamp target (a systemic fix),
+`contrast_regression_after_restyle`" → *that class* is the improvement target (a systemic fix),
 not three separate patches. This is the shrinking-failure-memory insight: repair the class,
 not the instance.
 
@@ -266,7 +270,7 @@ Each unresolved finding → a failure pattern carrying its **root-cause class** 
 of every ever-fixed P0/P1). The merge rule: a finding leaves the `open` VIEW only when its
 re-verify artifact PASSES → the open-set *shrinks as you fix*, while the event log *only
 grows*. `repairTargets` = distinct classes with an unresolved pattern = exactly the next
-revamp set. Retrieved with an honesty annotation: stale (last-seen > 30d) or low-confidence
+improvement set. Retrieved with an honesty annotation: stale (last-seen > 30d) or low-confidence
 patterns are flagged `risk`, never silently trusted.
 
 ### C.3 REPAIR — deterministic repair prompt for the next pass (NodeRL `generateRepairPrompt`)
@@ -282,8 +286,8 @@ facts — no guessing:
   regression case (`{id, userGoal, failedAssertions[], expectation}`) is embedded so the next
   iteration is gated on it.
 
-This is exactly SKILL §7's revamp loop + REVAMP.md's pipeline, now **reward-gated and
-memory-fed**: trace → reward → memory → repair → (next) trace.
+This is SKILL §7's improvement loop plus the selected DECLUTTER/REVAMP/PRETTIFY pipeline,
+now **reward-gated and memory-fed**: trace → reward → memory → repair → (next) trace.
 
 ---
 

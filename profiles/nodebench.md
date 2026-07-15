@@ -9,6 +9,7 @@ Scouted 2026-07-12 (read-only, repo evidence cited). NOTE the disambiguation tra
 | Repo root | `D:\VSCode Projects\cafecorner_nodebench\nodebench_ai4\nodebench-ai` ← the LIVE repo. `cafecorner_nodebench` is a WORKSPACE of ~15 repos; siblings `nodebench` (no .git), `nodebench_ai3` (stale 2025), `scratchnode-live` (extract) are NOT the target |
 | Backend | Convex (19 domains, @convex-dev/auth) + Node/Express server (search, SSE, voice, MCP gateway) + Vercel (host rewrites also serve scratchnode.live from this project) |
 | Auth path | NONE NEEDED: guests get the FULL cockpit (Unauthenticated branch renders CockpitLayout + GlobalFastAgentPanel). Optional one-click `signIn("anonymous")` in WorkspaceRail. Providers: Password/Anonymous/EmailMagicLink/Google |
+| QA run mode / mutation boundary | **READ-ONLY DIAGNOSTIC on production by default.** Submitting an agent prompt, accepting a proposal, creating data, or invoking paid/external services requires an isolated local/test identity or explicit AUTHORIZED PRODUCTION scope. |
 | Dev | `npm run dev` (parallel: vite :5173 + convex dev + voice server; voice lane needs `.env.local`) |
 | Typecheck gate | `npx tsc --noEmit` → 0 (ONBOARDING bar); full composite = `npm run lint` (agentNativeUiLinter + tsc×2 + convex typecheck + vite build) |
 | Test gate | `npm run test:run` (segmented vitest) · `npm run test:e2e` · **live smoke: `npm run live-smoke`** (playwright tests/e2e/live-smoke.spec.ts) |
@@ -37,7 +38,7 @@ surface for the authed persona, not a bug.
 
 ## Journey mapping (A0–A6)
 - A0 Smoke: verify-live.ts or live-signal → pixels of guest cockpit (Home) light/dark →
-  tab strip works: `?surface=home|chat|reports|nudges|me` each renders its surface;
+  canonical nav works: `?surface=home|reports|chat|inbox|me` each renders its surface;
   StatusStrip + WorkspaceRail + CommandBar present.
 - A1 Core creation (no AI): create/browse a report or capture via non-AI path; verify it
   persists for the session identity.
@@ -76,7 +77,7 @@ surface for the authed persona, not a bug.
 Deep research in separate Workspace surface · guest cockpit · tutorial after auth ·
 scratchnode.live cohabitation.
 
-## Last Bar score
-| B1 | B2 | B3 | B4 | B5 | B6 | B7 | B8 | date | notes |
-|---|---|---|---|---|---|---|---|---|---|
-| — | — | — | — | — | — | — | — | not yet scored | First pass pending. Paper read (verify in-UI): B8 likely strongest of the three apps (WebMCP attrs + agent-native linter + no-cache HTML); B2 verifiable via MCP provenance headers; risk areas: B1 (guest egress consent surface?), B5 (pipeline failure states). |
+## Last Bar score (lowest = next improvement target; choose mode by mechanism)
+| B1 | B2 | B3 | B4 | B5 | B6 | B7 | B8 | B9 | B10 | B11 | date | notes |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| — | — | — | — | — | — | — | — | — | — | — | not yet scored | First pass pending. Paper read (verify in-UI): B8 likely strongest of the three apps (WebMCP attrs + agent-native linter + no-cache HTML); B2 verifiable via MCP provenance headers; risk areas: B1 (guest egress consent surface?), B5 (pipeline failure states). |
