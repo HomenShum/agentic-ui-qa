@@ -181,7 +181,8 @@ existing verification surfaces:
    the `Det. signal` column. Cheap, stable, HIGH-or-PASS. Evidence = the literal matched
    strings. Wire it to the skill's existing checks: JS/a11y-tree asserts (`:checked`,
    `innerText`), `scripts/pixels.cjs` (rendered-state asserts, honest-state pixel diff),
-   `scripts/live-signal.mjs` (raw-HTML grep), the network log, and the profile's provenance
+   `scripts/live-signal.mjs` (raw-response presence or visible-readiness + rendered absence),
+   the network log, and the profile's provenance
    signals table. Presence of any evidence term ⇒ non-PASS with that evidence attached;
    empty evidence ⇒ PASS.
 2. **Schema/state gate.** Between judges, confirm the artifact you're judging is the real

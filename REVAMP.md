@@ -1,19 +1,19 @@
-# REVAMP.md — from low Bar score to shipped fix
+# REVAMP.md — from low Bar score to structural-additive fix
 
 This is the FIX side of the skill. QA (SKILL.md) finds and scores; this file takes a
 low-scoring dimension or an ugly surface ("the trace UI looks bad", "the chat feels
 dead") through redesign to an implemented, gate-verified change. It encodes a pipeline
 that was proven end to end on a production Trace tab — see `examples/trace-revamp/`.
 
-**Two modes — pick before you start.** REVAMP (this file) is the **structural** mode:
-surfacing hidden fields, adding a proposal/diff affordance, restructuring layout,
-rewriting copy — the DOM/content itself changes. `PRETTIFY.md` is the **presentation-only**
-mode: when structure/copy/provenance are already right and the surface just reads as
-un-designed, run its VISUAL RUBRIC (V1–V9) + `scripts/prettify-audit.mjs` + the token/CSS
-restyle loop — it may touch only tokens/spacing/type/color/radius/shadow/motion and must
-re-run B1–B10 for zero regression (beauty that costs trust = P0). A REVAMP that lands a
-new component ends with a PRETTIFY pass; a PRETTIFY pass that discovers a missing state or
-hidden field escalates back here to S1–S6.
+**Three modes — pick exactly one primary mode before editing, by mechanism.** Use REVAMP
+(this file) only for **structural-additive** work: add a missing capability, honest state,
+route, proposal/diff affordance, or information architecture/layout. Use `DECLUTTER.md` for
+**structural-subtractive** work: remove, merge, defer, compact, or repair an existing UI
+promise without inventing a new user-facing capability. Use `PRETTIFY.md` only when DOM,
+visible content, behavior, and the a11y contract remain unchanged and the work is limited to
+tokens/spacing/type/color/radius/shadow/motion. These are separate passes, not a blended
+checklist. All modes re-run the affected Bar dimensions; beauty or simplicity that costs
+trust is P0. A REVAMP that lands a new component may be followed by a separate PRETTIFY pass.
 
 ## Capability tiers (same contract as SKILL.md)
 - **FLOOR:** you don't design. You apply an existing spec/mockup from `examples/` or one
@@ -133,6 +133,16 @@ Machine check: clear storage → open canonical root → assert no internal para
 inspector containers, exactly one primary composer/input, and named secondary controls. Pixel
 check all six viewport/theme states to prove the input remains the hero. Keep B1–B5 intact and
 make first creation land as a reviewable proposal; end with PRETTIFY.
+
+### S8 · Subtractive simplification (B8 B9 B11)
+
+Stop this REVAMP pass and use `DECLUTTER.md` when the surface already contains the needed
+capability but exposes too much at once. Build the function ledger, mark each underlying
+capability guard, assign every rendered instance PRESERVE/REPAIR/DEFER/MERGE/REMOVE, and
+protect consent, scope, provenance, honest
+states, recovery, navigation, streaming, and export paths before editing. A static snapshot
+may nominate a candidate; runtime evidence decides its disposition. End with the same profile
+gates, six viewport/theme captures, Bar re-score, and append-only memory closeout.
 
 ## Non-negotiables at every tier
 Bind to real fields; honest states are mandatory in every mockup; six viewport/theme artifacts; charset

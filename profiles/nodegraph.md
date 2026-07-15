@@ -11,6 +11,7 @@
 | Dev command + port | `npm run example:dev` → React Flow showcase at **`127.0.0.1:5174`**. Streamlit: run `examples/streamlit/app.py` |
 | Backend / deployments | **None — pure library + local example.** No server, no login. Core (derivation/filter/select/layout) is pure TS; a React detail panel ships for NodeRoom-style sidebars. Optional Neo4j sync PLAN generated (not a live DB) |
 | Auth path for a QA agent | **NONE.** Drive the example app or import the package. No env var, no access code |
+| QA run mode / mutation boundary | **READ-ONLY DIAGNOSTIC by default.** SANDBOX DOGFOOD may exercise the local showcase and local import/export only when asked; there is no production target. |
 | Typecheck gate | `npm run typecheck` (first-run sequence: `npm install → npm run typecheck → npm test → npm run build`) |
 | Test gate | `npm test`. Also `npm run build`. `npm run showcase:capture` regenerates the README GIF (needs `ffmpeg` on PATH) |
 | Playwright available in repo? | UNKNOWN — grep `package.json` for `@playwright/test`; showcase is a Vite/React-Flow app at :5174 so browser-QA is feasible. Set pixels.cjs `repo` to the clone path if present |
@@ -37,7 +38,7 @@ Local only (`127.0.0.1:5174`) — not a hosted prod URL, so live-signal.mjs poin
 5. Neo4j sync-plan output (incremental / prune-missing).
 
 ## Journey mapping (archetypes A0–A6 → concrete steps)
-- **A0 Smoke:** `npm install && npm run typecheck && npm test && npm run build` all green → `npm run example:dev` → :5174 renders the graph canvas. Pixels light/dark.
+- **A0 Smoke (READ-ONLY):** with dependencies already present, run `npm run example:dev` → :5174 renders the graph canvas; capture light/dark without dragging/importing. If dependencies are absent, mark `SKIPPED(needs sandbox install)`; `npm install`, build outputs, and mutation journeys require SANDBOX DOGFOOD/change authority. Run typecheck/tests as read-only gates when they do not rewrite artifacts.
 - **A1 Core creation (no AI egress):** drag/pin nodes → reload → **positions + pinned ids persist** (the v1 contract guarantee); focus a neighborhood; filter by evidence. Import a prior document via toolbar and confirm round-trip.
 - **A2 Live AI action (consent → propose → provenance → accept):** mount `NodeGraphAgentPanel` bridged to the NodeAgent runtime (`src/nodeAgentBridge.ts`) → agent calls graph tools (`createNodeGraphAgentTools`) → new edges appear as **proposed**, requiring reviewer confirmation before becoming source-backed. (The AI itself lives in NodeAgent; NodeGraph governs the acceptance.)
 - **A3 Provenance audit (HERO for this app):** `buildGraphRelationshipReviewPlan(graph, id)` → receipt separates source-backed vs needs-confirmation edges deterministically. `diffNodeGraphDocuments` reports exact node/relationship/cluster upserts+removals BEFORE apply; `buildNeo4jSyncPlan` produces the incremental plan. `selectSemanticNeighborhood`/`selectSemanticGraphCluster` isolate a cluster with bounded neighbor rings + ranked multi-hop paths (person→company, claim→source, agent→artifact). `summarizeSemanticGraphClusters` ranks clusters by connected evidence.
@@ -45,7 +46,7 @@ Local only (`127.0.0.1:5174`) — not a hosted prod URL, so live-signal.mjs poin
 - **A5 Themes & access (trap U11):** UNKNOWN dark-mode in the showcase — inspect; test the detail panel + agent panel in both themes.
 - **A6 Adversarial:** import a malformed `nodegraph.document` (wrong revision / corrupt JSON) → confirm rejection, not silent partial load; confirm a non-source-backed edge cannot be presented as confirmed; run diff on identical docs → expect empty deterministic diff (no phantom churn).
 
-## App-specific traps (beyond universal U1–U11)
+## App-specific traps (beyond universal U1–U13)
 - **Library, not an app** — there is no product UI to "break"; the QA target is the showcase + the deterministic contracts. Findings are about contract integrity (round-trip, diff determinism, receipt correctness), not visual craft primarily.
 - **NodeGraph does NOT contain the LLM** — it bridges to NodeAgent. Any "AI action" test requires wiring the NodeAgent runtime; testing NodeGraph alone = testing the governance/receipt layer.
 - **Determinism is the invariant** — `nodegraph.document` v1 must survive JSON round-trip with stable `revision`; layout + pinned ids persist. A non-deterministic diff/sync-plan is a P0 (violates the audit-receipt promise).
@@ -57,7 +58,7 @@ Local only (`127.0.0.1:5174`) — not a hosted prod URL, so live-signal.mjs poin
 - Neo4j output is a sync PLAN, not a live DB write — it does not require a running Neo4j.
 - No internal degrade/model-status surface (no model call inside NodeGraph).
 
-## Last Bar score (update each pass; lowest = next revamp target)
-| B1 | B2 | B3 | B4 | B5 | B6 | B7 | B8 | date | notes |
-|---|---|---|---|---|---|---|---|---|---|
-| — | — | — | — | — | — | — | — | not yet scored | SCOUTED only. Paper read: B2 (deterministic provenance receipts, source-backed-vs-needs-confirmation) is the app's whole reason to exist — strongest dimension; B3 (proposed edges need confirmation before apply) architectural. B9/B10 (visual craft/content) less central for a library. B8 UNKNOWNs: dark-mode + Playwright presence + exact clone path — resolve via package.json. HERO journey = A3 provenance audit (receipt + diff determinism), verifiable purely by asserting on the exported JSON. |
+## Last Bar score (update each pass; lowest = next improvement target)
+| B1 | B2 | B3 | B4 | B5 | B6 | B7 | B8 | B9 | B10 | B11 | date | notes |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| — | — | — | — | — | — | — | — | — | — | — | not yet scored | SCOUTED only. Paper read: B2 (deterministic provenance receipts, source-backed-vs-needs-confirmation) is the app's whole reason to exist — strongest dimension; B3 (proposed edges need confirmation before apply) architectural. B9/B10 (visual craft/content) less central for a library. B8 UNKNOWNs: dark-mode + Playwright presence + exact clone path — resolve via package.json. HERO journey = A3 provenance audit (receipt + diff determinism), verifiable purely by asserting on the exported JSON. |

@@ -1,7 +1,8 @@
 # PRETTIFY.md — the presentation-only polish subsystem (B9, measured and driven)
 
 SKILL.md scores **B9 Visual craft** as one 0–2 vibe. REVAMP.md describes structural
-redesign. Neither MEASURES prettiness with a machine signal nor DRIVES a
+addition/redesign; DECLUTTER.md describes evidence-backed structural subtraction. None of
+them measures prettiness with a machine signal or drives a
 presentation-level polish loop. This file closes that gap: it explodes B9 into a
 measurable **VISUAL RUBRIC (V1–V9)**, runs a **PRETTIFY LOOP** that generates and judges
 restyle candidates, and enforces the guardrails that keep polish honest.
@@ -24,13 +25,18 @@ motion ONLY.** It must **NOT**:
 - hide or de-emphasize provenance (model id, cost, tokens, receipt) for aesthetics (**B2**);
 - change copy semantics — labels, verdicts, error cause+next-step (**B10**).
 
-Every prettify pass **RE-RUNS B1–B10 and proves zero regression before "done."**
+Every prettify pass **RE-RUNS B1–B11 and proves zero regression before "done."**
 **Beauty that costs trust is a P0, not an improvement** — it is reverted, not shipped.
 
 The guardrails in §3 make this enforceable, not aspirational: an a11y-tree snapshot diff
 catches structural/label drift, a masked pixel diff catches blanked honest-states, and a
 contrast re-run catches the classic "lightened the gray for elegance, dropped body text
 under 4.5:1" regression.
+
+If the problem is excess DOM, duplicate routes, empty containers, placebo controls, or
+unbacked projections, stop and use `DECLUTTER.md`. PRETTIFY requires a byte-equivalent
+a11y structure; DECLUTTER intentionally changes structure and instead freezes a smaller
+protected contract covering trust, unique capabilities, and reachability.
 
 ---
 
@@ -70,10 +76,10 @@ regardless of its V1–V9 score** — the machine rubric and this checklist are 
 
 | Smell | Why it hurts | Fix pattern |
 |---|---|---|
-| **Primary input not the hero** | the main text/composer input competes with surrounding controls at equal visual weight → "where do I act?" is ambiguous on first glance | elevate the input (size / border / focus ring); tuck secondary controls (model / scope / tools) INTO or just below it; collapse advanced options behind a disclosure (the ChatGPT/Claude composer) |
-| **Panel = undifferentiated long scroll** | an inspector/settings panel stacks many heterogeneous sections with no grouping, priority, or collapse → overwhelming, nothing findable | group into a few NAMED collapsible sections ordered by frequency of use (Content → Data → Appearance → Advanced) |
-| **Unlabeled controls** | numeric steppers / bare inputs / icon-only buttons with no label → the user can't tell what a naked "18" changes (radius? opacity?) | label every control (tooltip at minimum); no naked value fields |
-| **Delimited-string editing for structured data** | editing rows/series as a comma-separated text field instead of a grid → error-prone, screams "prototype" | a minimal editable cell table (add/remove rows, typed cells) for anything tabular (chart data, key/value pairs) |
+| **Primary input not the hero** | the main text/composer input competes with surrounding controls at equal visual weight → "where do I act?" is ambiguous on first glance | in PRETTIFY, elevate it with size/border/focus/spacing only; if controls must move, merge, or collapse, route that separate pass to DECLUTTER |
+| **Panel = undifferentiated long scroll** | an inspector/settings panel stacks many heterogeneous sections with no grouping, priority, or collapse → overwhelming, nothing findable | strengthen existing grouping with tokens/spacing; adding groups, names, order, or disclosures is DECLUTTER/REVAMP by mechanism |
+| **Unlabeled controls** | numeric steppers / bare inputs / icon-only buttons with no label → the user can't tell what a naked "18" changes (radius? opacity?) | report it as a B8/B10 finding and route the accessible-name/content addition to REVAMP; PRETTIFY cannot add the label |
+| **Delimited-string editing for structured data** | editing rows/series as a comma-separated text field instead of a grid → error-prone, screams "prototype" | route a real structured editor/table to REVAMP; PRETTIFY may only improve the existing field's presentation |
 | **Scrollbars on small controls** | a 5-button toolbar or chip row that scrolls horizontally instead of fitting/wrapping | wrap or size-to-fit; a scrollbar on a small control is a smell, not a feature |
 | **Dead-space / undersized primary surface** | the main canvas/artifact floats tiny in a large empty frame → weak focal point, wasted space | larger default fit or a denser frame; the primary artifact should dominate its area |
 | **Sub-baseline text on real content** | body/label text below ~12px (metadata) / ~14px (controls) / ~16px (primary input) — not just chrome | enforce the type-size floor on CONTENT, not only the shell (ties to V1) |
@@ -125,7 +131,7 @@ V5/V6/V7 as that surface's weakest craft dimensions.
 
 ## 3. The PRETTIFY LOOP
 
-One iteration raises the lowest sub-dimension without regressing B1–B10.
+One iteration raises the lowest sub-dimension without regressing B1–B11.
 
 **0. Baseline the invariants (BEFORE any change).**
 - `pixels.cjs` → PNGs of every honest state (live / degraded / failed / empty), both
@@ -134,7 +140,7 @@ One iteration raises the lowest sub-dimension without regressing B1–B10.
 - Capture the **a11y-tree snapshot** of each surface (Playwright `toMatchAriaSnapshot`, or
   a serialized `read_page` accessibility tree if that's your bridge). This is the
   structure/label baseline the restyle must not move.
-- Record the **B1–B10 scores** and the honest-state inventory you must preserve.
+- Record the **B1–B11 scores** and the honest-state inventory you must preserve.
 
 **1. Measure.** `prettify-audit.mjs` → JSON + summary. The lowest V-dimension with the
 element selectors is the target. If nothing is sub-2 and you can view pixels, hand to the
@@ -165,12 +171,12 @@ guesses taste from the DOM.
 
 **4. Apply the winner.** Token/CSS diff only.
 
-**5. Re-audit + pixel-verify + RE-RUN B1–B10.**
+**5. Re-audit + pixel-verify + RE-RUN B1–B11.**
 - `prettify-audit.mjs` again → confirm the target V-dimension went UP and no other went
   down. Emit the **before/after delta** (e.g. `V1 font-sizes 14 → 6`) as a machine artifact.
 - `pixels.cjs` again → the look changed where intended; the **masked honest-state regions
   are pixel-identical** (a decorative sweep must never blank a degraded badge or receipt).
-- **Re-score B1–B10** and diff the a11y snapshot (§4). Any regression → revert (§4).
+- **Re-score B1–B11** and diff the a11y snapshot (§4). Any regression → revert (§4).
 
 **6. Loop** to the next-lowest dimension, or stop at the Definition of Done (§5).
 
@@ -186,36 +192,45 @@ candidate is **rejected/reverted**, and if it shipped, the regression is a **P0*
 | **Structure/label unchanged (B8/B2)** | a11y-tree snapshot diff — capture before, assert byte-equal after (Playwright `toMatchAriaSnapshot`, order- & case-sensitive; or serialized a11y tree) | any node / accessible-name / order / testid / aria delta |
 | **Honest states preserved (B5)** | masked `pixels.cjs` diff over the degraded/failed/empty/timeout regions + a text assert that the state labels still render | a masked region changed, or a state label vanished/softened |
 | **Provenance intact (B2)** | assert model-id / cost / tokens / receipt nodes still present and legible (re-run their contrast) | any provenance field hidden, moved off-view, or dropped under contrast |
-| **Copy semantics unchanged (B10)** | diff visible text content of labels/verdicts/errors before vs after | any label/verdict/error-copy change (that's a REVAMP/content edit, not prettify) |
+| **Copy semantics unchanged (B10)** | diff visible text content of labels/verdicts/errors before vs after | any label/verdict/error-copy change; removal/condensing routes to DECLUTTER, additive/rebuilt content to REVAMP |
 | **Contrast floor held (V5)** | re-run per-node WCAG after every color/token change | any text node dropped below 4.5:1 (3:1 large) — the classic "elegant lighter gray" regression |
 | **Motion degrades honestly (V9)** | assert added motion collapses under `prefers-reduced-motion: reduce`, ≤400ms feedback, no un-guarded infinite loops | reduced-motion active but animation still runs; >400ms feedback; infinite w/o override |
 | **Token-routed (V3/V2)** | every changed value is a `var()`/token, on the 4/8 scale, in the palette | a raw literal or off-scale value was introduced |
 
-Regenerate the a11y-snapshot baseline **only** after an intentional STRUCTURAL change
-(that's REVAMP, not prettify) — never during a restyle.
+Regenerate the a11y-snapshot baseline **only** after an intentional structural pass
+(DECLUTTER or REVAMP by mechanism), never during a PRETTIFY restyle.
 
 ---
 
-## 5. Composition with REVAMP.md + Definition of Done
+## 5. Composition with DECLUTTER.md / REVAMP.md + Definition of Done
 
+- **Pick exactly one primary mode for this pass, by mechanism.** Existing UI promises must
+  disappear, merge, defer, or be repaired in place → DECLUTTER. A missing capability, honest
+  state, route, or information architecture/layout must be added or rebuilt → REVAMP. The
+  rendered structure, visible content, behavior, and a11y contract stay unchanged while only
+  visual tokens change → PRETTIFY. If the mechanism changes, stop and open a separate pass.
 - **PRETTIFY = the presentation-only mode.** Use it when structure/copy/provenance are
   already right and the surface just reads as un-designed (weak type scale, off-grid
   spacing, palette sprawl, inconsistent elevation, unpolished states). It never changes
   what the UI says or exposes — only how it looks.
-- **REVAMP S1–S6 = the structural mode.** Use it when the fix requires surfacing hidden
-  data, adding a proposal/diff affordance, restructuring layout, or rewriting copy — i.e.
-  when the DOM/content itself must change. REVAMP may *end* with a PRETTIFY pass, but a
-  PRETTIFY pass may never *become* a REVAMP (the moment it needs to touch structure/copy,
-  stop and switch modes).
-- A REVAMP that lands a new component runs PRETTIFY over it before "done"; a PRETTIFY pass
-  that discovers the ugliness is actually a missing state or hidden field escalates to
-  REVAMP S1–S6.
+- **DECLUTTER = the structural-subtractive mode.** Use it when extra, repeated, mistimed,
+  nonfunctional, or unbacked UI must be removed, merged, deferred, compacted, or repaired.
+  Its a11y tree is expected to change, so verify an explicit protected contract instead of
+  demanding byte equality. Counts remain descriptive, never an optimization score.
+- **REVAMP = the structural-additive mode.** Use it when a missing capability, honest state,
+  route, proposal/diff affordance, or information architecture/layout must be added or
+  rebuilt. It may change DOM/content as required for that addition. It may be followed by a
+  separate PRETTIFY pass; the moment PRETTIFY needs structure/content changes, stop it and
+  select the correct new mode.
+- A REVAMP that lands a new component runs a separate PRETTIFY pass before "done". A PRETTIFY pass
+  that discovers excess structure switches to DECLUTTER; one that discovers a missing state
+  or hidden field escalates to REVAMP.
 
 **PRETTIFY done when:** the target V-dimension rose (before/after audit delta pasted) ·
 the vision-judge confirms the rendered look improved (or DEFERRED(no-vision) with the
 deterministic fixes applied) · **all §4 guardrails pass** (a11y snapshot byte-equal,
 masked honest-states pixel-identical, provenance intact, copy unchanged, contrast held,
-motion honest) · **B1–B10 re-scored with zero regression** · memory updated (SKILL §9:
+motion honest) · **B1–B11 re-scored with zero regression** · memory updated (SKILL §9:
 the pass appended, any beauty-cost-trust finding logged as P0). If any guardrail failed,
 the pass is not done — it is reverted.
 

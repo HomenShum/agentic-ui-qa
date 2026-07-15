@@ -139,7 +139,8 @@ fix) has a first-party mechanism to steal rather than re-derive.
   https://www.npmjs.com/package/@homenshum/easier-to-read-submissions (MIT). *Steal:* a
   gate-green finding → a readable, verified PR — per-surface changelog lanes (one append-only
   file per page/component/server-module/table/integration, not one git log), a verified demo
-  with BOTH DOM checks and video analysis, a live-DOM "shipped" grep, an ASCII runtime diagram,
+  with BOTH DOM checks and video analysis, live presence or rendered-absence deploy proof,
+  an ASCII runtime diagram,
   a QA packet — an independent layer required before the word "shipped." Drives `HANDOFF.md`.
   (Dims: B2 B3 B7.)
 - **FeatureClipStudio** — prove. https://github.com/HomenShum/FeatureClipStudio (MIT).

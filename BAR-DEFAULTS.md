@@ -200,8 +200,10 @@ contract** below and a Haiku-class agent can drive the app from the profile alon
 | **No testid churn** | a testid is an API — renaming one is a breaking change, versioned in the changelog | — |
 
 Rules: **deterministic selectors** (no nth-child-only paths) · **no hover-only** reveals
-(everything reachable by click/focus) · **keyboard-complete** · **one label per action,
-everywhere** (the button says "Publish", the toast says "Published" — B10 too).
+(everything reachable by click/focus) · **keyboard-complete** for the named task controls
+in a logical order (not a promise to preserve incidental DOM order or every tab stop) ·
+**one label per action, everywhere** (the button says "Publish", the toast says "Published"
+— B10 too).
 
 **Pre-satisfies B8=2:** a cheap model can drive it — stable labels/aria, deterministic
 selectors, no hidden-hover paths, keyboard-complete. This is also what makes the app's own
@@ -260,9 +262,13 @@ Canonical `/` carries no internal fixture/debug params, does not auto-load a wor
 examples start a flow rather than opening hidden state. Workspace/proof surfaces mount only
 after intent. Once mounted, the activity side rail starts compact/collapsed with a visible
 status and named reopen control; responsive navigation keeps every item reachable.
+Every shipped control binds to a distinct capability/state transition or renders a named
+unavailable/degraded state; do not scaffold duplicate routes, ornamental metrics, or
+placebo modes for future work.
 
 **Pre-satisfies B11=2:** landing shows intent; primary and secondary hierarchy is clear;
-workspace/proof complexity reveals progressively; routes are clean. See `REVAMP.md` S7.
+workspace/proof complexity reveals progressively; routes are clean. See `DECLUTTER.md`
+for subtractive cleanup and `REVAMP.md` S7 for route/information-architecture work.
 
 **qa-gate check (net-new visitor):** clear storage → open canonical `/` → assert
 `location.search` has no internal params · editor/inspector containers absent from the DOM

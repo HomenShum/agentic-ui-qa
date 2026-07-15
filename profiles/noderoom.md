@@ -9,6 +9,7 @@ Scouted 2026-07-12 (read-only, repo evidence cited). Active repo, branch codex/m
 | Repo root | `D:\VSCode Projects\noderoom-main-merge` |
 | Backend | Convex — prod pinned `zealous-goshawk-766` (convex:deploy:guard enforces) |
 | Auth path | Anonymous — no accounts. Create/join with 6–12 char room code + display name; session persists in localStorage `noderoom:live:<CODE>`. No access-code env var |
+| QA run mode / mutation boundary | **READ-ONLY DIAGNOSTIC on production by default.** Create/join, agent prompts, review-mode changes, approvals, and collaborative writes require local in-memory mode or a named disposable test room; production writes require explicit AUTHORIZED PRODUCTION scope. |
 | Dev | `npm run dev` (vite, port 5260, strictPort; preview serves same port) |
 | Typecheck gate | `npm run typecheck` (+ convex: `npx tsc --noEmit --project convex/tsconfig.json`) |
 | Test gate | `npm test` (vitest) · e2e `npm run test:e2e` · composite release gate `npm run prod:gate` |
@@ -38,9 +39,10 @@ Rendered-DOM only: `Diligence that shows its work.`, `One code to join, no accou
 testids `join-room-code`, `create-room`.
 
 ## Journey mapping (A0–A6)
-- A0 Smoke: live-signal title → pixels landing light/dark → create room (`create-room`,
-  set name) → RoomShell renders artifact tab strip (`artifact-tabs`: Home/sheet/note/wall/
-  Trace/Graph) + Copilot rail (`copilot-tab-public`/`copilot-tab-private`) → close tour.
+- A0 Smoke (READ-ONLY): live-signal title → pixels of the production landing light/dark →
+  verify `create-room` / `join-room-code` are reachable; do not create/join or dismiss the
+  persisted tour. RoomShell/tab/Copilot checks move to A1 in local mode or a named disposable
+  test room under SANDBOX DOGFOOD.
 - A1 Core creation (no AI): edit spreadsheet cell + note + post-it as human; verify
   versioned writes land and survive reload (localStorage rejoin).
 - A2 Live AI action (HERO): host sets **review mode** (not auto-allow) → ask the room
@@ -76,7 +78,7 @@ Guests-only anonymous model; server may disable anonymous via
 `NODEROOM_REQUIRE_CONVEX_IDENTITY=1` (default 0); demo room "Startup Banking Diligence
 War Room" via `?demo=`.
 
-## Last Bar score
-| B1 | B2 | B3 | B4 | B5 | B6 | B7 | B8 | date | notes |
-|---|---|---|---|---|---|---|---|---|---|
-| — | — | — | — | — | — | — | — | not yet scored | First pass pending. Paper read (verify in-UI): B3/B4 look strong (CRS, planHash, review mode, server-owned policy); B8 strong on testids; risk areas: B6 (agent latency staging), mobile-surface honesty. |
+## Last Bar score (lowest = next improvement target; choose mode by mechanism)
+| B1 | B2 | B3 | B4 | B5 | B6 | B7 | B8 | B9 | B10 | B11 | date | notes |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| — | — | — | — | — | — | — | — | — | — | — | not yet scored | First pass pending. Paper read (verify in-UI): B3/B4 look strong (CRS, planHash, review mode, server-owned policy); B8 strong on testids; risk areas: B6 (agent latency staging), mobile-surface honesty. |

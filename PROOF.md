@@ -2,7 +2,7 @@
 
 HANDOFF.md Phase 2 needs a "verified demo." The lightweight version is a recorded pass +
 a vision-model confirm (good enough for a single-state P1 fix). The **heavy** version —
-for a landed REVAMP, a raised Bar dimension, or a demo deliverable — is a storyboarded
+for a landed DECLUTTER/REVAMP, a raised Bar dimension, or a demo deliverable — is a storyboarded
 **before/after proof clip** where the viewer follows the WHOLE flow (empty → action →
 loading/streaming → result), NOT a single final-state hero shot. This file is how you
 generate it with **FeatureClipStudio** (the `feature-clip-studio` skill/toolkit, MIT):
@@ -11,8 +11,12 @@ the spec is a checked-in "tape," the clip doubles as a regenerable integration s
 
 This is a QA artifact, so it inherits every skill invariant — and adds two the generic
 tool doesn't enforce on its own:
-- **No artifact, no claim** → the clip is not "proof" until the §5 vision-judge (an
-  independent layer, like Gemini in HANDOFF Phase 2) confirms the story reads as claimed.
+- **No artifact, no claim** → the clip is not "proof" until the §5 independent judge
+  (authorized remote/local vision or a human reviewer) confirms the story reads as claimed.
+- **No implicit vision egress** → inspect and redact locally first. A PR/publish request does
+  not authorize uploading customer UI to Gemini or any third party. Without explicit egress
+  authority, mark the remote judge `SKIPPED(no vision-egress authority)` and use an approved
+  local vision model or independent human reviewer.
 - **No hero-shot dishonesty** → a before/after that shows only the happy path and hides
   the honest degraded/failed state is a **fake success = P0**, same as any other. The
   QA-flavored rubric below makes "did you show the loading and the degrade" a scored gate,
@@ -34,6 +38,8 @@ tool doesn't enforce on its own:
 ## 1. When to produce one (and when NOT)
 
 Produce a narrated clip when:
+- a **DECLUTTER landed** (steps 0–7) — the same protected task still completes while the
+  duplicated, passive, or unbacked surface is visibly gone;
 - a **REVAMP landed** (S1–S7) — the before/after IS the argument that the Bar dimension rose;
 - a **PRETTIFY pass** materially changed a surface and you want the look-delta on record;
 - the finding fix is a **demo deliverable** (someone will watch it who won't run the app);
@@ -41,7 +47,7 @@ Produce a narrated clip when:
   live model → reviewable proposal → provenance receipt → accept, end to end.
 
 Do NOT produce one for: a server-only fix (nothing to see), a single static-state P2 copy
-tweak (a `pixels.cjs` PNG + Gemini confirm is the right weight — HANDOFF Phase 2 lightweight),
+tweak (a `pixels.cjs` PNG + authorized independent confirm is the right weight — HANDOFF Phase 2 lightweight),
 or anything where a full-width **static** README still + a markdown table communicates the
 comparison better than motion (dense multi-version comparisons — ship the stills as primary,
 clip as optional supporting motion; STORYBOARD §6).
@@ -148,15 +154,21 @@ records whichever path prod actually took, and the honest degrade is never edite
    capture lesson #11: two pages in one context share localStorage and fake multi-user),
    render side-by-side, cursor on the acting client, `burst` over the propagation moment.
 
-For a QA revamp the default is pattern 1; use 2 when the receipt/state layer is the point.
+For a QA structural pass (DECLUTTER or REVAMP) the default is pattern 1; use 2 when the
+receipt/state layer is the point. A DECLUTTER comparison must pair the absence claim with a
+positive completion of the protected task; a blank or broken after-pane is not subtraction.
 
 ---
 
-## 5. Stage 5 — the vision-judge (the independent layer that makes it "proof")
+## 5. Stage 5 — the independent judge that makes it "proof"
 
-`node judge-video.mjs out/WT-<id>.mp4` → writes `<id>.judge.md` + `.judge.json`. Judge the
-MP4 (a GIF isn't a supported video MIME). Needs `GEMINI_API_KEY` /
-`GOOGLE_GENERATIVE_AI_API_KEY`. Rubric (each 0–2 with evidence + timestamps), **QA-weighted**:
+Run a local secret/PII/internal-URL preflight and sanitize the artifact before any upload.
+When remote vision egress is explicitly authorized, `node judge-video.mjs
+out/WT-<id>.mp4` writes `<id>.judge.md` + `.judge.json`; it needs `GEMINI_API_KEY` /
+`GOOGLE_GENERATIVE_AI_API_KEY` and the MP4 (GIF is not a supported video MIME). Otherwise,
+record `SKIPPED(no vision-egress authority)` for that command and have an approved local
+vision model or independent human reviewer emit the same rubric-shaped JSON. Rubric (each
+0–2 with evidence + timestamps), **QA-weighted**:
 
 1. `storyboard_clarity` — can a first-time viewer state what's compared and what each scene proves?
 2. `state_coverage` — empty → action → (loading if async) → result present, or a hero-shot skip?
@@ -219,18 +231,20 @@ For dense comparisons ship STATIC README stills as the primary artifact, motion 
 ## 8. Definition of done + composition
 
 **Clip done when:** capture emitted `WALKTHROUGH_CAPTURE_DONE` with no `zz-fail.png` referenced
-by data.js · the MP4 rendered · the vision-judge verdict is `publish` with zero P0 and P1s
+by data.js · the MP4 rendered · the authorized independent-judge verdict is `publish` with zero P0 and P1s
 fixed (P2s logged) · the clip shows the honest state the finding is about (not only the
 happy path) · provenance is legible in-frame on any AI beat · no secrets on screen ·
 outputs (MP4 + GIF + `<id>.judge.json`) live in the finding's evidence dir · and it's linked
 from HANDOFF Phase 2's evidence JSON (`outputs.mp4`) and, if handoff-grade, the Phase-5
 `packet.json` `remotionVideo`.
 
-**Memory (SKILL §9):** the clip path goes into the finding's re-verify artifact — a REVAMP
-whose "before/after clip" claim has no judged MP4 stays "open," same rule as every other
-artifact-backed claim. The `.judge.json` is the independent-layer receipt; keep it.
+**Memory (SKILL §9):** the clip path goes into the finding's re-verify artifact — a
+DECLUTTER/REVAMP whose "before/after clip" claim has no judged MP4 stays "open," same rule
+as every other artifact-backed claim. The `.judge.json` is the independent-layer receipt;
+keep it.
 
-**Composition:** SKILL finds → REVAMP/PRETTIFY fix → HANDOFF ships (Phase 2 calls here) →
-**PROOF narrates**. The clip never becomes the place to discover a new bug — but its capture
+**Composition:** SKILL finds → DECLUTTER/REVAMP/PRETTIFY fix → HANDOFF ships when authorized
+and live-verified (Phase 2 calls here) → **PROOF narrates**. The clip never becomes the place
+to discover a new bug — but its capture
 harness often does (a "flaky" flow that turned out to be a real agent bug the capturer
 surfaced). When it does, that's a new SKILL §6 finding + memory event, not a caption edit.

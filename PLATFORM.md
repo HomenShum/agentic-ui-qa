@@ -50,7 +50,7 @@ UI-scoped instance of. Two JSON files ARE the machine-readable contract:
 **The Bar SHOULD emit the same assessment shape.** A UI pass conforms to
 `assessment-schema.json` with `dimensionScores` keyed `b1..b11`, `evidence[]` =
 screenshots / DOM-signals / recorded run ids, `upgradePath[]` = the next UI builds
-(exactly what SKILL.md §4 "lowest dimension = next revamp target" produces). This makes a
+(exactly what SKILL.md §4 "lowest dimension = next improvement target" produces). This makes a
 UI score comparable to a repo-level maturity score and lets both roll into one
 `overallLevel`. Reuse the rubric's own scale words when reporting: the Bar's 0/1/2 is a
 compression of the 0–5 scale for fast UI passes; a rigorous pass can expand to 0–5 and emit
@@ -95,7 +95,7 @@ prove → prevent regressions in the next app → learn from the corpus.
                     │  Bar nests as the UI instance
                     ▼
         agentic-ui-qa  ◄── THIS SKILL       the RUNNER  (journeys A0–A6, Bar B1–B11,
-                    │                        no-artifact-no-claim, fix/revamp loop)
+                    │                        no-artifact-no-claim, bounded improvement loop)
         ┌───────────┼───────────┐
         ▼           ▼           ▼
    AgentRedteam  VisualJudge / harness4visuals   the ADVERSARY + the TASTE JUDGE
@@ -122,7 +122,12 @@ prove → prevent regressions in the next app → learn from the corpus.
 
 **agentic-ui-qa — the RUNNER.** `[shipped]` This skill. Resolves an app profile, runs the
 persona journeys A0–A6, scores B1–B11, verifies every claim with an artifact, and runs the
-bounded fix→revamp loop (`REVAMP.md` / `PRETTIFY.md`). It is the executable, UI-scoped
+bounded improvement loop. It selects exactly one primary mechanism per pass: subtract,
+merge, or defer existing UI with `DECLUTTER.md`; add a missing capability/state/route or
+rebuild information architecture/layout with `REVAMP.md`; or keep rendered structure,
+visible content, behavior, and a11y equivalent and change only visual tokens with
+`PRETTIFY.md`. It verifies one pass before
+starting another mode. It is the executable, UI-scoped
 instance of the maturity rubric.
 
 **AgentRedteam — the ADVERSARY.** `[in-skill: thin]` `[roadmap: standalone]` Today this is
@@ -175,7 +180,8 @@ from so it's *born* scoring high. **`BAR-DEFAULTS.md` in this skill is the bridg
 each B1–B11 dimension to a copyable default (the egress gate, the receipt-only provenance
 badge, the proposal-only write path, the clean-route scaffold, the testid/aria contract,
 the CI `ui_ux_qa` gate). Prevent is cheaper than detect: designing the root-route split up
-front is free; retrofitting B11 is a structural revamp.
+front is free; retrofitting B11 uses DECLUTTER when existing proof machinery must recede and
+REVAMP when the first-run route or information architecture must be rebuilt.
 
 **NodeRL / NodeMem — LEARN.** `[in-skill: shipped]` + `[roadmap]` `NodeMem` ≈ the
 append-only QA memory (`scripts/qa-memory.mjs`, `runs.jsonl` + `findings.jsonl` in each
