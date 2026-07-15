@@ -1,0 +1,15 @@
+{
+  "name": "@homenshum/agentic-ui-qa",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "doctor": "node scripts/self-check.mjs",
+    "check": "node scripts/self-check.mjs",
+    "proof": "node scripts/self-check.mjs --json-out .nodekit/agentic-ui-qa-self-check.json"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "license": "MIT"
+}
