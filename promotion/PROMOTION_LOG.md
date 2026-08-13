@@ -279,13 +279,27 @@ targets for a PRETTIFY pass, not gate blockers.
   with shell    -> exit 0   PASS agentic-ui-qa self-check (15/15)
   ```
 
-  Receipt: `promotion/evidence/shell-regression-proof.json`. **Confirmed failing on
-  the pre-fix tree** in the only sense that matters here — the pre-fix tree is what
-  the reproduction above measured, and it is what this script reconstructs on every
-  run: the identical deletion that returned `exit 0, 13/13` before this change
-  returns `exit 1` after it. Run in both modes: source mode names 3 failures
-  (doctype, lang, viewport), rendered mode names 4 including
-  `mobile layout viewport 981px at a 375px device`. Neither passes.
+  Receipt: `promotion/evidence/shell-regression-proof.json`. Run in both modes:
+  source mode names 3 failures (doctype, lang, viewport), rendered mode names 4
+  including `mobile layout viewport 981px at a 375px device`. Neither passes.
+
+  **Confirmed failing on the pre-fix tree**, directly rather than by argument. The
+  final version of the check was dropped into a checkout of `5134a04` — iteration 1,
+  with nothing else from iteration 2 — and run there:
+
+  ```
+  git checkout 5134a04 && cp <this-tree>/scripts/shell-regression-proof.mjs scripts/
+  node scripts/shell-regression-proof.mjs
+    without shell -> exit 0   PASS agentic-ui-qa self-check (13/13)
+    with shell    -> exit 0   PASS agentic-ui-qa self-check (13/13)
+    FAIL shell-regression-proof — the gate does not go red when the document shell
+    is deleted.                                                          exit 1
+  ```
+
+  That receipt is committed beside the passing one as
+  `promotion/evidence/shell-regression-proof-before.json`, `"passed": false`. The
+  check fails on the tree it is meant to indict and passes on the tree that fixed
+  it; a check that had been green on both would have been guarding nothing.
 
 - **Deliberately not changed, and why.** `ci/qa-gate.yml` and `scripts/qa-gate.mjs`
   also carry no head-check reference. They are the **consumer** gate — the workflow

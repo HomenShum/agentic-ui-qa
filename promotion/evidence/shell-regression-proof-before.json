@@ -1,24 +1,21 @@
 {
   "schemaVersion": "agentic-ui-qa.shell-regression-proof/v1",
-  "capturedAt": "2026-08-13T13:18:40.320Z",
+  "capturedAt": "2026-08-13T13:18:04.054Z",
   "experiment": "revert examples/trace-revamp/mockup.html to the pre-iteration-1 charset-first fragment, run the declared proof, restore",
   "expectation": "non-zero without the document shell, zero with it",
   "withoutShell": {
     "command": "node scripts/self-check.mjs",
-    "exitCode": 1,
+    "exitCode": 0,
     "output": [
-      "FAIL shell:examples/trace-revamp/mockup.html: FAIL head-check (3)",
-      "- doctype absent — document renders in quirks mode",
-      "- <html lang> absent — WCAG 3.1.1 Level A",
-      "- meta[name=viewport] absent — want width=device-width"
+      "PASS agentic-ui-qa self-check (13/13)"
     ]
   },
   "withShell": {
     "command": "node scripts/self-check.mjs",
     "exitCode": 0,
     "output": [
-      "PASS agentic-ui-qa self-check (15/15)"
+      "PASS agentic-ui-qa self-check (13/13)"
     ]
   },
-  "passed": true
+  "passed": false
 }
