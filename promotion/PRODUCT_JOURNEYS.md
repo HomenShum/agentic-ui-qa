@@ -89,7 +89,7 @@ Each journey states, in this order:
   `promotion/evidence/mobile-375-emulated.png` (a real `isMobile` context, so it
   proves the phone layout is reachable rather than forced) and
   `promotion/evidence/desktop-1440.png`, both regenerable from a fresh clone with
-  `node scripts/head-check.mjs`.
+  `node scripts/head-check.mjs --evidence`.
 
 ## J3 — "Prove a screen actually rendered, when my screenshot tool has frozen"
 

@@ -1,7 +1,7 @@
 # Testing
 
-    npm test        # 31 tests, node --test, no install step
-    npm run doctor  # this repo's own self-check, 18/18
+    npm test        # node --test, no install step
+    npm run doctor  # this repo's own self-check
 
 ## What is tested, and what is deliberately not
 
@@ -15,13 +15,21 @@ hand against a live page and the run is recorded in
 | File | Covers |
 |---|---|
 | `test/ledger.test.mjs` | fingerprint stability, the open/fixed/regressed lifecycle, the permanent re-verify sweep, and the whole `qa-gate.mjs` exit contract |
-| `test/surface.test.mjs` | `head-check.mjs` in source mode, `live-signal.mjs` argument validation, and `self-check.mjs` |
-| `test/tours.test.mjs` | that every `.tours/` step resolves to a real file and a real, non-blank line, and that `docs/START_HERE.md` cites files that exist |
+| `test/surface.test.mjs` | `head-check.mjs` in source mode (including that a bare run writes into the gitignored `.nodekit/`, never the committed evidence), `live-signal.mjs` argument validation, and `self-check.mjs` |
+| `test/tours.test.mjs` | that every `.tours/` step and every `(line N)` in `docs/START_HERE.md` lands on a line CONTAINING the text it quotes |
 | `test/helpers.mjs` | not a test — spawns scripts as child processes and hands out throwaway workspaces |
 
 `tours.test.mjs` is there because documentation rots silently. A tour step that lands
 on the wrong line after somebody inserts a function above it teaches a newcomer
 something false, and nothing else would notice.
+
+It asserts anchor **correctness**, not anchor stability, and the difference is the whole
+point. Through 2026-08-13 it checked only that the cited line number was in range and
+non-blank — which passes while a step points at the wrong symbol. So every `.tour` step
+carries a `symbol`, every `(line N)` in `START_HERE.md` is preceded by the backticked text
+that line must contain, and the guard compares them. Proof it bites: repointing one step
+from `qa-gate.mjs:78` to `:79` fails naming the line it actually found (`const HERE = …`);
+the old guard passed that same mutated tour 5/5.
 
 ## Nothing is mocked, and that is the point
 
@@ -35,7 +43,9 @@ assert.notEqual(gate.code, 0, 'a gate that cannot read its own ledger must not r
 
 A test that stubbed the ledger reader would have agreed with both of the broken copies
 this pass deleted. Each test builds its own temporary directory and deletes it on exit,
-so tests can run in any order and none of them touches the repository.
+so tests can run in any order. The one exception is deliberate: the bare-run test writes
+the gitignored `.nodekit/head-check.json` precisely so it can assert the committed receipt
+beside it is byte-identical afterwards.
 
 Two tests force `PLAYWRIGHT_REPO` at a path that does not exist, so `head-check.mjs`
 takes its source-mode branch regardless of what happens to be installed on the machine.

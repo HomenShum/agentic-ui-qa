@@ -3,10 +3,15 @@
  * head-check.mjs — does the page declare a document shell, and does it hold up
  * at every supported width? Runs in real headless Chromium, not by grepping.
  *
- * Usage:  node scripts/head-check.mjs [url] [--repo <dir>]
+ * Usage:  node scripts/head-check.mjs [url] [--repo <dir>] [--evidence]
  *                [--out <json>] [--png-mobile <png>] [--png-desktop <png>]
- *         node scripts/head-check.mjs            # defaults to this repo's demo surface,
- *                                                # writing into promotion/evidence/
+ *         node scripts/head-check.mjs            # this repo's demo surface, receipt and
+ *                                                # PNGs into the gitignored .nodekit/
+ *         node scripts/head-check.mjs --evidence # same, but overwrite the COMMITTED
+ *                                                # receipt and PNGs in promotion/evidence/
+ *
+ * A bare run must never dirty the worktree it is measuring, so writing into
+ * promotion/evidence/ is opt-in: --evidence, or explicit --out / --png-* paths.
  *
  * Four shell assertions, all read off the rendered document:
  *   doctype      document.doctype !== null      — absent => quirks mode
@@ -50,15 +55,18 @@ const here = path.dirname(fileURLToPath(import.meta.url));
 const repoRoot = path.resolve(here, '..');
 
 const argv = process.argv.slice(2);
+const VALUE_FLAGS = new Set(['--repo', '--out', '--png-mobile', '--png-desktop']);
 const flag = (name) => { const i = argv.indexOf(name); return i === -1 ? null : argv[i + 1]; };
-const positional = argv.filter((a, i) => !a.startsWith('--') && !(i > 0 && argv[i - 1].startsWith('--')));
+const positional = argv.filter((a, i) => !a.startsWith('--') && !(i > 0 && VALUE_FLAGS.has(argv[i - 1])));
 
 const DEMO = path.join(repoRoot, 'examples', 'trace-revamp', 'mockup.html');
 const url = positional[0] || pathToFileURL(DEMO).href;
-const evidence = (name) => path.join(repoRoot, 'promotion', 'evidence', name);
-const outJson = flag('--out') || evidence('head-check.json');
-const outPng = flag('--png-mobile') || evidence('mobile-375-emulated.png');
-const outPngDesktop = flag('--png-desktop') || evidence('desktop-1440.png');
+// Receipts land in the gitignored .nodekit/ unless you ask for the committed evidence,
+// so a bare run can never dirty the worktree it is measuring.
+const outDir = path.join(repoRoot, argv.includes('--evidence') ? 'promotion/evidence' : '.nodekit');
+const outJson = flag('--out') || path.join(outDir, 'head-check.json');
+const outPng = flag('--png-mobile') || path.join(outDir, 'mobile-375-emulated.png');
+const outPngDesktop = flag('--png-desktop') || path.join(outDir, 'desktop-1440.png');
 const WIDTHS = [320, 375, 768, 1024, 1440, 1920];
 
 // required:false — this check has a weaker source-only mode to fall back to, so a

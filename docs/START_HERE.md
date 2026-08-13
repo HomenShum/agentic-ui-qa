@@ -32,15 +32,15 @@ Run it yourself before reading further:
 
     git clone https://github.com/HomenShum/agentic-ui-qa
     cd agentic-ui-qa
-    npm test        # 31 behaviour tests, no install step — this package has no dependencies
-    npm run doctor  # the repo's own self-check: 18/18
+    npm test        # behaviour tests, no install step — this package has no dependencies
+    npm run doctor  # the repo's own self-check
 
 ---
 
 ## Step 1 — A person asks an agent to QA their app, and the agent reads one file
 
 **File:** `AGENTS.md`
-**Symbol:** the numbered list under "Your instructions, in order" (line 7)
+**Symbol:** the numbered list under `## Your instructions, in order` (line 7)
 **Called by:** a human, in chat — "QA my app with agentic-ui-qa"
 **Calls next:** `SKILL.md`, then `profiles/<app>.md`
 
@@ -177,7 +177,7 @@ mode is required to label itself (Step 5).
 ## Step 5 — A measurement records how it was taken, so a weak proof cannot pose as a strong one
 
 **File:** `scripts/head-check.mjs`
-**Symbol:** module top level, `record.mode` (line 129) and `failures` (line 138)
+**Symbol:** module top level, `record.mode` (line 137) and `failures` (line 146)
 **Called by:** the agent, and by `self-check.mjs` as this repo's own gate
 **Calls next:** writes a JSON receipt beside two PNGs
 
@@ -242,7 +242,7 @@ never rewritten, so a wrong finding is corrected by appending, not by editing.
 ## Step 7 — The verdict is deterministic, and the model never gets a vote
 
 **File:** `scripts/qa-gate.mjs`
-**Symbol:** the `try` block from `blocks` (line 148) to the verdict (line 280)
+**Symbol:** the `try` block from `blocks` (line 148) to the verdict, `gateConfigured` (line 280)
 **Called by:** a CI job, a Stop hook, or a person before deploying
 **Calls next:** spawns `live-signal.mjs`, `qa-memory.mjs`, `prettify-audit.mjs`
 
@@ -318,8 +318,7 @@ differently, but they must never *see* differently.
 ## Step 9 — The tests that prove this flow
 
 **File:** `test/ledger.test.mjs` and `test/surface.test.mjs`
-**Symbol:** `a half-written ledger line is reported, never silently skipped`
-(`test/ledger.test.mjs` line 129)
+**Symbol:** `a half-written ledger line is reported, never silently skipped` (line 129)
 **Called by:** `npm test`, and the `proof` job in
 `.github/workflows/node-platform-conformance.yml`
 **Calls next:** each test spawns the real script as a child process and reads its real

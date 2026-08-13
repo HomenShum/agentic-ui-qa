@@ -85,6 +85,22 @@ test("this repo's own demo surface passes its own shell check", () => {
   assert.equal(code, 0, out);
 });
 
+// A measurement must not rewrite the artifact it is being compared against. Until
+// 2026-08-13 the default --out pointed at promotion/evidence/head-check.json, so every
+// bare run overwrote committed evidence and left the worktree dirty.
+test('a bare run writes into the gitignored .nodekit/, never the committed evidence', () => {
+  const committed = path.join(repoRoot, 'promotion', 'evidence', 'head-check.json');
+  const before = fs.readFileSync(committed, 'utf8');
+  const receipt = path.join(repoRoot, '.nodekit', 'head-check.json');
+  fs.rmSync(receipt, { force: true });
+
+  const { code, out } = run('head-check.mjs', [], sourceMode);
+
+  assert.equal(code, 0, out);
+  assert.ok(fs.existsSync(receipt), 'a bare run must write .nodekit/head-check.json');
+  assert.equal(fs.readFileSync(committed, 'utf8'), before, 'a bare run must not touch promotion/evidence/');
+});
+
 // ---------------------------------------------------------------- live-signal
 //
 // The trap this guards: "the control is gone" is the easiest claim in QA to fake.

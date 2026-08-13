@@ -2,6 +2,24 @@
 
 **An agent-agnostic QA + dogfooding protocol for agentic application UIs — until any coding agent, on any model, can drive them end to end.**
 
+## Start here
+
+| You want to | Read |
+|---|---|
+| **Run this on your app** | [`AGENTS.md`](AGENTS.md) — the entry point for any agent. It routes to [`SKILL.md`](SKILL.md), the complete protocol. |
+| **Understand the code** | [`docs/START_HERE.md`](docs/START_HERE.md) — one real QA pass from the sentence a person types to the exit code that decides whether they may deploy, in the order the code executes. |
+| **Read it in your editor** | [`.tours/`](.tours/) — the same walk as three CodeTours that jump to live source. `npm test` fails if any step drifts off the line it names. |
+
+Every other Markdown file on this page is reference material for one mode or one gate. None
+of it is prerequisite; go to whichever the two documents above send you to.
+
+```bash
+npm test        # behaviour tests, no install step — this package has no dependencies
+npm run doctor  # the repo's own self-check
+```
+
+---
+
 Not a test framework. A *protocol*: persona journeys, artifact-only verification, a scored quality bar for agentic UX, and a bounded fix-improve loop. It ships as a plain Markdown skill package and runs anywhere an agent can read markdown, run shell commands, and drive a browser or Playwright — Claude Code, Codex, Cursor, Gemini CLI, aider, OpenHands, or your own harness (`AGENTS.md` is the generic entry point).
 
 **It scales in both directions.** The floor: written so literally that a Haiku-class model can execute it cold — validated exactly that way (a Haiku agent ran the smoke journey against a production app with only these files as input, passed, and its friction list was folded back in). The ceiling: powerful models are explicitly told what to ADD — adversarial journey extensions, mechanism-level root-cause fixes, reference-driven revamp design with scored options, designer-grade pixel critique, and improving the protocol itself after every pass. The honesty invariants (no artifact no claim, fail closed, provenance is ground truth) never scale away at any tier — a stronger model earns wider action, never looser honesty.
@@ -196,23 +214,17 @@ Same lineage as [proofloop](https://github.com/HomenShum/proofloop-fork)'s "reme
 
 ## Working on this repo
 
-If you are here to *change* the protocol rather than run it, read
-[`docs/START_HERE.md`](docs/START_HERE.md) first — it walks one QA pass from the
-sentence a person types to the exit code that decides whether they may deploy, in the
-order the code executes, and it names the three stages that have no code here and why.
-
-```bash
-npm test        # 31 behaviour tests, no install step — this package has no dependencies
-npm run doctor  # the repo's own self-check: 18/18
-```
+If you are here to *change* the protocol rather than run it, start with
+[`docs/START_HERE.md`](docs/START_HERE.md) as the first screen says — it also names the
+three stages that have no code here, and why.
 
 - [`docs/SIMPLIFICATION_REPORT.md`](docs/SIMPLIFICATION_REPORT.md) — what was removed
   in the last reduction pass, measured with the exact command for each row, plus every
   finding deliberately left with its reason.
 - [`docs/codebase/`](docs/codebase/) — stack, structure, architecture, conventions,
   integrations, testing, and an honest [CONCERNS.md](docs/codebase/CONCERNS.md).
-- [`.tours/`](.tours/) — three CodeTour walkthroughs. They point at live source, and
-  `npm test` fails if any step stops resolving.
+- [`.tours/`](.tours/) — three CodeTour walkthroughs. Every step carries the text it
+  expects to land on, and `npm test` fails if a step lands anywhere else.
 
 This repository is judged against the maintainability gate, which lives in one place
 and is not restated here:

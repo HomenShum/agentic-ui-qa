@@ -6,51 +6,61 @@
     {
       "file": "scripts/lib/ledger.mjs",
       "line": 25,
+      "symbol": "export function readLedger",
       "description": "**Start with the file everything else believes.**\n\nThe ledger is JSONL, appended to by whatever agent ran last. A half-written final line is its *ordinary* failure mode, not an exotic one.\n\nA missing file is an empty ledger, which is legitimate — a first pass has no history."
     },
     {
       "file": "scripts/lib/ledger.mjs",
       "line": 35,
+      "symbol": "unreadable.push",
       "description": "**A line that will not parse is returned, never dropped.**\n\nThis is the fix for a real defect, reproduced on the previous commit. Two programs read this file and each carried its own copy of this loop:\n\n```\nqa-gate.mjs   -> VERDICT: PASSED -> exit 0   (line silently dropped)\nqa-memory.mjs -> SyntaxError stack trace, exit 1\n```\n\nThe gate's own header promises it \"never silently allows\". It was allowing — reporting green over a finding it could not read."
     },
     {
       "file": "scripts/qa-gate.mjs",
       "line": 183,
+      "symbol": "check: 'memory-unreadable'",
       "description": "**So the gate blocks on it.**\n\nAn unreadable line might be the one open P0 in the file. It cannot be ruled out, so it is not ruled out.\n\nThe viewer makes the opposite call for the same data — it names the line number on stderr and carries on — and that split is the point: a viewer and a gate should *print* differently, but they must never *see* differently."
     },
     {
       "file": "test/ledger.test.mjs",
       "line": 129,
+      "symbol": "a half-written ledger line is reported, never silently skipped",
       "description": "**The test that was written before the fix.**\n\nIt failed on the old code — which is what makes it evidence rather than decoration. Two assertions, one per program: the gate must not report PASSED, and the viewer must name the bad line instead of dumping a stack trace at the user."
     },
     {
       "file": "scripts/qa-gate.mjs",
       "line": 139,
+      "symbol": "if (checkMode)",
       "description": "**`--check`: read the stored verdict, do not re-run.**\n\nFor a CI job or an editor hook that wants the last answer cheaply. If there is no stored verdict, that is exit 2 — *fail-closed*, not \"probably fine\".\n\n`gate-state.json` is written with sorted keys so it is byte-stable and can be compared between runs."
     },
     {
       "file": "scripts/qa-gate.mjs",
       "line": 328,
+      "symbol": "qa-gate INTERNAL ERROR (fail-closed, never allows)",
       "description": "**Even a bug in the gate itself is safe.**\n\nThe whole body is wrapped in a `try`. An unexpected exception exits 3. There is no path through this file that ends in \"allowed\" by accident."
     },
     {
       "file": "scripts/self-check.mjs",
-      "line": 47,
+      "line": 46,
+      "symbol": "const headCheck = spawnSync",
       "description": "**A gate that passes before the fix guards nothing.**\n\nRead the comment above this call. Through an earlier iteration, `self-check.mjs` only ran `node --check` on `head-check.mjs` — a syntax parse. Deleting the entire document shell out of the demo page left `npm run doctor` and `npm run proof` green.\n\nThe script worked. Nothing ran it. So now it is *run*, not parsed."
     },
     {
       "file": "scripts/self-check.mjs",
       "line": 21,
+      "symbol": "const scripts = [...list(",
       "description": "**And the list of what to check is discovered, not written down.**\n\nA hand-maintained list is a second place to remember to edit, and this one had already fallen behind — `scripts/lib/` existed and was checked by nothing. Reading the directory means a script added tomorrow is covered the moment it lands."
     },
     {
       "file": "scripts/shell-regression-proof.mjs",
-      "line": 69,
+      "line": 70,
+      "symbol": "const passed = withoutShell.exitCode",
       "description": "**Proving the gate goes red, by making it.**\n\nThis script performs the exact deletion described two steps ago — it reverts the demo page to the fragment it used to be — runs the declared proof, restores the file, and runs it again.\n\nPASS means non-zero without the shell and zero with it. Anything else means the gate is decorative and a regression would ship green."
     },
     {
       "file": "scripts/shell-regression-proof.mjs",
-      "line": 39,
+      "line": 40,
+      "symbol": "const SHELL_RE =",
       "description": "**Two safety rails, because it edits your working tree.**\n\nThe regex is the literal four-line head it removes; if that head is reformatted the script exits 2 with an explanation rather than passing wrongly. And it refuses to start at all if the file has uncommitted changes.\n\nIf it is ever killed mid-run: `git checkout -- examples/trace-revamp/mockup.html`."
     }
   ]

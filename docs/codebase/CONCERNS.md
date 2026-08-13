@@ -43,9 +43,13 @@ If it is killed between the two, restore with
 the demo page. Reformat that head and the proof exits 2 with an explanation rather than
 passing wrongly — but it does need updating by hand.
 
-**`head-check.mjs` writes into `promotion/evidence/` by default.** Running it without
-`--out` and `--png-mobile` / `--png-desktop` overwrites committed evidence. `self-check`
-always passes explicit paths into the gitignored `.nodekit/` for exactly this reason.
+**Writing into `promotion/evidence/` is opt-in.** `head-check.mjs` and
+`shell-regression-proof.mjs` both default their receipts into the gitignored `.nodekit/`;
+pass `--evidence` (or explicit `--out` / `--png-*` paths) to overwrite the committed
+copies. Until 2026-08-13 the defaults pointed at `promotion/evidence/`, so every bare
+`node scripts/head-check.mjs` rewrote committed evidence and dirtied the worktree it was
+measuring. `test/surface.test.mjs` now runs a bare `head-check` and asserts the committed
+receipt is byte-identical afterwards.
 
 **Two module systems.** `scripts/pixels.cjs` is CommonJS in a `"type": "module"`
 package. Its path is a published command that other repositories' QA profiles hard-code,

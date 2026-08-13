@@ -6,51 +6,61 @@
     {
       "file": "scripts/lib/browser.mjs",
       "line": 35,
+      "symbol": "export function resolvePlaywright",
       "description": "**Five checks need a real browser. This package installs nothing.**\n\nThat is deliberate: this repository is cloned into other people's projects as an agent skill, and a skill that drags a browser download behind it does not get installed. So the checks borrow a Playwright that already exists somewhere on the machine.\n\nUntil this function existed the search was written out five times — and had already drifted. Two copies walked six directories up and three walked seven, so a checkout six levels up was found by some checks and not by others."
     },
     {
       "file": "scripts/lib/browser.mjs",
       "line": 55,
+      "symbol": "if (!required) return null",
       "description": "**One flag, two honest behaviours.**\n\nFour of the five callers treat \"no browser\" as fatal and exit 1 with a message naming the flag to set.\n\n`head-check.mjs` alone passes `required: false`, because it has a weaker no-browser mode to fall back to — and the next step is the rule that keeps that fallback honest."
     },
     {
       "file": "scripts/head-check.mjs",
-      "line": 66,
+      "line": 74,
+      "symbol": "resolvePlaywright(flag('--repo')",
       "description": "**The only caller that asks for `required: false`.**\n\nIf nothing is found, `playwright` is `null` and the check drops into source mode rather than exiting."
     },
     {
       "file": "scripts/head-check.mjs",
-      "line": 129,
+      "line": 137,
+      "symbol": "record.mode = 'source'",
       "description": "**Source mode: read what the file declares, guess nothing.**\n\nThe three facts a document *declares* — doctype, `lang`, the viewport tag — are recoverable from the file's own head, and they still gate the exit code. The two a browser *derives* stay `null`.\n\nThe receipt records `mode`, so a receipt from this branch can never be read as rendered proof. A remote URL with no browser is a hard error instead, because there is no file to read."
     },
     {
       "file": "scripts/live-signal.mjs",
       "line": 152,
+      "symbol": "const countVisible",
       "description": "**One definition of \"visible\", used by everything that asks.**\n\nA node counts as visible only if it has a real box, is not `display:none` / `visibility:hidden` / fully transparent, and is not inside anything `hidden`, `inert`, or `aria-hidden`. That last clause is what stops an off-screen drawer counting as on screen."
     },
     {
       "file": "scripts/live-signal.mjs",
       "line": 170,
+      "symbol": "const deadline =",
       "description": "**Waiting for a late-mounting app, using that same definition.**\n\nThis poll replaced a second copy of the whole visibility rule that used to live inside a `waitForFunction`. Two copies of a predicate where one decides the verdict and the other decides when to look is the kind of drift nobody notices until a claim is wrong.\n\nTiming out here is not a failure — the assertions below report what was actually seen."
     },
     {
       "file": "scripts/qa-gate.mjs",
       "line": 97,
+      "symbol": "function runNode",
       "description": "**How the gate invokes the checks: child processes, no shell.**\n\nAlways `process.execPath` plus an absolute path, so there is no `PATH` dependence and no shell quoting to get wrong on Windows. Each child's exit code, timing, and output are captured as a receipt.\n\nThis is the closest thing to a tool registry here — there is no registry, just this and the capability table in `AGENTS.md`."
     },
     {
       "file": "scripts/qa-gate.mjs",
       "line": 174,
+      "symbol": "latestByFingerprint(FINDINGS)",
       "description": "**Both ledger files are read once, through the shared module.**\n\n`findings` is the current state of every defect — last line wins per fingerprint. `runs` is the history of passes, used further down to detect a quality score that dropped.\n\n`unreadable` is the interesting one, and tour 03 picks it up."
     },
     {
       "file": "scripts/lib/browser.mjs",
       "line": 68,
+      "symbol": "export const safeErrorMessage",
       "description": "**Reports get committed, so errors get redacted.**\n\nA Playwright timeout quotes the URL it was driving, which for these checks is often a signed preview link or an internal host. Errors are trimmed to their first line with URLs stripped before anything prints them.\n\nThe same instinct appears as URL hashing in `live-signal.mjs` and `clutter-audit.mjs`."
     },
     {
       "file": "test/surface.test.mjs",
-      "line": 101,
+      "line": 117,
+      "symbol": "proving something is absent requires proving the page is alive",
       "description": "**What proves the honesty rule.**\n\nThe test asserts that an absence claim with no readiness witness exits 1 — that a page which crashed before mounting anything cannot be used to prove a control was removed.\n\nThis file also forces `PLAYWRIGHT_REPO` at a non-existent path so `head-check.mjs` takes its source-mode branch regardless of what is installed on the machine running the suite."
     }
   ]

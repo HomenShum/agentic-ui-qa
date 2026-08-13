@@ -41,17 +41,11 @@ for (const relative of scripts) {
 // "Non-negotiables at every tier" line). Listing head-check.mjs above only ran
 // `node --check` on it — a syntax parse — so deleting the four-line shell out of
 // mockup.html left `npm run doctor` and `npm run proof` green at 13/13, exit 0.
-// Run the check; do not parse it. Artifacts go to the gitignored .nodekit/ so a
-// doctor run never rewrites the committed evidence under promotion/evidence/.
-const artifacts = path.join(root, ".nodekit");
+// Run the check; do not parse it. Its artifacts default to the gitignored .nodekit/,
+// so a doctor run never rewrites the committed evidence under promotion/evidence/.
 const headCheck = spawnSync(
   process.execPath,
-  [
-    path.join(root, "scripts", "head-check.mjs"),
-    "--out", path.join(artifacts, "head-check.json"),
-    "--png-mobile", path.join(artifacts, "head-check-mobile-375.png"),
-    "--png-desktop", path.join(artifacts, "head-check-desktop-1440.png"),
-  ],
+  [path.join(root, "scripts", "head-check.mjs")],
   { cwd: root, encoding: "utf8" },
 );
 checks.push({

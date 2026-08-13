@@ -15,9 +15,10 @@
  *   PASS  = proof exits non-zero WITHOUT the shell and 0 WITH it.
  *   FAIL  = the gate is decorative; a regression would ship green.
  *
- * Usage:  node scripts/shell-regression-proof.mjs [--out <json>]
- * Writes promotion/evidence/shell-regression-proof.json. It EDITS your worktree (and puts it
- * back), so it refuses to start if mockup.html already has uncommitted changes.
+ * Usage:  node scripts/shell-regression-proof.mjs [--out <json>] [--evidence]
+ * Writes .nodekit/shell-regression-proof.json; --evidence overwrites the committed
+ * promotion/evidence/ copy instead. It EDITS your worktree (and puts it back), so it
+ * refuses to start if mockup.html already has uncommitted changes.
  *
  * Exit 0 = the gate has teeth. 1 = it does not. 2 = could not run the experiment.
  */
@@ -31,7 +32,7 @@ const mockup = path.join(repoRoot, 'examples', 'trace-revamp', 'mockup.html');
 const argv = process.argv.slice(2);
 const outIndex = argv.indexOf('--out');
 const outJson = outIndex === -1
-  ? path.join(repoRoot, 'promotion', 'evidence', 'shell-regression-proof.json')
+  ? path.join(repoRoot, argv.includes('--evidence') ? 'promotion/evidence' : '.nodekit', 'shell-regression-proof.json')
   : path.resolve(repoRoot, argv[outIndex + 1] ?? '');
 
 // The literal iteration-1 diff, backwards. Capturing the charset line and keeping it is the

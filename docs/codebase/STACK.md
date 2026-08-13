@@ -34,9 +34,9 @@ otherwise find odd:
 
 ## Commands
 
-    npm test        # 31 behaviour tests (node --test)
+    npm test        # behaviour tests (node --test)
     npm run doctor  # this repo's self-check: required docs exist, every script parses,
-                    # and the demo surface still has a document shell — 18/18
+                    # and the demo surface still has a document shell
     npm run proof   # the same self-check, writing a receipt to .nodekit/
 
 `npm run build` does not exist and is not missing anything: nothing is compiled or
