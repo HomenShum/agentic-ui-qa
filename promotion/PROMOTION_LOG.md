@@ -88,11 +88,13 @@ reproduction; a hunch is not a defect. `<SCRATCH>` =
 
 | # | Severity | Journey | Reproduction | Status |
 |---|----------|---------|--------------|--------|
-| D1 | major | J2 | **FIXED — iteration 1.** `examples/trace-revamp/mockup.html` ships no document-head boilerplate. `grep -i 'doctype\|name="viewport"\|<html'` returns **0 hits**; the file opens straight into `<meta charset="utf-8">`. Three observable consequences, all measured at runtime by `node <SCRATCH>/kbd-check.mjs`: (a) `document.doctype` → `null` and `document.compatMode` → `"BackCompat"`, i.e. the demo renders in **quirks mode**; (b) `document.querySelector('meta[name=viewport]')` → `null`, so a real phone lays the page out at ~980px and scales down — the 375px layout in `state-C-mobile-375.png` is reachable only because Playwright sets the layout viewport directly; (c) `document.documentElement.getAttribute("lang")` → `null` (WCAG 3.1.1 Level A). One missing seam, three symptoms — fix it once at the top of the file, not three times. Fixed at the top of the file **and** at the instruction that produced it (`REVAMP.md` step 4 specified the head as exactly one tag). Re-proved: `promotion/evidence/head-check.json` → `doctype html · CSS1Compat · lang en · viewport width=device-width · mobileLayoutViewport 375`. | **closed** |
+| D1 | major | J2 | **FIXED — iteration 1.** `examples/trace-revamp/mockup.html` ships no document-head boilerplate. `grep -i 'doctype\|name="viewport"\|<html'` returns **0 hits**; the file opens straight into `<meta charset="utf-8">`. Three observable consequences, all measured at runtime by `node <SCRATCH>/kbd-check.mjs`: (a) `document.doctype` → `null` and `document.compatMode` → `"BackCompat"`, i.e. the demo renders in **quirks mode**; (b) `document.querySelector('meta[name=viewport]')` → `null`, so a real phone lays the page out at ~980px and scales down — the 375px layout in `state-C-mobile-375.png` is reachable only because Playwright sets the layout viewport directly; (c) `document.documentElement.getAttribute("lang")` → `null` (WCAG 3.1.1 Level A). One missing seam, three symptoms — fix it once at the top of the file, not three times. Fixed at the top of the file **and** at the instruction that produced it (`REVAMP.md` step 4 specified the head as exactly one tag). Re-proved: `promotion/evidence/head-check.json` → `doctype html · CSS1Compat · lang en · viewport width=device-width · mobileLayoutViewport 375`. **Iteration 2 correction:** the root-cause half was one copy short. `REVAMP.md` carried the same directive a THIRD time at :165, in "Non-negotiables at every tier" — *"charset first line"*, verbatim and scoped more broadly than the step-4 text. An agent following the non-negotiables checklist would still have authored a fragment. Rewritten there too. | **closed** |
 | D2 | major | J2 | Horizontal overflow at 320px. Load the mockup at viewport 320x900; `document.documentElement.scrollWidth` = **360** vs `clientWidth` = **320**. Clean at 375, 768, 1024, 1440, 1920. Measured by `node <SCRATCH>/kbd-check.mjs` (`overflow` map). ~~**Untested hypothesis for Wave 2:** quirks mode (D1a) changes the box model document-wide, so D1 may be the upstream cause of D2 — do not assume it; re-measure at 320px *after* adding the doctype before writing any width CSS.~~ **Hypothesis tested and FALSE (iteration 1).** Measured with only the doctype added and no CSS touched: 320px `scrollWidth` is **360 both before and after** — identical. `promotion/evidence/head-check-before.json` and `head-check.json` both record `overflow["320"] = {scrollWidth: 360, clientWidth: 320}`. Quirks mode was never the cause; D2 is an independent CSS width defect and still needs a width fix. Corroborating: `desktop-1440-before.png` and `desktop-1440.png` are byte-identical (sha256 `1cf36037…`), so the box-model switch changed no layout at all. | open |
-| D3 | major | J1 | The package has zero behavioral tests. `npm test` → exit 1 `Missing script: "test"`. The declared proof, `npm run proof`, exits 0 with `12/12` but `scripts/self-check.mjs` only checks that 6 documents exist and runs `node --check` (syntax parse) on 6 scripts. Nothing asserts that `qa-gate.mjs` exits 2 on absent state, that `live-signal.mjs` exits 1 on a missing signal, or that `qa-memory.mjs` fingerprints dedupe — all three of which I had to verify by hand this pass. A green `proof` is compatible with every script being semantically broken. | open |
+| D3 | major | J1 | The package has zero behavioral tests. `npm test` → exit 1 `Missing script: "test"`. The declared proof, `npm run proof`, exits 0 with `12/12` but `scripts/self-check.mjs` only checks that 6 documents exist and runs `node --check` (syntax parse) on 6 scripts. Nothing asserts that `qa-gate.mjs` exits 2 on absent state, that `live-signal.mjs` exits 1 on a missing signal, or that `qa-memory.mjs` fingerprints dedupe — all three of which I had to verify by hand this pass. A green `proof` is compatible with every script being semantically broken. **Narrowed, not closed, in iteration 2:** `npm run proof` now runs `head-check.mjs` for real against the demo surface (13/13 → 15/15) and a green proof is no longer compatible with a broken document shell — see D6. The other three behaviours above are still hand-checked only. | open |
+| D6 | major | J1 | **FIXED — iteration 2.** D1's fix had no automated regression gate, so the repository could lose it again silently. `scripts/self-check.mjs` listed `head-check.mjs` but only spawned `node --check` on it — a **syntax parse**, not a run — and `.github/workflows/node-platform-conformance.yml` delegated entirely to NodeKit `repo check`, which asserts only that `nodekit.yaml`'s `proof.command` *references* an existing npm script and never executes it. Decisive reproduction, run on a fresh clone of `5134a04`: delete the four-line document shell out of `examples/trace-revamp/mockup.html` → `npm run doctor` **exit 0 `PASS (13/13)`** and `npm run proof` **exit 0 `PASS (13/13)`**. The producer worked; nothing ran it. Fixed at the seam: self-check now *runs* head-check against the demo surface (13/13 → 15/15), head-check gained a browserless source mode so it can gate where no browser is installed, and CI gained a job that actually executes `npm run proof`. Re-proved: `promotion/evidence/shell-regression-proof.json` → same command, **exit 1** without the shell, exit 0 with it. | **closed** |
 | D4 | minor | J2 | The screen-reader live region is declared but never announces the primary state change. `mockup.html:413` defines `<div id="srLive" aria-live="polite" role="status">`; the only write is at `:819`, for `'Digest copied to clipboard'`. Repro: focus `[data-trace="B"]`, press Enter — `aria-pressed` flips to `true`, the banner text changes to `Completed…deterministic fallback`, the footnote changes, and `document.getElementById('srLive').textContent` is still `""`. A screen-reader user is told nothing when the entire trace swaps, including when it swaps to the failed state. Same gap for the DEPTH and theme controls. | open |
 | D5 | minor | J2 | No loading and no empty state exist anywhere in the demo surface — not styled poorly, absent. The repo's own auditor says so: `<SCRATCH>/qa-shots/prettify-audit.json` scores V8 "State polish (empty / loading / error)" as `n/a` with the note that empty+loading+error PNGs must be captured. Three of five states named by gate condition 5 are designed and captured; two are not. | open |
+| D7 | minor | J1 | **FIXED — iteration 2.** `examples/trace-revamp/implementation-spec.md:3` declared *"Proven mockup: `trace-tab-merged.html`"*. No such file exists — the directory holds `README.md`, `implementation-spec.md`, `mockup.html`. A reader following the spec to its proven artifact lands on nothing. Pre-existing, and pointed at by an iteration-1 edit to that same line, which is how it surfaced. Now names `mockup.html`, beside it. | **closed** |
 
 Two advisory items, deliberately **not** listed as defects because they are
 advisory by their own tool's design and have no user-facing reproduction:
@@ -205,3 +207,119 @@ targets for a PRETTIFY pass, not gate blockers.
 - **Conditions newly PASS:** **3** (mobile and desktop both intentional). 4/12 → 5/12.
   Not 4: 320px still overflows. Not 2: D2, D3, D4, D5 remain open. Not 6: the
   `lang` half is now fixed but D4 (the silent `aria-live` region) still fails it.
+
+### Iteration 2 — 2026-08-13 — the gate that guarded iteration 1 was decorative
+
+- **Journey exercised:** J1 "Get this onto my machine and tell me it isn't already
+  broken" — the quickstart, which is also this repo's only gate.
+
+- **Observed (D6, major).** An adversarial verifier judged iteration 1
+  VERIFIED_WITH_CAVEATS and named the caveat: D1 had no automated regression gate.
+  Reproduced here on a fresh clone of `5134a04`, exactly as described. Delete the
+  four-line document shell out of `examples/trace-revamp/mockup.html` — the whole
+  iteration-1 fix — and the repository still says it is fine:
+
+  ```
+  npm run doctor  -> exit 0   PASS agentic-ui-qa self-check (13/13)
+  npm run proof   -> exit 0   PASS agentic-ui-qa self-check (13/13)
+  ```
+
+  Two mechanisms both failed open. `scripts/self-check.mjs` listed
+  `head-check.mjs` in its `scripts[]` array, but everything in that array gets
+  `spawnSync(node, ["--check", file])` — a **syntax parse**. It proved the producer
+  still parses, never that the surface still passes. And
+  `.github/workflows/node-platform-conformance.yml` delegates wholly to NodeKit
+  `repo check`, which (confirmed by reading `src/lib/repo-check.mjs:204`) asserts
+  only that `nodekit.yaml`'s `proof.command` *references an existing npm script*.
+  It never executes it. So CI has never once run this repo's declared proof.
+
+- **Root cause — the same shape as D1, one level up.** Iteration 1 wrote a
+  behavioral check and then registered it in the one place that cannot run
+  behavior. `self-check.mjs` had exactly one idea of what a check is, "does this
+  file parse", and adding a runnable check to that list silently downgraded it to
+  a parse. The fix is not another entry in that array; it is giving the file a
+  second, honest kind of check.
+
+  The same one-copy-short mistake showed up in the docs half. Iteration 1 fixed
+  `REVAMP.md` step 4 and stopped. `REVAMP.md:165`, under **"Non-negotiables at
+  every tier"**, still read *"charset first line"* — the same directive, scoped
+  more broadly than the one that was fixed. An agent working the non-negotiables
+  checklist would have authored a fragment and been right to.
+
+- **Fixed:**
+  - `scripts/self-check.mjs` — **runs** `head-check.mjs` against the demo surface
+    and folds its exit code in as a `shell:` check, alongside (not instead of) the
+    syntax family. Artifacts are directed at the gitignored `.nodekit/`, so a
+    doctor run never rewrites the committed evidence. 13/13 → 15/15.
+  - `scripts/head-check.mjs` — a browserless **source mode**. It was
+    `FATAL: playwright not found → exit 1`, which would have made a zero-dependency
+    CI permanently red. Now: `mode: "rendered"` when Playwright resolves (unchanged
+    behaviour, all five assertions), `mode: "source"` when it does not — the three
+    facts a document *declares* are read from its own head and still gate the exit
+    code, while `compatMode` and `mobileLayoutViewport` are recorded `null`, never
+    guessed, so a source receipt cannot be misread as rendered proof. A remote URL
+    with no browser stays a hard error, verified against a local server on :4402.
+  - `.github/workflows/node-platform-conformance.yml` — a `proof` job that actually
+    runs `npm run proof`. Without it, "wired into the gate CI runs" would still have
+    been false however good self-check got.
+  - `REVAMP.md:165` — the third copy of the directive, now the full four-line shell
+    with the check that gates it.
+  - `examples/trace-revamp/implementation-spec.md:3` (**D7**, minor) — "Proven
+    mockup: `trace-tab-merged.html`" named a file that does not exist in that
+    directory. Now `mockup.html`.
+  - `scripts/shell-regression-proof.mjs` — **new**, the committed producer for the
+    claim this iteration is actually making.
+
+- **Re-proved — the gate goes red, which is the whole point.**
+  `node scripts/shell-regression-proof.mjs` deletes the shell, runs the declared
+  proof, restores the file, runs it again, and demands opposite outcomes:
+
+  ```
+  without shell -> exit 1   FAIL shell:examples/trace-revamp/mockup.html
+  with shell    -> exit 0   PASS agentic-ui-qa self-check (15/15)
+  ```
+
+  Receipt: `promotion/evidence/shell-regression-proof.json`. **Confirmed failing on
+  the pre-fix tree** in the only sense that matters here — the pre-fix tree is what
+  the reproduction above measured, and it is what this script reconstructs on every
+  run: the identical deletion that returned `exit 0, 13/13` before this change
+  returns `exit 1` after it. Run in both modes: source mode names 3 failures
+  (doctype, lang, viewport), rendered mode names 4 including
+  `mobile layout viewport 981px at a 375px device`. Neither passes.
+
+- **Deliberately not changed, and why.** `ci/qa-gate.yml` and `scripts/qa-gate.mjs`
+  also carry no head-check reference. They are the **consumer** gate — the workflow
+  a target app copies into its own repo — and they judge a live deployed URL, not a
+  file. Wiring head-check there means a new config knob, a Playwright requirement in
+  every consumer's CI, and a new blocking check that would turn existing consumers'
+  gates red on adoption. That is a redesign of the consumer gate, not this defect.
+  The defect reproduced above was in *this* repo's own gate, and that is what was
+  fixed. Recorded here rather than silently skipped; it is the correct next target
+  if the shell is to be enforced for consumers too.
+
+- **Blast radius, measured rather than argued:** `head-check.mjs` was restructured,
+  so its rendered output was re-generated rather than assumed intact.
+  `promotion/evidence/mobile-375-emulated.png` and `desktop-1440.png` came back
+  **byte-identical** to the ones iteration 1 committed (sha256 `0ddb46c8…` and
+  `1cf36037…`). The only change to `head-check.json` is the new `mode` field. No
+  CSS, HTML, or rendered surface was touched this pass, so J2 was not re-driven —
+  the identical renders are the evidence for that, not an assumption.
+
+- **Tests:** `npm run doctor` → exit 0 `PASS (15/15)` with no Playwright resolvable
+  (what CI does) and again with `PLAYWRIGHT_REPO` set (`mode: "rendered"`).
+  `npm run proof` → exit 0, receipt written, `checks.length` 15.
+  `node scripts/shell-regression-proof.mjs` → exit 0, both modes.
+  `node scripts/head-check.mjs` → exit 0 rendered, exit 0 source, exit 1 on a
+  remote URL with no browser. `npm test` and `npm run build` still exit 1
+  (`Missing script`) — D3 is narrowed, not closed, and condition 11 stays FAIL.
+
+- **Conditions newly PASS: none. Still 5/12.** This iteration fixed a defect in the
+  gate, not on the surface the gate scores, and no condition may move without
+  evidence. What it changes is the standing of the conditions already claimed:
+  condition 3's PASS was, until now, guarded by nothing. Condition 11 stays FAIL
+  and its wording is updated — `npm test` and `npm run build` still do not exist,
+  and D3's substance survives: `npm run proof` now exercises exactly one script's
+  real behaviour (`head-check.mjs`, via the demo surface). That
+  `live-signal.mjs` exits 1 on a missing signal, that `qa-gate.mjs` exits 2 with no
+  prior state, and that `qa-memory.mjs` fingerprints dedupe are still things a human
+  has to check by hand, as the baseline did. D3 narrows; it does not close.

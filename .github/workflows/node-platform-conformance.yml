@@ -11,3 +11,18 @@ permissions:
 jobs:
   node-platform:
     uses: HomenShum/NodeKit/.github/workflows/repo-conformance.yml@ef4ac8a011b230efa3324892a193abe02ff2d673
+
+  # repo-conformance only asserts that nodekit.yaml's proof.command REFERENCES an existing
+  # npm script — it never executes it. So until this job existed, nothing in CI ran the
+  # declared proof, and a regression in the demo surface could not turn a check red.
+  proof:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      # No install step: this package has zero dependencies. head-check therefore runs in
+      # source mode here, which still fails the job if the demo surface loses its document
+      # shell. The rendered proof is an attended step (scripts/head-check.mjs --repo …).
+      - run: npm run proof

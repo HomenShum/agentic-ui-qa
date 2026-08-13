@@ -27,6 +27,17 @@
  * receipt is what proves whether it was responsible. On this repo's own demo surface
  * it proved it was not: 320px scrollWidth was 360 both before and after the doctype.
  *
+ * TWO MODES, and the receipt says which one ran, because they do not prove the same thing.
+ *   mode "rendered"  playwright resolved. Everything above is measured off a live document.
+ *   mode "source"    no playwright anywhere (this repo ships zero dependencies, so that is
+ *                    the normal case in CI). The three DECLARABLE facts — doctype, lang,
+ *                    viewport content — are read from the file's own head and still gate the
+ *                    exit code. compatMode and mobileLayoutViewport are recorded `null`,
+ *                    never guessed, so a source receipt can never be read as rendered proof.
+ * Source mode exists so the shell can be gated where no browser is installed. It is the CI
+ * floor, not the proof: REVAMP.md still says verify it rendered. A file:// url is required —
+ * a remote url with no browser is a hard error, not a downgrade.
+ *
  * Exit 0 = every shell assertion held. Exit 1 = at least one failed (named on stderr).
  * --repo points at any checkout that has playwright installed; omit to walk up from cwd.
  */
@@ -62,11 +73,10 @@ function resolvePlaywright(hint) {
     if (fs.existsSync(pw)) return require(pw);
   }
   try { return require('playwright'); } catch {}
-  console.error('FATAL: playwright not found. Pass --repo <dir with node_modules/playwright>.');
-  process.exit(1);
+  return null;
 }
 
-const { chromium } = resolvePlaywright(flag('--repo') || process.env.PLAYWRIGHT_REPO);
+const playwright = resolvePlaywright(flag('--repo') || process.env.PLAYWRIGHT_REPO);
 
 const probeShell = () => ({
   doctype: document.doctype ? document.doctype.name : null,
@@ -76,52 +86,77 @@ const probeShell = () => ({
   mobileLayoutViewport: window.innerWidth,
 });
 
-const browser = await chromium.launch();
+// The same four facts are read off the file's own head when no browser exists. Only the
+// three a document DECLARES are recoverable this way; the two a browser DERIVES stay null.
+const shellFromSource = (file) => {
+  const head = fs.readFileSync(file, 'utf8').slice(0, 4096);
+  return {
+    doctype: /<!doctype\s+html[\s>]/i.test(head) ? 'html' : null,
+    compatMode: null,
+    lang: head.match(/<html[^>]*\slang\s*=\s*["']([^"']*)["']/i)?.[1] || null,
+    viewportMeta: head.match(/<meta[^>]+name\s*=\s*["']viewport["'][^>]*\scontent\s*=\s*["']([^"']*)["']/i)?.[1] ?? null,
+    mobileLayoutViewport: null,
+  };
+};
+
 const consoleErrors = [];
-const record = { url, capturedAt: new Date().toISOString(), shell: null, overflow: {}, consoleErrors };
+const record = { url, capturedAt: new Date().toISOString(), mode: null, shell: null, overflow: {}, consoleErrors };
 
-// 1. Shell, measured the way a phone measures it: mobile emulation at 375 CSS px.
-const mobile = await browser.newContext({
-  viewport: { width: 375, height: 812 }, isMobile: true, hasTouch: true, deviceScaleFactor: 2,
-});
-const mpage = await mobile.newPage();
-mpage.on('console', (m) => { if (m.type() === 'error') consoleErrors.push(m.text()); });
-mpage.on('pageerror', (e) => consoleErrors.push(String(e)));
-await mpage.goto(url, { waitUntil: 'networkidle' });
-record.shell = await mpage.evaluate(probeShell);
-fs.mkdirSync(path.dirname(outPng), { recursive: true });
-await mpage.screenshot({ path: outPng, fullPage: false });
-await mobile.close();
+if (playwright) {
+  record.mode = 'rendered';
+  const browser = await playwright.chromium.launch();
 
-// 2. Horizontal overflow at every supported width.
-const desk = await browser.newContext();
-const dpage = await desk.newPage();
-dpage.on('console', (m) => { if (m.type() === 'error') consoleErrors.push(m.text()); });
-dpage.on('pageerror', (e) => consoleErrors.push(String(e)));
-await dpage.goto(url, { waitUntil: 'networkidle' });
-for (const width of WIDTHS) {
-  await dpage.setViewportSize({ width, height: 900 });
-  await dpage.waitForTimeout(120);
-  record.overflow[width] = await dpage.evaluate(() => ({
-    scrollWidth: document.documentElement.scrollWidth,
-    clientWidth: document.documentElement.clientWidth,
-  }));
-  // The widest common desktop width is also the one worth looking at: a shell fix
-  // changes the box model document-wide, so the desktop composition has to be
-  // re-seen, not assumed unchanged.
-  if (width === 1440) await dpage.screenshot({ path: outPngDesktop, fullPage: false });
+  // 1. Shell, measured the way a phone measures it: mobile emulation at 375 CSS px.
+  const mobile = await browser.newContext({
+    viewport: { width: 375, height: 812 }, isMobile: true, hasTouch: true, deviceScaleFactor: 2,
+  });
+  const mpage = await mobile.newPage();
+  mpage.on('console', (m) => { if (m.type() === 'error') consoleErrors.push(m.text()); });
+  mpage.on('pageerror', (e) => consoleErrors.push(String(e)));
+  await mpage.goto(url, { waitUntil: 'networkidle' });
+  record.shell = await mpage.evaluate(probeShell);
+  fs.mkdirSync(path.dirname(outPng), { recursive: true });
+  await mpage.screenshot({ path: outPng, fullPage: false });
+  await mobile.close();
+
+  // 2. Horizontal overflow at every supported width.
+  const desk = await browser.newContext();
+  const dpage = await desk.newPage();
+  dpage.on('console', (m) => { if (m.type() === 'error') consoleErrors.push(m.text()); });
+  dpage.on('pageerror', (e) => consoleErrors.push(String(e)));
+  await dpage.goto(url, { waitUntil: 'networkidle' });
+  for (const width of WIDTHS) {
+    await dpage.setViewportSize({ width, height: 900 });
+    await dpage.waitForTimeout(120);
+    record.overflow[width] = await dpage.evaluate(() => ({
+      scrollWidth: document.documentElement.scrollWidth,
+      clientWidth: document.documentElement.clientWidth,
+    }));
+    // The widest common desktop width is also the one worth looking at: a shell fix
+    // changes the box model document-wide, so the desktop composition has to be
+    // re-seen, not assumed unchanged.
+    if (width === 1440) await dpage.screenshot({ path: outPngDesktop, fullPage: false });
+  }
+  await browser.close();
+} else if (url.startsWith('file:')) {
+  record.mode = 'source';
+  record.shell = shellFromSource(fileURLToPath(url));
+} else {
+  console.error(`FATAL: ${url} can only be measured in a browser and playwright was not found.`);
+  console.error('Pass --repo <dir with node_modules/playwright>, or point at a local file.');
+  process.exit(1);
 }
-await browser.close();
 
 const s = record.shell;
 const failures = [];
+// null on the two derived facts means "this mode did not measure it", never "it passed".
 if (!s.doctype) failures.push('doctype absent — document renders in quirks mode');
-if (s.compatMode !== 'CSS1Compat') failures.push(`compatMode ${s.compatMode} (want CSS1Compat)`);
+if (s.compatMode !== null && s.compatMode !== 'CSS1Compat') failures.push(`compatMode ${s.compatMode} (want CSS1Compat)`);
 if (!s.lang) failures.push('<html lang> absent — WCAG 3.1.1 Level A');
 if (!s.viewportMeta || !/width\s*=\s*device-width/.test(s.viewportMeta)) {
   failures.push(`meta[name=viewport] ${s.viewportMeta === null ? 'absent' : JSON.stringify(s.viewportMeta)} — want width=device-width`);
 }
-if (s.mobileLayoutViewport !== 375) {
+if (s.mobileLayoutViewport !== null && s.mobileLayoutViewport !== 375) {
   failures.push(`mobile layout viewport ${s.mobileLayoutViewport}px at a 375px device — page is laid out wide and scaled down`);
 }
 if (consoleErrors.length) failures.push(`${consoleErrors.length} console error(s)`);
@@ -134,16 +169,21 @@ record.passed = failures.length === 0;
 fs.mkdirSync(path.dirname(outJson), { recursive: true });
 fs.writeFileSync(outJson, JSON.stringify(record, null, 2) + '\n');
 
-console.log(`doctype:${s.doctype} | compatMode:${s.compatMode} | lang:${s.lang} | viewport:${s.viewportMeta} | mobileLayoutViewport:${s.mobileLayoutViewport}px`);
+const na = (v, suffix = '') => (v === null ? 'not-measured(source mode)' : `${v}${suffix}`);
+console.log(`mode:${record.mode} | doctype:${s.doctype} | compatMode:${na(s.compatMode)} | lang:${s.lang} | viewport:${s.viewportMeta} | mobileLayoutViewport:${na(s.mobileLayoutViewport, 'px')}`);
 for (const [width, m] of Object.entries(record.overflow)) {
   console.log(`  ${width}px -> scrollWidth ${m.scrollWidth} / clientWidth ${m.clientWidth} ${m.scrollWidth > m.clientWidth ? 'OVERFLOW (reported, not asserted)' : 'ok'}`);
 }
 console.log(`WROTE ${outJson}`);
-console.log(`WROTE ${outPng}`);
-console.log(`WROTE ${outPngDesktop}`);
+if (record.mode === 'rendered') {
+  console.log(`WROTE ${outPng}`);
+  console.log(`WROTE ${outPngDesktop}`);
+}
 if (failures.length) {
   console.error(`FAIL head-check (${failures.length})`);
   for (const f of failures) console.error(`  - ${f}`);
   process.exit(1);
 }
-console.log(`PASS head-check (doctype + lang + viewport declared, ${record.overflowWidths.length} width(s) overflowing — reported, see receipt)`);
+console.log(record.mode === 'rendered'
+  ? `PASS head-check rendered (doctype + lang + viewport declared, ${record.overflowWidths.length} width(s) overflowing — reported, see receipt)`
+  : 'PASS head-check source (doctype + lang + viewport declared in the file; quirks mode and the mobile layout viewport were NOT measured — install playwright for the rendered proof)');

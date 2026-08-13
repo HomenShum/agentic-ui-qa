@@ -162,7 +162,9 @@ may nominate a candidate; runtime evidence decides its disposition. End with the
 gates, six viewport/theme captures, Bar re-score, and append-only memory closeout.
 
 ## Non-negotiables at every tier
-Bind to real fields; honest states are mandatory in every mockup; six viewport/theme artifacts; charset
-first line; a11y floor (focus visible, reduced motion, contrast at small sizes);
+Bind to real fields; honest states are mandatory in every mockup; six viewport/theme artifacts;
+a document shell, not a fragment — `<!doctype html>`, `<html lang>`, charset, and a
+`width=device-width` viewport, in that order (step 4), gated by `node scripts/head-check.mjs`;
+a11y floor (focus visible, reduced motion, contrast at small sizes);
 reference-not-dependency; scope discipline on the implementing diff; gates + pixel
 re-verify before "done"; memory updated (SKILL §9).

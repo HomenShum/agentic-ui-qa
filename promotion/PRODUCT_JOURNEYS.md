@@ -39,13 +39,21 @@ Each journey states, in this order:
      (the README's repo-level install line).
   2. `npm run doctor` in the clone.
   3. `npm run proof` to get a machine-readable receipt instead of a console line.
-- **Done when:** `PASS agentic-ui-qa self-check (13/13)` on stdout, exit 0, and
+- **Done when:** `PASS agentic-ui-qa self-check (15/15)` on stdout, exit 0, and
   `.nodekit/agentic-ui-qa-self-check.json` written with `"passed": true`.
   (12/12 through the baseline pass; iteration 1 added `scripts/head-check.mjs`
-  to the checked list, so a deleted producer now fails the quickstart.)
-- **Evidence:** clone succeeded (49 files, branch `main`); `npm run doctor`
-  → exit 0, `PASS agentic-ui-qa self-check (13/13)` re-run at iteration 1;
-  `npm run proof` → exit 0, `WROTE .../.nodekit/agentic-ui-qa-self-check.json`.
+  to the checked list, so a deleted producer now fails the quickstart; iteration 2
+  found that listing it only *syntax-parsed* it, and now RUNS it against the demo
+  surface — 13/13 → 15/15, and the quickstart is the thing that goes red when the
+  demo surface stops being a document.)
+- **Evidence:** clone succeeded (branch `main`); `npm run doctor` → exit 0,
+  `PASS agentic-ui-qa self-check (15/15)` re-run at iteration 2 in both modes
+  (no Playwright resolvable, and with `PLAYWRIGHT_REPO` set); `npm run proof`
+  → exit 0, `WROTE .../.nodekit/agentic-ui-qa-self-check.json`. That the pass is
+  meaningful rather than automatic is itself evidenced:
+  `promotion/evidence/shell-regression-proof.json` records the same command
+  exiting **1** when the demo surface's document shell is deleted. Regenerate with
+  `node scripts/shell-regression-proof.mjs`.
 
 ## J2 — "Show me what an honest agent-trace screen looks like before I redesign mine"
 

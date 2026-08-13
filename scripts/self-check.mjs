@@ -21,6 +21,7 @@ const scripts = [
   "scripts/qa-gate.mjs",
   "scripts/qa-memory.mjs",
   "scripts/self-check.mjs",
+  "scripts/shell-regression-proof.mjs",
 ];
 
 const checks = [];
@@ -40,6 +41,29 @@ for (const relative of scripts) {
   });
 }
 
+// The demo surface has to be a document, not a fragment (REVAMP.md step 4 and its
+// "Non-negotiables at every tier" line). Listing head-check.mjs above only ran
+// `node --check` on it — a syntax parse — so deleting the four-line shell out of
+// mockup.html left `npm run doctor` and `npm run proof` green at 13/13, exit 0.
+// Run the check; do not parse it. Artifacts go to the gitignored .nodekit/ so a
+// doctor run never rewrites the committed evidence under promotion/evidence/.
+const artifacts = path.join(root, ".nodekit");
+const headCheck = spawnSync(
+  process.execPath,
+  [
+    path.join(root, "scripts", "head-check.mjs"),
+    "--out", path.join(artifacts, "head-check.json"),
+    "--png-mobile", path.join(artifacts, "head-check-mobile-375.png"),
+    "--png-desktop", path.join(artifacts, "head-check-desktop-1440.png"),
+  ],
+  { cwd: root, encoding: "utf8" },
+);
+checks.push({
+  id: "shell:examples/trace-revamp/mockup.html",
+  passed: headCheck.status === 0,
+  detail: headCheck.status === 0 ? null : (headCheck.stderr || headCheck.stdout || "").trim(),
+});
+
 const receipt = {
   schemaVersion: "agentic-ui-qa.self-check/v1",
   createdAt: new Date().toISOString(),
@@ -47,6 +71,7 @@ const receipt = {
   limitations: [
     "This validates the QA protocol package itself, not any consumer application's rendered UI.",
     "Application certification still requires target-specific journeys and artifacts.",
+    "The demo-surface shell check runs rendered when a Playwright checkout resolves and from the file's source otherwise; .nodekit/head-check.json records which mode ran.",
   ],
   passed: checks.every((check) => check.passed),
 };

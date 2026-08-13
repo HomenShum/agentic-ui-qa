@@ -1,6 +1,6 @@
 # Trace tab — Codex implementation spec (Agent Prism rail + Countersigned seal)
 
-Status: **FINAL**. Proven mockup: `trace-tab-merged.html` (pixel-verified, light+dark, full document shell — doctype, `<html lang>`, charset, viewport — mojibake=0, `head-check` green). Target: `src/domains/nodeslide/inspector/TraceInspector.tsx` + `src/domains/nodeslide/inspector/reviewInspector.css`.
+Status: **FINAL**. Proven mockup: `mockup.html`, beside this file (pixel-verified, light+dark, full document shell — doctype, `<html lang>`, charset, viewport — mojibake=0, `head-check` green). Target: `src/domains/nodeslide/inspector/TraceInspector.tsx` + `src/domains/nodeslide/inspector/reviewInspector.css`.
 
 ## 0. Scope guardrail (read first — this is non-negotiable)
 This is a **PRESENTATIONAL refactor** of `TraceInspector.tsx` and its `ns-trace*` CSS over the **existing** `AgentTrace` / `ValidationResult` / `CandidateValidationReceipt` / `DeckPatch` data already passed in as props.
