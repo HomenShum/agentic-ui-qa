@@ -17,15 +17,9 @@
  * rendered presence assertion plus an explicit stability window, so a blank/crashed page
  * or a late-mounted removed control cannot pass vacuously.
  */
-import fs from 'node:fs';
-import path from 'node:path';
-import { createRequire } from 'node:module';
 import { createHash } from 'node:crypto';
+import { resolvePlaywright, safeErrorMessage } from './lib/browser.mjs';
 
-const require = createRequire(import.meta.url);
-const safeErrorMessage = (error) => String(error?.message || error)
-  .split('\n')[0]
-  .replace(/https?:\/\/[^\s'"<>]+/gi, '(redacted-url)');
 const USAGE = `Usage:
   node live-signal.mjs <url> <signal> [signal...]
   node live-signal.mjs <url> [--repo <path>] [--wait-ms <ms>] [--timeout-ms <ms>]
@@ -112,28 +106,6 @@ function safeUrlLabel(value) {
   }
 }
 
-function resolvePlaywright(repoHint) {
-  const roots = [];
-  if (repoHint) roots.push(path.resolve(repoHint));
-  let dir = process.cwd();
-  for (let index = 0; index < 7; index += 1) {
-    roots.push(dir);
-    const parent = path.dirname(dir);
-    if (parent === dir) break;
-    dir = parent;
-  }
-  for (const root of roots) {
-    const candidate = path.join(root, 'node_modules', 'playwright');
-    if (fs.existsSync(candidate)) return require(candidate);
-  }
-  try {
-    return require('playwright');
-  } catch {
-    console.error('FATAL: Playwright not found. Set --repo to a repo with Playwright installed.');
-    process.exit(1);
-  }
-}
-
 async function checkRawPresence(options) {
   if (options.rawPresent.length === 0) return false;
   const response = await fetch(options.url, {
@@ -190,28 +162,14 @@ async function checkRendered(options) {
         !element.closest('[hidden],[inert],[aria-hidden="true"]');
     }).length);
 
+    // Give a late-mounting app time to show each witness. Polling countVisible keeps
+    // ONE definition of "visible" in this file: a second copy inside waitForFunction
+    // was the thing most likely to drift away from the copy that decides the verdict.
+    // Timing out here is not a failure — the assertions below report what was seen.
     for (const selector of options.renderedPresent) {
-      try {
-        await page.waitForFunction((candidate) => {
-          try {
-            return Array.from(document.querySelectorAll(candidate)).some((element) => {
-              const rect = element.getBoundingClientRect();
-              const style = getComputedStyle(element);
-              if (typeof element.checkVisibility === 'function') {
-                try {
-                  if (!element.checkVisibility({ checkOpacity: true, checkVisibilityCSS: true })) return false;
-                } catch {}
-              }
-              return rect.width > 0 && rect.height > 0 && style.display !== 'none' &&
-                style.visibility !== 'hidden' && Number(style.opacity) > 0 &&
-                !element.closest('[hidden],[inert],[aria-hidden="true"]');
-            });
-          } catch {
-            return false;
-          }
-        }, selector, { timeout: Math.min(15_000, options.timeoutMs) });
-      } catch {
-        // Count and report below; do not expose page text or other runtime data.
+      const deadline = Date.now() + Math.min(15_000, options.timeoutMs);
+      while (await countVisible(selector) === 0 && Date.now() < deadline) {
+        await page.waitForTimeout(200);
       }
     }
     await page.waitForTimeout(options.waitMs);

@@ -43,10 +43,9 @@
  */
 import fs from 'node:fs';
 import path from 'node:path';
-import { createRequire } from 'node:module';
 import { fileURLToPath, pathToFileURL } from 'node:url';
+import { resolvePlaywright } from './lib/browser.mjs';
 
-const require = createRequire(import.meta.url);
 const here = path.dirname(fileURLToPath(import.meta.url));
 const repoRoot = path.resolve(here, '..');
 
@@ -62,21 +61,9 @@ const outPng = flag('--png-mobile') || evidence('mobile-375-emulated.png');
 const outPngDesktop = flag('--png-desktop') || evidence('desktop-1440.png');
 const WIDTHS = [320, 375, 768, 1024, 1440, 1920];
 
-function resolvePlaywright(hint) {
-  const roots = [];
-  if (hint) roots.push(hint);
-  let d = process.cwd();
-  for (let i = 0; i < 6; i++) { roots.push(d); const up = path.dirname(d); if (up === d) break; d = up; }
-  roots.push(repoRoot);
-  for (const r of roots) {
-    const pw = path.join(r, 'node_modules', 'playwright');
-    if (fs.existsSync(pw)) return require(pw);
-  }
-  try { return require('playwright'); } catch {}
-  return null;
-}
-
-const playwright = resolvePlaywright(flag('--repo') || process.env.PLAYWRIGHT_REPO);
+// required:false — this check has a weaker source-only mode to fall back to, so a
+// machine with no browser gets that instead of an exit. Every other caller exits.
+const playwright = resolvePlaywright(flag('--repo') || process.env.PLAYWRIGHT_REPO, { required: false });
 
 const probeShell = () => ({
   doctype: document.doctype ? document.doctype.name : null,

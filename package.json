@@ -4,9 +4,15 @@
   "private": true,
   "type": "module",
   "scripts": {
+    "test": "node --test",
     "doctor": "node scripts/self-check.mjs",
     "check": "node scripts/self-check.mjs",
     "proof": "node scripts/self-check.mjs --json-out .nodekit/agentic-ui-qa-self-check.json"
+  },
+  "knip": {
+    "$schema": "https://unpkg.com/knip@5/schema.json",
+    "entry": ["scripts/*.mjs", "scripts/*.cjs", "test/*.test.mjs"],
+    "project": ["scripts/**", "test/**"]
   },
   "engines": {
     "node": ">=20"

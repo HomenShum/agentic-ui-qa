@@ -1,0 +1,57 @@
+{
+  "$schema": "https://aka.ms/codetour-schema",
+  "title": "01 · One QA pass, entry to verdict",
+  "description": "Follow a single run from the sentence a person types to the exit code that decides whether they may deploy. Start here; the other two tours go deeper into acquiring a browser and into what happens when things break.",
+  "steps": [
+    {
+      "file": "AGENTS.md",
+      "line": 9,
+      "description": "**Someone says: \"QA my app with agentic-ui-qa.\"**\n\nThere is no server and no `main()` in this repository. The entry point is a file an agent is told to read. `AGENTS.md` exists so the protocol is not tied to one vendor's skill format — anything that can read Markdown and run a shell command starts here.\n\nNothing has been measured yet and nothing has been written."
+    },
+    {
+      "file": "AGENTS.md",
+      "line": 20,
+      "description": "**The first thing the agent *executes* is remembering.**\n\nBefore any new exploration, it re-verifies every defect ever fixed at P0 or P1. A pass that starts from a blank sheet re-discovers last month's defects and misses the ones that quietly came back."
+    },
+    {
+      "file": "scripts/qa-memory.mjs",
+      "line": 99,
+      "description": "**The permanent re-verify sweep.**\n\nEvery fingerprint ever marked `fixed` at P0 or P1 is printed as a mandatory check. Notice it reads *every* line of history, not the current state: a defect that was fixed and later regressed is still on this list, forever. The corpus only grows.\n\nRun it: `node scripts/qa-memory.mjs regressions --dir <app>/.qa/memory`"
+    },
+    {
+      "file": "scripts/live-signal.mjs",
+      "line": 91,
+      "description": "**The trust boundary, enforced by argument validation.**\n\n\"The control I removed is gone from production\" is the easiest claim in QA to fake — a blank page, or one that crashed before mounting anything, makes every absence assertion true.\n\nSo an absence claim is refused unless it arrives with a positive witness that the page is alive, and (next line) a named window of time to hold that witness for. There is no permissive mode."
+    },
+    {
+      "file": "scripts/head-check.mjs",
+      "line": 141,
+      "description": "**A measurement records how it was taken.**\n\nThis check asks whether a page declares a proper document shell. Three of those facts a file *declares*; two only a browser *derives*.\n\nRead the `s.compatMode !== null` guard twice. On a machine with no browser that field is `null`, and `null` means *this mode did not measure it* — never *it passed*. A receipt from the weaker mode can never be mistaken for rendered proof."
+    },
+    {
+      "file": "scripts/qa-memory.mjs",
+      "line": 51,
+      "description": "**Writing down what was found — and the same defect twice is still one defect.**\n\nThe fingerprint is a hash of the area and the symptom with digits, file paths and object ids stripped out. So the same defect found again next month, at a different line number in a different deck, lands on the same fingerprint instead of opening a duplicate ticket.\n\nThe ledger is append-only: fixing a defect appends a new line with `status: \"fixed\"`, it never edits the old one."
+    },
+    {
+      "file": "scripts/qa-gate.mjs",
+      "line": 78,
+      "description": "**The verdict, and the model gets no vote.**\n\nA loop that scores itself can always decide it is finished. This gate never calls a model — it runs child processes, reads a file, and compares numbers.\n\nFour exit codes, published here and in the header above. Note code 2: *nothing to check*. It is not a pass."
+    },
+    {
+      "file": "scripts/qa-gate.mjs",
+      "line": 280,
+      "description": "**Fail closed.**\n\nAn unconfigured gate is never green. `gateConfigured` demands real content — a live check to run, a recorded pass, or a finding — because a freshly initialised ledger has files on disk and nothing in them, and that is not a gate.\n\nMissing config, unparseable config, empty ledger, and a crash inside the gate itself all exit non-zero."
+    },
+    {
+      "file": "test/ledger.test.mjs",
+      "line": 89,
+      "description": "**What proves it.**\n\nNothing is mocked. The test writes a throwaway ledger, spawns the real `qa-gate.mjs` as a child process, and asserts on the exit code a CI job would see.\n\n`npm test` runs 26 of these with Node's built-in runner — no install step, because this package has no dependencies."
+    },
+    {
+      "file": ".github/workflows/node-platform-conformance.yml",
+      "line": 29,
+      "description": "**And what runs it.**\n\nThe suite and the declared proof both run on every push and pull request. The comment above explains why this job exists at all: the platform's conformance workflow only checks that the proof command *names* an npm script — it never executes it.\n\nThat is the end of one pass. Tour 02 goes into how a check acquires a browser; tour 03 into what happens when things break."
+    }
+  ]
+}

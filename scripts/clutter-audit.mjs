@@ -38,36 +38,10 @@
  */
 import fs from 'node:fs';
 import path from 'node:path';
-import { createRequire } from 'node:module';
 import { createHash } from 'node:crypto';
+import { resolvePlaywright, safeErrorMessage } from './lib/browser.mjs';
 
-const require = createRequire(import.meta.url);
 const hashValue = (value) => createHash('sha256').update(Buffer.isBuffer(value) ? value : String(value)).digest('hex').slice(0, 20);
-const safeErrorMessage = (error) => String(error?.message || error)
-  .split('\n')[0]
-  .replace(/https?:\/\/[^\s'"<>]+/gi, '(redacted-url)');
-
-async function resolvePlaywright(repoHint) {
-  const roots = [];
-  if (repoHint) roots.push(path.resolve(repoHint));
-  let dir = process.cwd();
-  for (let i = 0; i < 7; i += 1) {
-    roots.push(dir);
-    const parent = path.dirname(dir);
-    if (parent === dir) break;
-    dir = parent;
-  }
-  for (const root of roots) {
-    const candidate = path.join(root, 'node_modules', 'playwright');
-    if (fs.existsSync(candidate)) return require(candidate);
-  }
-  try {
-    return require('playwright');
-  } catch {
-    console.error('FATAL: playwright not found. Set "repo" to a repo with Playwright installed.');
-    process.exit(1);
-  }
-}
 
 function readConfig(arg) {
   if (!arg) {
@@ -769,7 +743,7 @@ async function main() {
   if (cfg.includeRawSelectors || cfg.includeRawPaths || cfg.textMode === 'sample') {
     console.warn('WARNING: raw evidence opt-in is enabled; redact the report before sharing or committing it.');
   }
-  const { chromium } = await resolvePlaywright(resolveConfigPath(cfg, cfg.repo));
+  const { chromium } = resolvePlaywright(resolveConfigPath(cfg, cfg.repo));
   const report = {
     schemaVersion: 2,
     generatedAt: new Date().toISOString(),

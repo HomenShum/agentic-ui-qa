@@ -147,7 +147,14 @@ scripts/live-signal.mjs    additive raw-response presence or hydrated readiness 
 scripts/qa-gate.mjs        the auto-gate binary (GATING.md): reads the memory ledger,
                            returns the done/needs-verification/not-done/blocked verdict,
                            fail-closed when the state file is absent
+scripts/lib/               the two things more than one script needs: browser.mjs (find a
+                           borrowed Playwright; redact URLs out of errors) and ledger.mjs
+                           (read the append-only ledger — one reduction rule, two readers)
 ci/qa-gate.yml             drop-in CI job wiring qa-gate.mjs as a named ui_ux_qa check
+test/                      behaviour tests, run by Node's own `node --test` (npm test)
+docs/                      START_HERE.md (the code in runtime order), the simplification
+                           report, and docs/codebase/ — read these to CHANGE this repo
+.tours/                    CodeTour walkthroughs pointing into live source
 ```
 
 The included profiles span live production, local-only, library/corpus, and scouted-but-not-yet-validated targets. Each profile states its own evidence status and unknowns; read them as filled examples, not as blanket production proof.
@@ -186,6 +193,30 @@ That last step is the point: the skill dogfoods itself. A protocol a cheap model
 ## Memory (remember every failure)
 
 Same lineage as [proofloop](https://github.com/HomenShum/proofloop-fork)'s "remember every failure": each app keeps an **append-only QA ledger in its own repo** (`.qa/memory/` — runs.jsonl + findings.jsonl, managed by the dependency-free `scripts/qa-memory.mjs`). Findings are fingerprinted so re-discoveries dedupe across runs; every finding ever marked *fixed* at P0/P1 becomes a **permanent regression check** at the start of every future pass — the corpus only grows. `history` shows Bar-score drift across passes, honestly. Memory lives with the app, not in this skill clone, so your QA history stays as private as your repo.
+
+## Working on this repo
+
+If you are here to *change* the protocol rather than run it, read
+[`docs/START_HERE.md`](docs/START_HERE.md) first — it walks one QA pass from the
+sentence a person types to the exit code that decides whether they may deploy, in the
+order the code executes, and it names the three stages that have no code here and why.
+
+```bash
+npm test        # 31 behaviour tests, no install step — this package has no dependencies
+npm run doctor  # the repo's own self-check: 18/18
+```
+
+- [`docs/SIMPLIFICATION_REPORT.md`](docs/SIMPLIFICATION_REPORT.md) — what was removed
+  in the last reduction pass, measured with the exact command for each row, plus every
+  finding deliberately left with its reason.
+- [`docs/codebase/`](docs/codebase/) — stack, structure, architecture, conventions,
+  integrations, testing, and an honest [CONCERNS.md](docs/codebase/CONCERNS.md).
+- [`.tours/`](.tours/) — three CodeTour walkthroughs. They point at live source, and
+  `npm test` fails if any step stops resolving.
+
+This repository is judged against the maintainability gate, which lives in one place
+and is not restated here:
+**https://github.com/HomenShum/NodeKit/blob/main/templates/promotion/HUMAN_READY.md**
 
 ## Provenance
 

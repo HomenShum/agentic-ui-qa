@@ -30,29 +30,17 @@
 const fs = require('fs');
 const path = require('path');
 
-function resolvePlaywright(repoHint) {
-  const roots = [];
-  if (repoHint) roots.push(repoHint);
-  // walk up from cwd
-  let d = process.cwd();
-  for (let i = 0; i < 6; i++) { roots.push(d); const p = path.dirname(d); if (p === d) break; d = p; }
-  for (const r of roots) {
-    const pw = path.join(r, 'node_modules', 'playwright');
-    if (fs.existsSync(pw)) return require(pw);
-  }
-  try { return require('playwright'); } catch {}
-  console.error('FATAL: playwright not found. Set "repo" in the config to a repo that has it (pnpm install there).');
-  process.exit(1);
-}
-
 const cfgPath = process.argv[2];
 if (!cfgPath) { console.error('Usage: node pixels.cjs <config.json>'); process.exit(1); }
 const cfg = JSON.parse(fs.readFileSync(cfgPath, 'utf8'));
-const { chromium } = resolvePlaywright(cfg.repo);
 const outDir = cfg.outDir || path.join(process.cwd(), 'qa-out');
 fs.mkdirSync(outDir, { recursive: true });
 
 (async () => {
+  // This file stays CommonJS because its path is a published command that other repos'
+  // QA profiles already hard-code; import() is how CommonJS reaches the shared resolver.
+  const { resolvePlaywright } = await import('./lib/browser.mjs');
+  const { chromium } = resolvePlaywright(cfg.repo);
   const browser = await chromium.launch();
   let failed = false;
   for (const shot of cfg.shots || [{ name: 'default', scheme: 'light', fullPage: true }]) {

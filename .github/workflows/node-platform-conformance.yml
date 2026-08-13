@@ -22,7 +22,9 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 22
-      # No install step: this package has zero dependencies. head-check therefore runs in
-      # source mode here, which still fails the job if the demo surface loses its document
-      # shell. The rendered proof is an attended step (scripts/head-check.mjs --repo …).
+      # No install step: this package has zero dependencies, and the test runner is Node's
+      # own. head-check therefore runs in source mode here, which still fails the job if the
+      # demo surface loses its document shell. The rendered proof is an attended step
+      # (scripts/head-check.mjs --repo …).
+      - run: npm test
       - run: npm run proof

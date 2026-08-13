@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 import { spawnSync } from "node:child_process";
-import { existsSync, mkdirSync, writeFileSync } from "node:fs";
+import { existsSync, mkdirSync, readdirSync, writeFileSync } from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -13,16 +13,12 @@ const requiredDocs = [
   "PROOF.md",
   "BAR-DEFAULTS.md",
 ];
-const scripts = [
-  "scripts/clutter-audit.mjs",
-  "scripts/head-check.mjs",
-  "scripts/live-signal.mjs",
-  "scripts/prettify-audit.mjs",
-  "scripts/qa-gate.mjs",
-  "scripts/qa-memory.mjs",
-  "scripts/self-check.mjs",
-  "scripts/shell-regression-proof.mjs",
-];
+// Discovered, not listed. A hand-written list is a second place to remember to edit,
+// and it had already fallen behind: scripts/lib/ existed and was checked by nothing.
+const list = (dir) => readdirSync(path.join(root, dir))
+  .filter((name) => /\.(mjs|cjs)$/.test(name))
+  .map((name) => `${dir}/${name}`);
+const scripts = [...list("scripts"), ...list("scripts/lib")].sort();
 
 const checks = [];
 for (const relative of requiredDocs) {

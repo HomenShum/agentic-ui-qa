@@ -34,22 +34,7 @@
  */
 import fs from 'node:fs';
 import path from 'node:path';
-import { createRequire } from 'node:module';
-const require = createRequire(import.meta.url);
-
-async function resolvePlaywright(repoHint) {
-  const roots = [];
-  if (repoHint) roots.push(repoHint);
-  let d = process.cwd();
-  for (let i = 0; i < 6; i++) { roots.push(d); const p = path.dirname(d); if (p === d) break; d = p; }
-  for (const r of roots) {
-    const pw = path.join(r, 'node_modules', 'playwright');
-    if (fs.existsSync(pw)) return require(pw);
-  }
-  try { return require('playwright'); } catch {}
-  console.error('FATAL: playwright not found. Set "repo" in the config to a repo that has it (pnpm install there).');
-  process.exit(1);
-}
+import { resolvePlaywright } from './lib/browser.mjs';
 
 const arg = process.argv[2];
 if (!arg) { console.error('Usage: node prettify-audit.mjs <config.json | url>'); process.exit(1); }
@@ -58,7 +43,7 @@ if (/^https?:\/\//i.test(arg)) cfg = { url: arg };
 else cfg = JSON.parse(fs.readFileSync(arg, 'utf8'));
 if (!cfg.url) { console.error('FATAL: config needs a "url".'); process.exit(1); }
 
-const { chromium } = await resolvePlaywright(cfg.repo);
+const { chromium } = resolvePlaywright(cfg.repo);
 const vp = cfg.viewport || { width: 1512, height: 812 };
 
 // ---------- the in-page measurement (runs in the browser over VISIBLE elements) ----------

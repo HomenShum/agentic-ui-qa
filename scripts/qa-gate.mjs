@@ -73,6 +73,7 @@ import path from 'node:path';
 import crypto from 'node:crypto';
 import { fileURLToPath } from 'node:url';
 import { spawnSync } from 'node:child_process';
+import { readLedger, latestByFingerprint } from './lib/ledger.mjs';
 
 const EXIT = { PASS: 0, BLOCKED: 1, NO_GATE: 2, INTERNAL: 3 };
 const HERE = path.dirname(fileURLToPath(import.meta.url));
@@ -91,18 +92,6 @@ function stableStringify(obj) {
     return v;
   };
   return JSON.stringify(norm(obj), null, 2);
-}
-
-const readLines = (f) =>
-  fs.existsSync(f)
-    ? fs.readFileSync(f, 'utf8').split('\n').filter(Boolean).map((l) => { try { return JSON.parse(l); } catch { return null; } }).filter(Boolean)
-    : [];
-
-// latest finding event per fingerprint (later line wins — same reducer as qa-memory.mjs)
-function latestByFp(findingsFile) {
-  const m = new Map();
-  for (const f of readLines(findingsFile)) if (f && f.fp) m.set(f.fp, f);
-  return m;
 }
 
 function runNode(script, args, opts = {}) {
@@ -182,7 +171,22 @@ try {
   }
 
   // ---- G2 · memory: open P0 + regressed fixed-findings (deterministic) --------
-  const findings = latestByFp(FINDINGS);
+  const { byFingerprint: findings, unreadable: findingsDamage } = latestByFingerprint(FINDINGS);
+  const { records: runs, unreadable: runsDamage } = readLedger(RUNS);
+
+  // A ledger line that will not parse is the ordinary result of an interrupted append,
+  // and it may be the one open P0 in the file. This gate's whole contract is that it
+  // never silently allows, so a record it cannot read blocks rather than disappears.
+  for (const [file, damage] of [[FINDINGS, findingsDamage], [RUNS, runsDamage]]) {
+    for (const entry of damage) {
+      blocks.push({
+        check: 'memory-unreadable', sev: 'P0',
+        reason: `unreadable ledger line — ${file} line ${entry.line} is not valid JSON, so its finding cannot be ruled out`,
+        evidence: entry.text,
+      });
+    }
+  }
+
   const openStates = new Set(['open', 'regressed']);
   const isP0 = (s) => String(s) === 'P0';
   const isP01 = (s) => /^P[01]$/.test(String(s));
@@ -220,7 +224,6 @@ try {
   }
 
   // ---- G3 · Bar drop on a scored dim (deterministic) --------------------------
-  const runs = readLines(RUNS);
   const latestRun = runs.length ? runs[runs.length - 1] : null;
   const latestBar = latestRun && latestRun.bar ? latestRun.bar : null;
   let barFloor = g.barFloor || null;

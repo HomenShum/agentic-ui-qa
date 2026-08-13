@@ -29,6 +29,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import crypto from 'node:crypto';
+import { readLedger, latestByFingerprint, describeUnreadable } from './lib/ledger.mjs';
 
 const args = process.argv.slice(2);
 const cmd = args[0];
@@ -40,19 +41,24 @@ const DIR = path.resolve(flag('dir', path.join(process.cwd(), '.qa', 'memory')))
 const RUNS = path.join(DIR, 'runs.jsonl');
 const FINDINGS = path.join(DIR, 'findings.jsonl');
 
-const readLines = (f) => (fs.existsSync(f) ? fs.readFileSync(f, 'utf8').split('\n').filter(Boolean).map((l) => JSON.parse(l)) : []);
+// Read a ledger and say out loud which lines were damaged, instead of dying on one.
+const readLines = (f) => {
+  const { records, unreadable } = readLedger(f);
+  for (const line of describeUnreadable(unreadable, f)) console.error(line);
+  return records;
+};
 const append = (f, obj) => fs.appendFileSync(f, JSON.stringify(obj) + '\n', 'utf8');
 const fpOf = (area, symptom) =>
   crypto.createHash('sha256')
     .update((String(area) + '|' + String(symptom).replace(/[0-9]+|[A-Za-z]:\\\S+|\/\S+\.\w+|deck_\w+|ref_\w+/g, '#')).toLowerCase())
     .digest('hex').slice(0, 12);
 
-// latest status per fingerprint
-function latestByFp() {
-  const m = new Map();
-  for (const f of readLines(FINDINGS)) m.set(f.fp, f); // later lines overwrite = latest event wins
-  return m;
-}
+// latest status per fingerprint — the reduction rule lives in lib/ledger.mjs
+const latestByFp = () => {
+  const { byFingerprint, unreadable } = latestByFingerprint(FINDINGS);
+  for (const line of describeUnreadable(unreadable, FINDINGS)) console.error(line);
+  return byFingerprint;
+};
 
 switch (cmd) {
   case 'init': {
