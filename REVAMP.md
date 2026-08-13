@@ -36,8 +36,25 @@ trust is P0. A REVAMP that lands a new component may be followed by a separate P
    ASCII wireframe, real copy from real data. Then **adversarially judge**: score
    audit-grade / scannability / taste / data-fidelity / implementability; pick a winner
    and graft the runners-up's best ideas.
-4. **Build a self-contained interactive mockup** (single HTML, `<meta charset="utf-8">`
-   FIRST line, all CSS/JS inline, no external requests, system fonts + mono stack).
+4. **Build a self-contained interactive mockup** — a single HTML *document*, not a
+   fragment. Four lines open the file, in this order, before any CSS:
+
+   ```html
+   <!doctype html>
+   <html lang="en">
+   <meta charset="utf-8">
+   <meta name="viewport" content="width=device-width, initial-scale=1">
+   ```
+
+   A mockup that starts at `<meta charset>` is a fragment the browser silently
+   repairs, and it repairs it wrong in three ways at once: no doctype means quirks
+   mode (`document.compatMode === "BackCompat"`, a different box model than the app
+   you are prototyping for), no viewport meta means a phone lays the page out at
+   ~980px and scales it down, and no `lang` fails WCAG 3.1.1 Level A. None of the
+   three shows up in a desktop screenshot, and the mobile one does not show up in
+   Playwright either unless the context is `isMobile`. Verify it rendered, do not
+   grep it: `node scripts/head-check.mjs <url>`. Then: all CSS/JS inline, no
+   external requests, system fonts + mono stack.
    Bind ONLY to real data-model fields — invent nothing. Render EVERY honest state:
    live / degraded / failed / empty, both themes, working density-or-mode toggles.
 5. **Pixel-critique loop.** Render desktop/tablet/mobile × light/dark → actually LOOK →

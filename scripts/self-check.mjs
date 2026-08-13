@@ -15,6 +15,7 @@ const requiredDocs = [
 ];
 const scripts = [
   "scripts/clutter-audit.mjs",
+  "scripts/head-check.mjs",
   "scripts/live-signal.mjs",
   "scripts/prettify-audit.mjs",
   "scripts/qa-gate.mjs",

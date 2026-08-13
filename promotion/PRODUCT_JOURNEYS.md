@@ -39,11 +39,13 @@ Each journey states, in this order:
      (the README's repo-level install line).
   2. `npm run doctor` in the clone.
   3. `npm run proof` to get a machine-readable receipt instead of a console line.
-- **Done when:** `PASS agentic-ui-qa self-check (12/12)` on stdout, exit 0, and
+- **Done when:** `PASS agentic-ui-qa self-check (13/13)` on stdout, exit 0, and
   `.nodekit/agentic-ui-qa-self-check.json` written with `"passed": true`.
+  (12/12 through the baseline pass; iteration 1 added `scripts/head-check.mjs`
+  to the checked list, so a deleted producer now fails the quickstart.)
 - **Evidence:** clone succeeded (49 files, branch `main`); `npm run doctor`
-  → exit 0, `PASS agentic-ui-qa self-check (12/12)`; `npm run proof` → exit 0,
-  `WROTE .../.nodekit/agentic-ui-qa-self-check.json`.
+  → exit 0, `PASS agentic-ui-qa self-check (13/13)` re-run at iteration 1;
+  `npm run proof` → exit 0, `WROTE .../.nodekit/agentic-ui-qa-self-check.json`.
 
 ## J2 — "Show me what an honest agent-trace screen looks like before I redesign mine"
 
@@ -72,6 +74,14 @@ Each journey states, in this order:
   `body` background `oklch(0.975 0.002 260)` → `oklch(0.145 0.006 258)`
   (`<SCRATCH>/kbd-check.mjs`). Regenerate:
   `node scripts/pixels.cjs <SCRATCH>/pixels-states.json`.
+  Iteration 1 re-drove this journey after the document-shell fix — all three RUN
+  states plus dark and 375 re-rendered clean (5/5 shots,
+  `mojibake:0 | consoleErrors:0 | hOverflow:false | asserts:ok`, exit 0) — and
+  added the two committed captures this journey previously lacked:
+  `promotion/evidence/mobile-375-emulated.png` (a real `isMobile` context, so it
+  proves the phone layout is reachable rather than forced) and
+  `promotion/evidence/desktop-1440.png`, both regenerable from a fresh clone with
+  `node scripts/head-check.mjs`.
 
 ## J3 — "Prove a screen actually rendered, when my screenshot tool has frozen"
 

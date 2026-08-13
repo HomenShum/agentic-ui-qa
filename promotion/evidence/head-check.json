@@ -1,0 +1,43 @@
+{
+  "url": "file:///C:/Users/hshum/AppData/Local/Temp/claude/D--VSCode-Projects-cheiron-ai-take-home/440ef9e9-83bb-4fe6-8676-4fdaaf332f3e/scratchpad/wave2/agentic-ui-qa/examples/trace-revamp/mockup.html",
+  "capturedAt": "2026-08-13T11:51:27.851Z",
+  "shell": {
+    "doctype": "html",
+    "compatMode": "CSS1Compat",
+    "lang": "en",
+    "viewportMeta": "width=device-width, initial-scale=1",
+    "mobileLayoutViewport": 375
+  },
+  "overflow": {
+    "320": {
+      "scrollWidth": 360,
+      "clientWidth": 320
+    },
+    "375": {
+      "scrollWidth": 375,
+      "clientWidth": 375
+    },
+    "768": {
+      "scrollWidth": 768,
+      "clientWidth": 768
+    },
+    "1024": {
+      "scrollWidth": 1024,
+      "clientWidth": 1024
+    },
+    "1440": {
+      "scrollWidth": 1440,
+      "clientWidth": 1440
+    },
+    "1920": {
+      "scrollWidth": 1920,
+      "clientWidth": 1920
+    }
+  },
+  "consoleErrors": [],
+  "overflowWidths": [
+    320
+  ],
+  "failures": [],
+  "passed": true
+}

@@ -1,0 +1,49 @@
+{
+  "url": "file:///C:/Users/hshum/AppData/Local/Temp/claude/D--VSCode-Projects-cheiron-ai-take-home/440ef9e9-83bb-4fe6-8676-4fdaaf332f3e/scratchpad/wave2/agentic-ui-qa/examples/trace-revamp/mockup.html",
+  "capturedAt": "2026-08-13T11:48:15.432Z",
+  "shell": {
+    "doctype": null,
+    "compatMode": "BackCompat",
+    "lang": null,
+    "viewportMeta": null,
+    "mobileLayoutViewport": 981
+  },
+  "overflow": {
+    "320": {
+      "scrollWidth": 360,
+      "clientWidth": 320
+    },
+    "375": {
+      "scrollWidth": 375,
+      "clientWidth": 375
+    },
+    "768": {
+      "scrollWidth": 768,
+      "clientWidth": 768
+    },
+    "1024": {
+      "scrollWidth": 1024,
+      "clientWidth": 1024
+    },
+    "1440": {
+      "scrollWidth": 1440,
+      "clientWidth": 1440
+    },
+    "1920": {
+      "scrollWidth": 1920,
+      "clientWidth": 1920
+    }
+  },
+  "consoleErrors": [],
+  "overflowWidths": [
+    320
+  ],
+  "failures": [
+    "doctype absent — document renders in quirks mode",
+    "compatMode BackCompat (want CSS1Compat)",
+    "<html lang> absent — WCAG 3.1.1 Level A",
+    "meta[name=viewport] absent — want width=device-width",
+    "mobile layout viewport 981px at a 375px device — page is laid out wide and scaled down"
+  ],
+  "passed": false
+}
