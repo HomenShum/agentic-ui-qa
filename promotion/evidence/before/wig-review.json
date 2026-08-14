@@ -1,0 +1,725 @@
+{
+  "tool": "wig-review.mjs",
+  "kind": "Web Interface Guidelines review — NOT a Lighthouse score. See scripts/web-quality-audit.mjs for condition 8.",
+  "ranAt": "2026-08-14T03:08:23.093Z",
+  "guidelinesSource": "https://vercel.com/design/guidelines",
+  "guidelinesFetched": "2026-08-13",
+  "surface": "examples/trace-revamp/mockup.html",
+  "url": "http://127.0.0.1:4913/",
+  "screenshots": [
+    "promotion/evidence/before/wig-desktop-1440.png",
+    "promotion/evidence/before/wig-dark-1440.png",
+    "promotion/evidence/before/wig-state-A.png",
+    "promotion/evidence/before/wig-state-B.png",
+    "promotion/evidence/before/wig-state-C.png",
+    "promotion/evidence/before/wig-state-D.png",
+    "promotion/evidence/before/wig-state-E.png"
+  ],
+  "counts": {
+    "checked": 28,
+    "pass": 12,
+    "fail": 10,
+    "needsHumanEyes": 5,
+    "notApplicable": 1
+  },
+  "majorFindings": [
+    "Interactions/\"Announce async updates\"",
+    "Layout/\"Responsive coverage\"",
+    "Layout/\"No excessive scrollbars\"",
+    "Content/\"All states designed\"",
+    "Design/\"Minimum contrast\""
+  ],
+  "minorFindings": [
+    "Interactions/\"Match visual & hit targets\"",
+    "Content/\"Headings & skip link\"",
+    "Content/\"Semantics before ARIA\"",
+    "Design/\"Set the appropriate color-scheme\"",
+    "Design/\"Browser UI matches your background\""
+  ],
+  "checks": [
+    {
+      "guideline": "Keyboard works everywhere",
+      "section": "Interactions",
+      "severity": "major",
+      "status": "pass",
+      "measurement": {
+        "tabStops": 13,
+        "stops": [
+          "button[data-density=human]",
+          "button[data-density=pro]",
+          "button[data-density=tech]",
+          "#themeBtn",
+          "button[data-trace=A]",
+          "button[data-trace=B]",
+          "button[data-trace=C]",
+          "div.node[data-node=consent]",
+          "div.node[data-node=read]",
+          "div.node[data-node=plan]",
+          "div.node[data-node=edits]",
+          "div.node[data-node=validate]",
+          "div.node[data-node=receipt]"
+        ],
+        "railNodeAriaExpanded": {
+          "start": "false",
+          "afterEnter": "true",
+          "afterSpace": "false"
+        },
+        "note": "WAI-ARIA button pattern: a role=button must answer to Enter and to Space. Both toggle aria-expanded here, so the value flips twice."
+      }
+    },
+    {
+      "guideline": "Clear focus",
+      "section": "Interactions",
+      "severity": "major",
+      "status": "pass",
+      "measurement": {
+        "tabStops": 13,
+        "withoutVisibleRing": [],
+        "sampleRing": "solid 2px oklch(0.552 0.163 271.4 / 0.9)"
+      }
+    },
+    {
+      "guideline": "Match visual & hit targets",
+      "section": "Interactions",
+      "severity": "minor",
+      "status": "fail",
+      "measurement": {
+        "floorPx": 24,
+        "under": [
+          "button[data-density=human] 54x23",
+          "button[data-density=pro] 35x23",
+          "button[data-density=tech] 40x23",
+          "button[data-trace=A] 68x21",
+          "button[data-trace=B] 93x21",
+          "button[data-trace=C] 80x21"
+        ],
+        "mobileFloorPx": 44,
+        "underMobileFloor": [
+          "button[data-density=human] 54x23",
+          "button[data-density=pro] 35x23",
+          "button[data-density=tech] 40x23",
+          "#themeBtn 30x30",
+          "button[data-trace=A] 68x21",
+          "button[data-trace=B] 93x21",
+          "button[data-trace=C] 80x21"
+        ],
+        "note": "The guideline names 24px as the floor and 44px on mobile. The 24px floor is what this check gates. The 44px shortfall on the two segmented controls is recorded, not fixed: raising them to 44px re-proportions the whole control bar, which is a redesign and not a defect closure."
+      }
+    },
+    {
+      "guideline": "Respect zoom",
+      "section": "Interactions",
+      "severity": "major",
+      "status": "pass",
+      "measurement": {
+        "viewport": "width=device-width, initial-scale=1"
+      }
+    },
+    {
+      "guideline": "Announce async updates",
+      "section": "Interactions",
+      "severity": "major",
+      "status": "fail",
+      "measurement": {
+        "liveRegionExists": true,
+        "liveRegionAttrs": {
+          "aria-live": "polite",
+          "role": "status"
+        },
+        "textBefore": "",
+        "textAfter": "",
+        "bannerAfter": "Completeddeck v11.0s run$0.000 · no tokensopenrouter · z-ai/glm-5.2 (determinist",
+        "pressedAfter": "true"
+      }
+    },
+    {
+      "guideline": "Never `transition: all`",
+      "section": "Animations",
+      "severity": "minor",
+      "status": "pass",
+      "measurement": {
+        "count": 0,
+        "sample": [],
+        "rule": "transition-property: all AND transition-duration > 0"
+      }
+    },
+    {
+      "guideline": "Honor `prefers-reduced-motion`",
+      "section": "Animations",
+      "severity": "major",
+      "status": "pass",
+      "measurement": {
+        "queryMatches": true,
+        "elementsWithMotion": 0,
+        "stillMoving": 0
+      }
+    },
+    {
+      "guideline": "Responsive coverage",
+      "section": "Layout",
+      "severity": "major",
+      "status": "fail",
+      "measurement": {
+        "widths": {
+          "320": {
+            "scrollWidth": 360,
+            "clientWidth": 320
+          },
+          "375": {
+            "scrollWidth": 375,
+            "clientWidth": 375
+          },
+          "768": {
+            "scrollWidth": 768,
+            "clientWidth": 768
+          },
+          "1024": {
+            "scrollWidth": 1024,
+            "clientWidth": 1024
+          },
+          "1440": {
+            "scrollWidth": 1440,
+            "clientWidth": 1440
+          },
+          "1920": {
+            "scrollWidth": 1920,
+            "clientWidth": 1920
+          }
+        },
+        "overflowing": [
+          320
+        ]
+      }
+    },
+    {
+      "guideline": "No excessive scrollbars",
+      "section": "Layout",
+      "severity": "major",
+      "status": "fail",
+      "measurement": {
+        "overflowing": [
+          320
+        ],
+        "note": "Same measurement as Responsive coverage: a horizontal scrollbar at a supported width is the observable symptom."
+      }
+    },
+    {
+      "guideline": "Accurate page titles",
+      "section": "Content",
+      "severity": "minor",
+      "status": "pass",
+      "measurement": {
+        "title": "NodeSlide — Trace tab (Agent Prism rail + Countersigned seal)"
+      }
+    },
+    {
+      "guideline": "Headings & skip link",
+      "section": "Content",
+      "severity": "minor",
+      "status": "fail",
+      "measurement": {
+        "headings": [
+          {
+            "level": 1,
+            "text": "The Trace tab, as a chain of custody"
+          }
+        ],
+        "headingLevelSkips": 0,
+        "hasSkipLink": false,
+        "note": "Heading order holds; there is no skip link. Minor on a single-view surface with 13 tab stops and no repeated nav to skip past."
+      }
+    },
+    {
+      "guideline": "Icon-only buttons are named",
+      "section": "Content",
+      "severity": "major",
+      "status": "pass",
+      "measurement": {
+        "iconOnly": [
+          {
+            "id": "themeBtn",
+            "named": true
+          }
+        ]
+      }
+    },
+    {
+      "guideline": "Semantics before ARIA",
+      "section": "Content",
+      "severity": "minor",
+      "status": "fail",
+      "measurement": {
+        "roleButtonOnNonButtonElements": 6,
+        "ariaLabelOnGenericRole": [
+          "div.insp-tabs"
+        ],
+        "note": "Two separate halves. (a) `aria-label` is PROHIBITED on an implicit generic role — the browser drops it, so the label silently does nothing; that is the element axe reports as an `aria-prohibited-attr` incomplete, and it is fixed. (b) The six rail nodes are `<div role=\"button\" tabindex=\"0\" aria-expanded>`, not `<button>`. Recorded and NOT fixed: each node is a two-column grid whose rail segments are positioned against its own box, so making it a native button means a full UA-style reset before the layout is back where it started. The ARIA pattern is complete and measured — Enter and Space both activate, aria-expanded tracks — so this is a minor standing debt, not a broken control."
+      }
+    },
+    {
+      "guideline": "Tabular numbers for comparisons",
+      "section": "Content",
+      "severity": "minor",
+      "status": "pass",
+      "measurement": {
+        "tabularNumericElements": 6,
+        "numericElementsWithoutTabular": []
+      }
+    },
+    {
+      "guideline": "All states designed",
+      "section": "Content",
+      "severity": "major",
+      "status": "fail",
+      "measurement": {
+        "perState": {
+          "A": {
+            "panelText": "ConsentHuman authorized an exact-scope edit to slide 02 and consented ",
+            "ariaBusy": null,
+            "skeletonBars": 0,
+            "emptyBlocks": 0,
+            "footnote": "Live GLM 5.2 edit, sealed end-to-end. The Receipt seal shows"
+          },
+          "B": {
+            "panelText": "ConsentThe user consented to send the full brief to OpenRouter.Read2 c",
+            "ariaBusy": null,
+            "skeletonBars": 0,
+            "emptyBlocks": 0,
+            "footnote": "Rail breaks to a dashed amber gap at the Read hop: the GLM 5"
+          },
+          "C": {
+            "panelText": "ConsentHuman authorized an exact-scope edit to slide 02 and consented ",
+            "ariaBusy": null,
+            "skeletonBars": 0,
+            "emptyBlocks": 0,
+            "footnote": "Deterministic validation rejected the candidate: 2 blocking "
+          },
+          "D": {
+            "absent": true,
+            "panelText": "",
+            "ariaBusy": null,
+            "skeletonBars": 0,
+            "emptyBlocks": 0,
+            "footnote": ""
+          },
+          "E": {
+            "absent": true,
+            "panelText": "",
+            "ariaBusy": null,
+            "skeletonBars": 0,
+            "emptyBlocks": 0,
+            "footnote": ""
+          }
+        },
+        "loadingDesigned": false,
+        "emptyDesigned": false,
+        "screenshots": [
+          "promotion/evidence/before/wig-state-A.png",
+          "promotion/evidence/before/wig-state-B.png",
+          "promotion/evidence/before/wig-state-C.png",
+          "promotion/evidence/before/wig-state-D.png",
+          "promotion/evidence/before/wig-state-E.png"
+        ],
+        "note": "Five states reachable from one control: success (A), honest degrade (B), failure (C), agent-running (D, aria-busy with a partially sealed rail), empty (E). Before this pass D and E did not exist in the DOM at all — the promotion ledger tracked that as D5."
+      }
+    },
+    {
+      "guideline": "Redundant status cues",
+      "section": "Content",
+      "severity": "major",
+      "status": "pass",
+      "measurement": {
+        "bannerTextPerRunState": {
+          "A": "Awaiting reviewdeck v26.0s run$0.002openrouter · z-ai/glm-5.2",
+          "B": "Completeddeck v11.0s run$0.000 · no tokensopenrouter · z-ai/glm-5.2 (deterministic fallbac",
+          "C": "Faileddeck v15.2s run$0.002openrouter · z-ai/glm-5.2",
+          "D": "",
+          "E": ""
+        },
+        "note": "Three finished run states, three distinct banner strings — the state is legible without seeing colour."
+      }
+    },
+    {
+      "guideline": "Minimum contrast",
+      "section": "Design",
+      "severity": "major",
+      "status": "fail",
+      "measurement": {
+        "method": "WCAG 2.2 SC 1.4.3 relative luminance, every text node in BOTH schemes. Colours are resolved by painting one pixel and reading it back, because this page is authored in oklch and neither getComputedStyle nor canvas fillStyle converts one. Backdrops are composited root-to-leaf so paint order holds; `ratio` is against the solid backdrop and `ratioAtGradientMax` is the same text with every gradient stop at full strength — the bound, not the position — which is what decides the nodes axe reports as `color-contrast` INCOMPLETE. The guideline PREFERS APCA; APCA is not computed here because this repo ships zero dependencies and no APCA implementation is vendored — recorded as a known limit of this review, not as a pass.",
+        "coverageNote": "The axe CLI rendered this page in DARK (its own passing nodes report backdrops like #111315), so axe's clean colour-contrast result covers the dark theme only. The light theme is covered here and nowhere else.",
+        "crossCheckAgainstAxe": {
+          "note": "Six nodes axe scores itself. Compare against the axe.json written into the SAME directory by scripts/web-quality-audit.mjs — rule `color-contrast`, `passes[].nodes[].any[0].data.contrastRatio` — and only against a run of the same tree. No expected value is hard-coded here on purpose: a number frozen in a script is the stale measurement this repo keeps finding in its own reports.",
+          "thisResolverDark": {
+            "button[data-density=\"pro\"]": 5.39,
+            ".attrib": 6.73,
+            ".banner-ver": 9.97,
+            ".signer.human .srole": 6.26,
+            ".insp-tab": 6.01,
+            ".validator .srole": 6.2
+          }
+        },
+        "light": {
+          "textNodesScored": 75,
+          "unparseable": 0,
+          "worstNode": {
+            "sel": "div.srole",
+            "ratio": 2.75,
+            "ratioAtGradientMax": 2.75,
+            "floor": 4.5,
+            "size": 10,
+            "backdropsConsidered": 1,
+            "text": "Human"
+          }
+        },
+        "dark": {
+          "textNodesScored": 75,
+          "unparseable": 0,
+          "worstNode": {
+            "sel": "div.footnote",
+            "ratio": 5.1,
+            "ratioAtGradientMax": 5.1,
+            "floor": 4.5,
+            "size": 10.5,
+            "backdropsConsidered": 1,
+            "text": "Live GLM 5.2 edit, sealed end-"
+          }
+        },
+        "belowFloor": [
+          {
+            "scheme": "light",
+            "sel": "em",
+            "ratio": 2.81,
+            "ratioAtGradientMax": 2.61,
+            "floor": 3,
+            "size": 26,
+            "backdropsConsidered": 2,
+            "text": "Trace"
+          },
+          {
+            "scheme": "light",
+            "sel": "b",
+            "ratio": 2.81,
+            "ratioAtGradientMax": 2.61,
+            "floor": 4.5,
+            "size": 14,
+            "backdropsConsidered": 2,
+            "text": "Receipt"
+          },
+          {
+            "scheme": "light",
+            "sel": "b",
+            "ratio": 2.81,
+            "ratioAtGradientMax": 2.61,
+            "floor": 4.5,
+            "size": 14,
+            "backdropsConsidered": 2,
+            "text": "Human"
+          },
+          {
+            "scheme": "light",
+            "sel": "button",
+            "ratio": 4.42,
+            "ratioAtGradientMax": 4.42,
+            "floor": 4.5,
+            "size": 11,
+            "backdropsConsidered": 1,
+            "text": "Pro"
+          },
+          {
+            "scheme": "light",
+            "sel": "button",
+            "ratio": 4.42,
+            "ratioAtGradientMax": 4.42,
+            "floor": 4.5,
+            "size": 11,
+            "backdropsConsidered": 1,
+            "text": "Tech"
+          },
+          {
+            "scheme": "light",
+            "sel": "button",
+            "ratio": 4.42,
+            "ratioAtGradientMax": 4.42,
+            "floor": 4.5,
+            "size": 11,
+            "backdropsConsidered": 1,
+            "text": "B · fallback"
+          },
+          {
+            "scheme": "light",
+            "sel": "button",
+            "ratio": 4.42,
+            "ratioAtGradientMax": 4.42,
+            "floor": 4.5,
+            "size": 11,
+            "backdropsConsidered": 1,
+            "text": "C · failed"
+          },
+          {
+            "scheme": "light",
+            "sel": "span.badge",
+            "ratio": 4.44,
+            "ratioAtGradientMax": 4.44,
+            "floor": 4.5,
+            "size": 10.5,
+            "backdropsConsidered": 1,
+            "text": "Consent"
+          },
+          {
+            "scheme": "light",
+            "sel": "span.badge",
+            "ratio": 4.44,
+            "ratioAtGradientMax": 4.44,
+            "floor": 4.5,
+            "size": 10.5,
+            "backdropsConsidered": 1,
+            "text": "Validate"
+          },
+          {
+            "scheme": "light",
+            "sel": "span.badge",
+            "ratio": 4.44,
+            "ratioAtGradientMax": 4.44,
+            "floor": 4.5,
+            "size": 10.5,
+            "backdropsConsidered": 1,
+            "text": "Receipt"
+          },
+          {
+            "scheme": "light",
+            "sel": "p.nsummary",
+            "ratio": 4.42,
+            "ratioAtGradientMax": 4.42,
+            "floor": 4.5,
+            "size": 12,
+            "backdropsConsidered": 1,
+            "text": "Countersigned by machine — awa"
+          },
+          {
+            "scheme": "light",
+            "sel": "span",
+            "ratio": 4.42,
+            "ratioAtGradientMax": 4.42,
+            "floor": 4.5,
+            "size": 10,
+            "backdropsConsidered": 1,
+            "text": "Countersigned receipt"
+          },
+          {
+            "scheme": "light",
+            "sel": "div.ssub",
+            "ratio": 4.42,
+            "ratioAtGradientMax": 4.42,
+            "floor": 4.5,
+            "size": 11,
+            "backdropsConsidered": 1,
+            "text": "candidateDigest sealed · raise"
+          },
+          {
+            "scheme": "light",
+            "sel": "div.ssub",
+            "ratio": 4.42,
+            "ratioAtGradientMax": 4.42,
+            "floor": 4.5,
+            "size": 11,
+            "backdropsConsidered": 1,
+            "text": "deck v2"
+          },
+          {
+            "scheme": "light",
+            "sel": "div.srole",
+            "ratio": 2.75,
+            "ratioAtGradientMax": 2.75,
+            "floor": 4.5,
+            "size": 10,
+            "backdropsConsidered": 1,
+            "text": "Human"
+          },
+          {
+            "scheme": "light",
+            "sel": "div.ssub",
+            "ratio": 4.42,
+            "ratioAtGradientMax": 4.42,
+            "floor": 4.5,
+            "size": 11,
+            "backdropsConsidered": 1,
+            "text": "machine countersigned · human "
+          },
+          {
+            "scheme": "light",
+            "sel": "div.footnote",
+            "ratio": 3.98,
+            "ratioAtGradientMax": 3.98,
+            "floor": 4.5,
+            "size": 10.5,
+            "backdropsConsidered": 1,
+            "text": "Live GLM 5.2 edit, sealed end-"
+          },
+          {
+            "scheme": "light",
+            "sel": "code",
+            "ratio": 3.98,
+            "ratioAtGradientMax": 3.98,
+            "floor": 4.5,
+            "size": 10,
+            "backdropsConsidered": 1,
+            "text": "candidateDigest"
+          },
+          {
+            "scheme": "light",
+            "sel": "b",
+            "ratio": 3.02,
+            "ratioAtGradientMax": 3.02,
+            "floor": 4.5,
+            "size": 10.5,
+            "backdropsConsidered": 1,
+            "text": "Human"
+          },
+          {
+            "scheme": "light",
+            "sel": "i",
+            "ratio": 3.98,
+            "ratioAtGradientMax": 3.98,
+            "floor": 4.5,
+            "size": 10.5,
+            "backdropsConsidered": 1,
+            "text": "awaiting your review"
+          }
+        ]
+      }
+    },
+    {
+      "guideline": "Set the appropriate color-scheme",
+      "section": "Design",
+      "severity": "minor",
+      "status": "fail",
+      "measurement": {
+        "themeAttr": "dark",
+        "bodyBackground": "oklch(0.145 0.006 258)",
+        "colorSchemeOnRoot": "normal",
+        "metaThemeColor": null,
+        "metaColorScheme": null,
+        "note": "With `color-scheme` unset the UA keeps light form controls and light scrollbars on a dark page. Visible in wig-dark-1440.png as a light scrollbar track."
+      }
+    },
+    {
+      "guideline": "Browser UI matches your background",
+      "section": "Design",
+      "severity": "minor",
+      "status": "fail",
+      "measurement": {
+        "metaThemeColor": null,
+        "note": "No <meta name=\"theme-color\">, so mobile browser chrome does not follow the page."
+      }
+    },
+    {
+      "guideline": "Nested radii",
+      "section": "Design",
+      "severity": "minor",
+      "status": "pass",
+      "measurement": {
+        "violations": 0,
+        "sample": [],
+        "rule": "px child radius > px parent radius; percentage radii (pills, dots) excluded"
+      }
+    },
+    {
+      "guideline": "No image-caused CLS",
+      "section": "Performance",
+      "severity": "minor",
+      "status": "na",
+      "measurement": {
+        "images": 0,
+        "imagesWithoutDimensions": 0,
+        "note": "No raster images on this surface; every glyph is inline SVG in the flow. Lighthouse measured CLS 0 independently."
+      }
+    },
+    {
+      "guideline": "No dead ends",
+      "section": "Content",
+      "severity": "major",
+      "status": "pass",
+      "measurement": {
+        "note": "The failed run state (C) is the only terminal state, and it names the two validation issues and the reason it is not signable rather than stopping at a red seal. Read back from the rendered banner:",
+        "bannerC": "Faileddeck v15.2s run$0.002openrouter · z-ai/glm-5.2"
+      }
+    },
+    {
+      "guideline": "Optical alignment",
+      "section": "Layout",
+      "severity": "minor",
+      "status": "eyes",
+      "measurement": {
+        "screenshots": [
+          "promotion/evidence/before/wig-desktop-1440.png",
+          "promotion/evidence/before/wig-dark-1440.png"
+        ],
+        "note": "Perceptual: not auto-passed. A reviewer must open the screenshots. Recorded so the receipt cannot be read as a clean sweep."
+      }
+    },
+    {
+      "guideline": "Deliberate alignment",
+      "section": "Layout",
+      "severity": "minor",
+      "status": "eyes",
+      "measurement": {
+        "screenshots": [
+          "promotion/evidence/before/wig-desktop-1440.png",
+          "promotion/evidence/before/wig-dark-1440.png"
+        ],
+        "note": "Perceptual: not auto-passed. A reviewer must open the screenshots. Recorded so the receipt cannot be read as a clean sweep."
+      }
+    },
+    {
+      "guideline": "Easing fits the subject",
+      "section": "Animations",
+      "severity": "minor",
+      "status": "eyes",
+      "measurement": {
+        "screenshots": [
+          "promotion/evidence/before/wig-desktop-1440.png",
+          "promotion/evidence/before/wig-dark-1440.png"
+        ],
+        "note": "Perceptual: not auto-passed. A reviewer must open the screenshots. Recorded so the receipt cannot be read as a clean sweep."
+      }
+    },
+    {
+      "guideline": "Layered shadows",
+      "section": "Design",
+      "severity": "minor",
+      "status": "eyes",
+      "measurement": {
+        "screenshots": [
+          "promotion/evidence/before/wig-desktop-1440.png",
+          "promotion/evidence/before/wig-dark-1440.png"
+        ],
+        "note": "Perceptual: not auto-passed. A reviewer must open the screenshots. Recorded so the receipt cannot be read as a clean sweep."
+      }
+    },
+    {
+      "guideline": "Balance contrast in lockups",
+      "section": "Layout",
+      "severity": "minor",
+      "status": "eyes",
+      "measurement": {
+        "screenshots": [
+          "promotion/evidence/before/wig-desktop-1440.png",
+          "promotion/evidence/before/wig-dark-1440.png"
+        ],
+        "note": "Perceptual: not auto-passed. A reviewer must open the screenshots. Recorded so the receipt cannot be read as a clean sweep."
+      }
+    },
+    {
+      "guideline": "Console & network hygiene (observed during this review)",
+      "section": "Review context",
+      "severity": "major",
+      "status": "pass",
+      "measurement": {
+        "consoleErrors": [],
+        "failedRequests": [],
+        "pageLoads": 4
+      }
+    }
+  ],
+  "passed": false
+}

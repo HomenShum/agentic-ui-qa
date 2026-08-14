@@ -7,7 +7,9 @@
     "test": "node --test",
     "doctor": "node scripts/self-check.mjs",
     "check": "node scripts/self-check.mjs",
-    "proof": "node scripts/self-check.mjs --json-out .nodekit/agentic-ui-qa-self-check.json"
+    "proof": "node scripts/self-check.mjs --json-out .nodekit/agentic-ui-qa-self-check.json",
+    "audit:wig": "node scripts/wig-review.mjs",
+    "audit:web": "node scripts/web-quality-audit.mjs"
   },
   "knip": {
     "$schema": "https://unpkg.com/knip@5/schema.json",

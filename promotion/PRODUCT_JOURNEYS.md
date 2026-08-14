@@ -61,19 +61,25 @@ Each journey states, in this order:
   that is a flat text dump. They want to see the worked example the README
   promises — specifically what the screen does when the model call *fails*,
   because that is the state their app currently fakes.
-- **Goal:** See the same trace rendered in three honest states and confirm the
-  failed one is visually impossible to mistake for success.
+- **Goal:** See the same trace rendered in every honest state it can be in, and
+  confirm the failed one is visually impossible to mistake for success.
 - **Steps:**
   1. Open `examples/trace-revamp/mockup.html` in a browser.
   2. Click `RUN: B · fallback`.
   3. Click `RUN: C · failed`.
-  4. Click the `Receipt` node to expand the tri-signature seal.
-  5. Click the theme toggle (`#themeBtn`); switch `DEPTH` to `Tech`.
+  4. Click `RUN: D` and `RUN: E` - the agent-running and empty states, which
+     this panel did not have before iteration 3.
+  5. Click the `Receipt` node to expand the tri-signature seal.
+  6. Click the theme toggle (`#themeBtn`); switch `DEPTH` to `Tech`.
 - **Done when:** Three visually distinct terminal seals render — solid indigo
   "awaiting your signature" (A), dashed-amber "provisional · not signable" with
   `$0.000 · no tokens billed` and no invented hash (B), solid red
   "VALIDATION FAILED · blocked" listing 2 real validation issues (C) — and dark
-  theme actually renders dark, not just claims to.
+  theme actually renders dark, not just claims to. Two more states are
+  reachable from the same control since iteration 3 and are part of this
+  journey's done-when: agent-running (D) with `aria-busy="true"`, three of six
+  hops sealed and no cost or digest shown for work that has not happened, and
+  empty (E), which says what is absent and what the person would do about it.
 - **Evidence:** `<SCRATCH>/qa-shots/mockup-desktop-light.png` (A),
   `state-B-fallback.png` (B), `state-C-failed.png` (C),
   `state-tech-depth.png`, `state-theme-toggled.png`,
@@ -90,6 +96,13 @@ Each journey states, in this order:
   proves the phone layout is reachable rather than forced) and
   `promotion/evidence/desktop-1440.png`, both regenerable from a fresh clone with
   `node scripts/head-check.mjs --evidence`.
+  Iteration 3 replaced the session-local half of this evidence with committed
+  captures from a committed producer: `promotion/evidence/wig-state-A.png`
+  through `wig-state-E.png`, plus `wig-desktop-1440.png` and
+  `wig-dark-1440.png`, all regenerable from a fresh clone with
+  `npm run audit:wig -- --evidence`. The same run reads each state back out of
+  the DOM rather than trusting the picture: see `perState` in
+  `promotion/evidence/wig-review.json`.
 
 ## J3 — "Prove a screen actually rendered, when my screenshot tool has frozen"
 

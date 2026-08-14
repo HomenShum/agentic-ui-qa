@@ -1,0 +1,90 @@
+{
+  "tool": "web-quality-audit.mjs",
+  "ranAt": "2026-08-14T03:05:48.201Z",
+  "surface": "examples/trace-revamp/mockup.html",
+  "url": "http://127.0.0.1:4913/",
+  "commands": [
+    "npx.cmd --yes lighthouse@13.4.1 http://127.0.0.1:4913/ --output=json --output-path=C:\\Users\\hshum\\AppData\\Local\\Temp\\claude\\D--VSCode-Projects-cheiron-ai-take-home\\440ef9e9-83bb-4fe6-8676-4fdaaf332f3e\\scratchpad\\limits\\agentic-ui-qa\\repo\\promotion\\evidence\\lighthouse.json --chrome-flags=\"--headless\" --quiet",
+    "npx.cmd --yes @axe-core/cli@4.13.0 http://127.0.0.1:4913/ --save promotion/evidence/axe.json"
+  ],
+  "exitCodes": {
+    "lighthouse": 0,
+    "axe": 0
+  },
+  "lighthouse": {
+    "version": "13.4.1",
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/151.0.0.0 Safari/537.36",
+    "scores": {
+      "performance": 1,
+      "accessibility": 1,
+      "best-practices": 1,
+      "seo": 0.91
+    },
+    "coreWebVitals": {
+      "lcpMs": 1357.5592028748779,
+      "cls": 0,
+      "tbtMs": 0,
+      "fcpMs": 1070.779601437439,
+      "siMs": 1070.779601437439
+    },
+    "failedAudits": [
+      {
+        "id": "robots-txt",
+        "title": "robots.txt is not valid",
+        "score": 0
+      },
+      {
+        "id": "llms-txt",
+        "title": "llms.txt does not follow recommendations",
+        "score": 0
+      },
+      {
+        "id": "unminified-css",
+        "title": "Minify CSS",
+        "score": 0.5
+      },
+      {
+        "id": "unminified-javascript",
+        "title": "Minify JavaScript",
+        "score": 0.5
+      },
+      {
+        "id": "unused-css-rules",
+        "title": "Reduce unused CSS",
+        "score": 0.5
+      },
+      {
+        "id": "document-latency-insight",
+        "title": "Document request latency",
+        "score": 0.5
+      },
+      {
+        "id": "first-contentful-paint",
+        "title": "First Contentful Paint",
+        "score": 0.99
+      }
+    ]
+  },
+  "axe": {
+    "testEngine": "4.13.0",
+    "counts": {
+      "violations": 0,
+      "passes": 30,
+      "incomplete": 1
+    },
+    "byImpact": {},
+    "violations": [],
+    "incomplete": [
+      {
+        "id": "color-contrast",
+        "impact": "serious",
+        "help": "Elements must meet minimum color contrast ratio thresholds",
+        "nodes": 21,
+        "reason": "Element's background color could not be determined due to a background gradient",
+        "resolvedBy": "scripts/wig-review.mjs — Design/\"Minimum contrast\". axe cannot composite a gradient backdrop; wig-review resolves every gradient colour stop the browser reports and scores each text node against its WORST stop."
+      }
+    ]
+  },
+  "majorFindings": [],
+  "passed": true
+}

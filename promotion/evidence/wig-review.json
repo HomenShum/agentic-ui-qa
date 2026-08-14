@@ -1,0 +1,504 @@
+{
+  "tool": "wig-review.mjs",
+  "kind": "Web Interface Guidelines review — NOT a Lighthouse score. See scripts/web-quality-audit.mjs for condition 8.",
+  "ranAt": "2026-08-14T03:07:47.120Z",
+  "guidelinesSource": "https://vercel.com/design/guidelines",
+  "guidelinesFetched": "2026-08-13",
+  "surface": "examples/trace-revamp/mockup.html",
+  "url": "http://127.0.0.1:4913/",
+  "screenshots": [
+    "promotion/evidence/wig-desktop-1440.png",
+    "promotion/evidence/wig-dark-1440.png",
+    "promotion/evidence/wig-state-A.png",
+    "promotion/evidence/wig-state-B.png",
+    "promotion/evidence/wig-state-C.png",
+    "promotion/evidence/wig-state-D.png",
+    "promotion/evidence/wig-state-E.png"
+  ],
+  "counts": {
+    "checked": 28,
+    "pass": 20,
+    "fail": 2,
+    "needsHumanEyes": 5,
+    "notApplicable": 1
+  },
+  "majorFindings": [],
+  "minorFindings": [
+    "Content/\"Headings & skip link\"",
+    "Content/\"Semantics before ARIA\""
+  ],
+  "checks": [
+    {
+      "guideline": "Keyboard works everywhere",
+      "section": "Interactions",
+      "severity": "major",
+      "status": "pass",
+      "measurement": {
+        "tabStops": 15,
+        "stops": [
+          "button[data-density=human]",
+          "button[data-density=pro]",
+          "button[data-density=tech]",
+          "#themeBtn",
+          "button[data-trace=A]",
+          "button[data-trace=B]",
+          "button[data-trace=C]",
+          "button[data-trace=D]",
+          "button[data-trace=E]",
+          "div.node[data-node=consent]",
+          "div.node[data-node=read]",
+          "div.node[data-node=plan]",
+          "div.node[data-node=edits]",
+          "div.node[data-node=validate]",
+          "div.node[data-node=receipt]"
+        ],
+        "railNodeAriaExpanded": {
+          "start": "false",
+          "afterEnter": "true",
+          "afterSpace": "false"
+        },
+        "note": "WAI-ARIA button pattern: a role=button must answer to Enter and to Space. Both toggle aria-expanded here, so the value flips twice."
+      }
+    },
+    {
+      "guideline": "Clear focus",
+      "section": "Interactions",
+      "severity": "major",
+      "status": "pass",
+      "measurement": {
+        "tabStops": 15,
+        "withoutVisibleRing": [],
+        "sampleRing": "solid 2px oklch(0.552 0.163 271.4 / 0.9)"
+      }
+    },
+    {
+      "guideline": "Match visual & hit targets",
+      "section": "Interactions",
+      "severity": "minor",
+      "status": "pass",
+      "measurement": {
+        "floorPx": 24,
+        "under": [],
+        "mobileFloorPx": 44,
+        "underMobileFloor": [
+          "button[data-density=human] 54x24",
+          "button[data-density=pro] 35x24",
+          "button[data-density=tech] 40x24",
+          "#themeBtn 30x30",
+          "button[data-trace=A] 50x34",
+          "button[data-trace=B] 68x34",
+          "button[data-trace=C] 59x34",
+          "button[data-trace=D] 63x34",
+          "button[data-trace=E] 54x34"
+        ],
+        "note": "The guideline names 24px as the floor and 44px on mobile. The 24px floor is what this check gates. The 44px shortfall on the two segmented controls is recorded, not fixed: raising them to 44px re-proportions the whole control bar, which is a redesign and not a defect closure."
+      }
+    },
+    {
+      "guideline": "Respect zoom",
+      "section": "Interactions",
+      "severity": "major",
+      "status": "pass",
+      "measurement": {
+        "viewport": "width=device-width, initial-scale=1"
+      }
+    },
+    {
+      "guideline": "Announce async updates",
+      "section": "Interactions",
+      "severity": "major",
+      "status": "pass",
+      "measurement": {
+        "liveRegionExists": true,
+        "liveRegionAttrs": {
+          "aria-live": "polite",
+          "role": "status"
+        },
+        "textBefore": "",
+        "textAfter": "Trace B. Completed. Model route timed out, attribution degraded — provisional receipt, no tokens billed. Detail level human.",
+        "bannerAfter": "Completeddeck v11.0s run$0.000 · no tokensopenrouter · z-ai/glm-5.2 (determinist",
+        "pressedAfter": "true"
+      }
+    },
+    {
+      "guideline": "Never `transition: all`",
+      "section": "Animations",
+      "severity": "minor",
+      "status": "pass",
+      "measurement": {
+        "count": 0,
+        "sample": [],
+        "rule": "transition-property: all AND transition-duration > 0"
+      }
+    },
+    {
+      "guideline": "Honor `prefers-reduced-motion`",
+      "section": "Animations",
+      "severity": "major",
+      "status": "pass",
+      "measurement": {
+        "queryMatches": true,
+        "elementsWithMotion": 0,
+        "stillMoving": 0
+      }
+    },
+    {
+      "guideline": "Responsive coverage",
+      "section": "Layout",
+      "severity": "major",
+      "status": "pass",
+      "measurement": {
+        "widths": {
+          "320": {
+            "scrollWidth": 320,
+            "clientWidth": 320
+          },
+          "375": {
+            "scrollWidth": 375,
+            "clientWidth": 375
+          },
+          "768": {
+            "scrollWidth": 768,
+            "clientWidth": 768
+          },
+          "1024": {
+            "scrollWidth": 1024,
+            "clientWidth": 1024
+          },
+          "1440": {
+            "scrollWidth": 1440,
+            "clientWidth": 1440
+          },
+          "1920": {
+            "scrollWidth": 1920,
+            "clientWidth": 1920
+          }
+        },
+        "overflowing": []
+      }
+    },
+    {
+      "guideline": "No excessive scrollbars",
+      "section": "Layout",
+      "severity": "major",
+      "status": "pass",
+      "measurement": {
+        "overflowing": [],
+        "note": "Same measurement as Responsive coverage: a horizontal scrollbar at a supported width is the observable symptom."
+      }
+    },
+    {
+      "guideline": "Accurate page titles",
+      "section": "Content",
+      "severity": "minor",
+      "status": "pass",
+      "measurement": {
+        "title": "NodeSlide — Trace tab (Agent Prism rail + Countersigned seal)"
+      }
+    },
+    {
+      "guideline": "Headings & skip link",
+      "section": "Content",
+      "severity": "minor",
+      "status": "fail",
+      "measurement": {
+        "headings": [
+          {
+            "level": 1,
+            "text": "The Trace tab, as a chain of custody"
+          }
+        ],
+        "headingLevelSkips": 0,
+        "hasSkipLink": false,
+        "note": "Heading order holds; there is no skip link. Minor on a single-view surface with 13 tab stops and no repeated nav to skip past."
+      }
+    },
+    {
+      "guideline": "Icon-only buttons are named",
+      "section": "Content",
+      "severity": "major",
+      "status": "pass",
+      "measurement": {
+        "iconOnly": [
+          {
+            "id": "themeBtn",
+            "named": true
+          }
+        ]
+      }
+    },
+    {
+      "guideline": "Semantics before ARIA",
+      "section": "Content",
+      "severity": "minor",
+      "status": "fail",
+      "measurement": {
+        "roleButtonOnNonButtonElements": 6,
+        "ariaLabelOnGenericRole": [],
+        "note": "Two separate halves. (a) `aria-label` is PROHIBITED on an implicit generic role — the browser drops it, so the label silently does nothing; that is the element axe reports as an `aria-prohibited-attr` incomplete, and it is fixed. (b) The six rail nodes are `<div role=\"button\" tabindex=\"0\" aria-expanded>`, not `<button>`. Recorded and NOT fixed: each node is a two-column grid whose rail segments are positioned against its own box, so making it a native button means a full UA-style reset before the layout is back where it started. The ARIA pattern is complete and measured — Enter and Space both activate, aria-expanded tracks — so this is a minor standing debt, not a broken control."
+      }
+    },
+    {
+      "guideline": "Tabular numbers for comparisons",
+      "section": "Content",
+      "severity": "minor",
+      "status": "pass",
+      "measurement": {
+        "tabularNumericElements": 6,
+        "numericElementsWithoutTabular": []
+      }
+    },
+    {
+      "guideline": "All states designed",
+      "section": "Content",
+      "severity": "major",
+      "status": "pass",
+      "measurement": {
+        "perState": {
+          "A": {
+            "panelText": "ConsentHuman authorized an exact-scope edit to slide 02 and consented ",
+            "ariaBusy": null,
+            "skeletonBars": 0,
+            "emptyBlocks": 0,
+            "footnote": "Live GLM 5.2 edit, sealed end-to-end. The Receipt seal shows"
+          },
+          "B": {
+            "panelText": "ConsentThe user consented to send the full brief to OpenRouter.Read2 c",
+            "ariaBusy": null,
+            "skeletonBars": 0,
+            "emptyBlocks": 0,
+            "footnote": "Rail breaks to a dashed amber gap at the Read hop: the GLM 5"
+          },
+          "C": {
+            "panelText": "ConsentHuman authorized an exact-scope edit to slide 02 and consented ",
+            "ariaBusy": null,
+            "skeletonBars": 0,
+            "emptyBlocks": 0,
+            "footnote": "Deterministic validation rejected the candidate: 2 blocking "
+          },
+          "D": {
+            "panelText": "Consent · sealedRead · sealedPlan · sealed",
+            "ariaBusy": "true",
+            "skeletonBars": 6,
+            "emptyBlocks": 0,
+            "footnote": "The rail fills one hop at a time and each hop seals as it co"
+          },
+          "E": {
+            "panelText": "No agent run on this deck yetAsk the assistant to edit a slide. The pr",
+            "ariaBusy": null,
+            "skeletonBars": 0,
+            "emptyBlocks": 1,
+            "footnote": "An empty Trace tab means no agent has touched this deck. It "
+          }
+        },
+        "loadingDesigned": true,
+        "emptyDesigned": true,
+        "screenshots": [
+          "promotion/evidence/wig-state-A.png",
+          "promotion/evidence/wig-state-B.png",
+          "promotion/evidence/wig-state-C.png",
+          "promotion/evidence/wig-state-D.png",
+          "promotion/evidence/wig-state-E.png"
+        ],
+        "note": "Five states reachable from one control: success (A), honest degrade (B), failure (C), agent-running (D, aria-busy with a partially sealed rail), empty (E). Before this pass D and E did not exist in the DOM at all — the promotion ledger tracked that as D5."
+      }
+    },
+    {
+      "guideline": "Redundant status cues",
+      "section": "Content",
+      "severity": "major",
+      "status": "pass",
+      "measurement": {
+        "bannerTextPerRunState": {
+          "A": "Awaiting reviewdeck v26.0s run$0.002openrouter · z-ai/glm-5.2",
+          "B": "Completeddeck v11.0s run$0.000 · no tokensopenrouter · z-ai/glm-5.2 (deterministic fallbac",
+          "C": "Faileddeck v15.2s run$0.002openrouter · z-ai/glm-5.2",
+          "D": "Agent runningdeck v22.4s elapsed$— · not yet billedopenrouter · z-ai/glm-5.2",
+          "E": ""
+        },
+        "note": "Three finished run states, three distinct banner strings — the state is legible without seeing colour."
+      }
+    },
+    {
+      "guideline": "Minimum contrast",
+      "section": "Design",
+      "severity": "major",
+      "status": "pass",
+      "measurement": {
+        "method": "WCAG 2.2 SC 1.4.3 relative luminance, every text node in BOTH schemes. Colours are resolved by painting one pixel and reading it back, because this page is authored in oklch and neither getComputedStyle nor canvas fillStyle converts one. Backdrops are composited root-to-leaf so paint order holds; `ratio` is against the solid backdrop and `ratioAtGradientMax` is the same text with every gradient stop at full strength — the bound, not the position — which is what decides the nodes axe reports as `color-contrast` INCOMPLETE. The guideline PREFERS APCA; APCA is not computed here because this repo ships zero dependencies and no APCA implementation is vendored — recorded as a known limit of this review, not as a pass.",
+        "coverageNote": "The axe CLI rendered this page in DARK (its own passing nodes report backdrops like #111315), so axe's clean colour-contrast result covers the dark theme only. The light theme is covered here and nowhere else.",
+        "crossCheckAgainstAxe": {
+          "note": "Six nodes axe scores itself. Compare against the axe.json written into the SAME directory by scripts/web-quality-audit.mjs — rule `color-contrast`, `passes[].nodes[].any[0].data.contrastRatio` — and only against a run of the same tree. No expected value is hard-coded here on purpose: a number frozen in a script is the stale measurement this repo keeps finding in its own reports.",
+          "thisResolverDark": {
+            "button[data-density=\"pro\"]": 5.39,
+            ".attrib": 6.73,
+            ".banner-ver": 9.97,
+            ".signer.human .srole": 7.94,
+            ".insp-tab": 6.01,
+            ".validator .srole": 6.2
+          }
+        },
+        "light": {
+          "textNodesScored": 78,
+          "unparseable": 0,
+          "worstNode": {
+            "sel": "b",
+            "ratio": 4.67,
+            "ratioAtGradientMax": 4.34,
+            "floor": 4.5,
+            "size": 14,
+            "backdropsConsidered": 2,
+            "text": "deterministic fallback"
+          }
+        },
+        "dark": {
+          "textNodesScored": 77,
+          "unparseable": 0,
+          "worstNode": {
+            "sel": "div.footnote",
+            "ratio": 5.1,
+            "ratioAtGradientMax": 5.1,
+            "floor": 4.5,
+            "size": 10.5,
+            "backdropsConsidered": 1,
+            "text": "Live GLM 5.2 edit, sealed end-"
+          }
+        },
+        "belowFloor": []
+      }
+    },
+    {
+      "guideline": "Set the appropriate color-scheme",
+      "section": "Design",
+      "severity": "minor",
+      "status": "pass",
+      "measurement": {
+        "themeAttr": "dark",
+        "bodyBackground": "oklch(0.145 0.006 258)",
+        "colorSchemeOnRoot": "dark",
+        "metaThemeColor": "#fafafa",
+        "metaColorScheme": null,
+        "note": "With `color-scheme` unset the UA keeps light form controls and light scrollbars on a dark page. Visible in wig-dark-1440.png as a light scrollbar track."
+      }
+    },
+    {
+      "guideline": "Browser UI matches your background",
+      "section": "Design",
+      "severity": "minor",
+      "status": "pass",
+      "measurement": {
+        "metaThemeColor": "#fafafa",
+        "note": "No <meta name=\"theme-color\">, so mobile browser chrome does not follow the page."
+      }
+    },
+    {
+      "guideline": "Nested radii",
+      "section": "Design",
+      "severity": "minor",
+      "status": "pass",
+      "measurement": {
+        "violations": 0,
+        "sample": [],
+        "rule": "px child radius > px parent radius; percentage radii (pills, dots) excluded"
+      }
+    },
+    {
+      "guideline": "No image-caused CLS",
+      "section": "Performance",
+      "severity": "minor",
+      "status": "na",
+      "measurement": {
+        "images": 0,
+        "imagesWithoutDimensions": 0,
+        "note": "No raster images on this surface; every glyph is inline SVG in the flow. Lighthouse measured CLS 0 independently."
+      }
+    },
+    {
+      "guideline": "No dead ends",
+      "section": "Content",
+      "severity": "major",
+      "status": "pass",
+      "measurement": {
+        "note": "The failed run state (C) is the only terminal state, and it names the two validation issues and the reason it is not signable rather than stopping at a red seal. Read back from the rendered banner:",
+        "bannerC": "Faileddeck v15.2s run$0.002openrouter · z-ai/glm-5.2"
+      }
+    },
+    {
+      "guideline": "Optical alignment",
+      "section": "Layout",
+      "severity": "minor",
+      "status": "eyes",
+      "measurement": {
+        "screenshots": [
+          "promotion/evidence/wig-desktop-1440.png",
+          "promotion/evidence/wig-dark-1440.png"
+        ],
+        "note": "Perceptual: not auto-passed. A reviewer must open the screenshots. Recorded so the receipt cannot be read as a clean sweep."
+      }
+    },
+    {
+      "guideline": "Deliberate alignment",
+      "section": "Layout",
+      "severity": "minor",
+      "status": "eyes",
+      "measurement": {
+        "screenshots": [
+          "promotion/evidence/wig-desktop-1440.png",
+          "promotion/evidence/wig-dark-1440.png"
+        ],
+        "note": "Perceptual: not auto-passed. A reviewer must open the screenshots. Recorded so the receipt cannot be read as a clean sweep."
+      }
+    },
+    {
+      "guideline": "Easing fits the subject",
+      "section": "Animations",
+      "severity": "minor",
+      "status": "eyes",
+      "measurement": {
+        "screenshots": [
+          "promotion/evidence/wig-desktop-1440.png",
+          "promotion/evidence/wig-dark-1440.png"
+        ],
+        "note": "Perceptual: not auto-passed. A reviewer must open the screenshots. Recorded so the receipt cannot be read as a clean sweep."
+      }
+    },
+    {
+      "guideline": "Layered shadows",
+      "section": "Design",
+      "severity": "minor",
+      "status": "eyes",
+      "measurement": {
+        "screenshots": [
+          "promotion/evidence/wig-desktop-1440.png",
+          "promotion/evidence/wig-dark-1440.png"
+        ],
+        "note": "Perceptual: not auto-passed. A reviewer must open the screenshots. Recorded so the receipt cannot be read as a clean sweep."
+      }
+    },
+    {
+      "guideline": "Balance contrast in lockups",
+      "section": "Layout",
+      "severity": "minor",
+      "status": "eyes",
+      "measurement": {
+        "screenshots": [
+          "promotion/evidence/wig-desktop-1440.png",
+          "promotion/evidence/wig-dark-1440.png"
+        ],
+        "note": "Perceptual: not auto-passed. A reviewer must open the screenshots. Recorded so the receipt cannot be read as a clean sweep."
+      }
+    },
+    {
+      "guideline": "Console & network hygiene (observed during this review)",
+      "section": "Review context",
+      "severity": "major",
+      "status": "pass",
+      "measurement": {
+        "consoleErrors": [],
+        "failedRequests": [],
+        "pageLoads": 4
+      }
+    }
+  ],
+  "passed": true
+}

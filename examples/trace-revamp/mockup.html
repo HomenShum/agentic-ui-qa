@@ -2,6 +2,9 @@
 <html lang="en">
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Worked example: an agent Trace tab rendered as a chain of custody — five honest states (live, degraded fallback, failed validation, agent-running, empty) on one six-node provenance rail.">
+<meta name="theme-color" content="#fafafa" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0c0e11" media="(prefers-color-scheme: dark)">
 <title>NodeSlide — Trace tab (Agent Prism rail + Countersigned seal)</title>
 <style>
 /* ============================================================
@@ -19,12 +22,16 @@
    Terracotta = human ink · Indigo = agent ink.
    ============================================================ */
 :root{
+  /* The UA paints scrollbars, form controls and the canvas from color-scheme, not
+     from our tokens. Without this the dark theme keeps a light scrollbar track.
+     WIG Design/"Set the appropriate color-scheme". */
+  color-scheme: light dark;
   /* --- surfaces / ink (light) --- */
   --ap-background: 1 0 0;              /* ns-surface #fff */
   --ap-page:       0.975 0.002 260;   /* ns-bg #fafafa */
   --ap-raised:     0.968 0.002 260;   /* ns-raised #f3f4f6 */
   --ap-foreground: 0.21 0.034 264.665;/* ns-ink #111827 / gray.900 */
-  --ap-faint:      0.55 0.019 258;    /* ns-faint #667085 */
+  --ap-faint:      0.50 0.019 258;    /* was 0.55 (#667085): 4.42:1 on --ap-raised, under the 4.5 floor */
   --ap-border:     0.928 0.006 264.531;/* gray.200 */
   --ap-border-subtle: 0.955 0.004 264;/* gray.100 */
   --ap-border-strong: 0.872 0.010 258.338;/* gray.300 */
@@ -32,7 +39,7 @@
 
   /* --- human (terracotta) --- */
   --ap-human:        0.681 0.132 41.5;/* #d97757 */
-  --ap-human-strong: 0.553 0.122 40.2;/* #a8583f */
+  --ap-human-strong: 0.530 0.122 40.2;/* was 0.553 (#a8583f): 4.44:1 as badge ink on --ap-human-soft */
   --ap-human-soft:   0.958 0.020 40;
 
   /* --- agent (indigo) --- */
@@ -95,11 +102,12 @@
   --shadow-seal: 0 1px 2px oklch(0 0 0 / 0.4), 0 6px 20px oklch(0 0 0 / 0.45);
 }}
 :root[data-theme="light"]{
+  color-scheme: light;
   --ap-background:1 0 0; --ap-page:0.975 0.002 260; --ap-raised:0.968 0.002 260;
-  --ap-foreground:0.21 0.034 264.665; --ap-faint:0.55 0.019 258;
+  --ap-foreground:0.21 0.034 264.665; --ap-faint:0.50 0.019 258;
   --ap-border:0.928 0.006 264.531; --ap-border-subtle:0.955 0.004 264; --ap-border-strong:0.872 0.010 258.338;
   --ap-mono-ink:0.37 0.020 264;
-  --ap-human:0.681 0.132 41.5; --ap-human-strong:0.553 0.122 40.2; --ap-human-soft:0.958 0.020 40;
+  --ap-human:0.681 0.132 41.5; --ap-human-strong:0.530 0.122 40.2; --ap-human-soft:0.958 0.020 40;
   --ap-agent:0.552 0.163 271.4; --ap-agent-strong:0.500 0.160 271; --ap-agent-soft:0.963 0.018 271;
   --ap-success:0.520 0.110 163; --ap-success-soft:0.965 0.020 163;
   --ap-warning:0.553 0.132 54.6; --ap-warning-soft:0.965 0.028 60;
@@ -114,6 +122,7 @@
   --shadow-seal:0 1px 2px oklch(0.2 0.03 264 / 0.06), 0 6px 18px oklch(0.2 0.03 264 / 0.10);
 }
 :root[data-theme="dark"]{
+  color-scheme: dark;
   --ap-background:0.185 0.006 258; --ap-page:0.145 0.006 258; --ap-raised:0.235 0.007 258;
   --ap-foreground:0.955 0.004 260; --ap-faint:0.66 0.014 258;
   --ap-border:0.315 0.010 260; --ap-border-subtle:0.27 0.008 260; --ap-border-strong:0.40 0.014 260;
@@ -146,14 +155,20 @@ body{
   padding:32px 20px 64px;
   overflow-x:hidden;
 }
-.stage{max-width:920px;margin:0 auto;display:grid;grid-template-columns:1fr;gap:22px}
+/* minmax(0,1fr), not 1fr. `1fr` is `minmax(auto,1fr)`, and that automatic minimum
+   adopts the widest item's min-content contribution — which here is `.inspector`'s
+   fixed `width:340px`. At a 320px viewport the single column therefore became 340px
+   and the document overflowed by 40px (its `max-width:100%` cannot help: it resolves
+   against the track it is currently sizing). The two-column rule below already wrote
+   minmax(0,1fr) for exactly this reason; the one-column rule was one clamp short. */
+.stage{max-width:920px;margin:0 auto;display:grid;grid-template-columns:minmax(0,1fr);gap:22px}
 @media(min-width:860px){.stage{grid-template-columns:minmax(0,1fr) 340px;align-items:start}}
 
 /* ---- editorial framing (page chrome, not inspector) ---- */
 .frame-note{max-width:420px}
 .eyebrow{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:oklch(var(--ap-faint));font-weight:600;margin:0 0 10px}
 .frame-note h1{font-size:26px;line-height:1.15;margin:0 0 14px;font-weight:650;letter-spacing:-.02em;text-wrap:balance}
-.frame-note h1 em{font-style:normal;color:oklch(var(--ap-human))}
+.frame-note h1 em{font-style:normal;color:oklch(var(--ap-human-strong))}
 .frame-note p{font-size:14px;line-height:1.6;color:oklch(var(--ap-faint));margin:0 0 14px;max-width:52ch}
 .legend{display:flex;flex-direction:column;gap:9px;margin-top:22px;padding-top:20px;border-top:1px solid oklch(var(--ap-border))}
 .legend-row{display:flex;align-items:center;gap:10px;font-size:12.5px;color:oklch(var(--ap-faint))}
@@ -208,13 +223,16 @@ body{
 /* controls bar */
 .controls{display:flex;align-items:center;gap:8px;padding:10px 15px;border-bottom:1px solid oklch(var(--ap-border-subtle));flex-wrap:wrap}
 .seg{display:inline-flex;padding:2px;background:oklch(var(--ap-raised));border:1px solid oklch(var(--ap-border));border-radius:8px}
-.seg button{font:inherit;font-size:11px;font-weight:550;border:0;background:transparent;color:oklch(var(--ap-faint));padding:4px 9px;border-radius:6px;cursor:pointer;transition:background .12s,color .12s}
+/* min-height 24px: WIG Interactions/"Match visual & hit targets" floor. The type is
+   11px so the text box came out 23px and 21px tall — under the floor by a hair, which
+   is the size that reads as fine on a trackpad and misses on a thumb. */
+.seg button{font:inherit;font-size:11px;font-weight:550;border:0;background:transparent;color:oklch(var(--ap-faint));padding:4px 9px;min-height:24px;border-radius:6px;cursor:pointer;transition:background .12s,color .12s}
 .seg button[aria-pressed="true"]{background:oklch(var(--ap-background));color:oklch(var(--ap-foreground));box-shadow:var(--shadow-sm)}
 .seg-label{font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:oklch(var(--ap-faint));font-weight:600}
 .iconbtn{margin-left:auto;display:inline-flex;align-items:center;justify-content:center;width:30px;height:30px;border-radius:8px;border:1px solid oklch(var(--ap-border));background:oklch(var(--ap-raised));color:oklch(var(--ap-foreground));cursor:pointer}
 .iconbtn svg{width:15px;height:15px}
 .traceswitch{display:inline-flex;gap:2px;padding:2px;background:oklch(var(--ap-raised));border:1px solid oklch(var(--ap-border));border-radius:8px}
-.traceswitch button{font:inherit;font-size:11px;font-weight:600;border:0;background:transparent;color:oklch(var(--ap-faint));padding:4px 8px;border-radius:6px;cursor:pointer;font-family:var(--mono)}
+.traceswitch button{font:inherit;font-size:11px;font-weight:600;border:0;background:transparent;color:oklch(var(--ap-faint));padding:4px 8px;min-height:24px;border-radius:6px;cursor:pointer;font-family:var(--mono)}
 .traceswitch button[aria-pressed="true"]{background:oklch(var(--ap-background));color:oklch(var(--ap-foreground));box-shadow:var(--shadow-sm)}
 
 /* ---- the spine ---- */
@@ -332,7 +350,7 @@ body{
 .signer .ssub.mono{font-family:var(--mono);font-variant-numeric:tabular-nums;letter-spacing:-.01em}
 .signer.agent .glyph,.signer.agent .srole{color:oklch(var(--ap-agent-strong))}
 .signer.validator .glyph,.signer.validator .srole{color:oklch(var(--ap-success))}
-.signer.human .glyph,.signer.human .srole{color:oklch(var(--ap-human))}
+.signer.human .glyph,.signer.human .srole{color:oklch(var(--ap-human-strong))}
 .signer.human .sval{color:oklch(var(--ap-human-strong))}
 .digest-line{display:flex;align-items:center;gap:6px;margin-top:5px}
 .digest-line .hash{
@@ -368,16 +386,33 @@ body{
 .footnote code{font-family:var(--mono);font-size:10px}
 .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}
 
+/* ---- the two states this panel used to not have -------------------------
+   Gate condition 5 and WIG Content/"All states designed" both name empty and
+   loading. Success, honest-degrade and failure were designed here from the
+   start; empty and agent-running were absent from the DOM entirely, so there
+   was nothing to review and nothing to screenshot. They are reachable from the
+   same RUN switch as the other three rather than behind a timer, so each one
+   can be captured and argued with. */
+.skelrow{display:grid;grid-template-columns:30px 1fr;gap:0;padding:10px 0}
+.skelbar{height:10px;border-radius:5px;background:oklch(var(--ap-border-subtle));margin:3px 0}
+.skelbar.w70{width:70%} .skelbar.w45{width:45%} .skelbar.w85{width:85%}
+.skelmk{width:9px;height:9px;margin:4px auto 0;border-radius:2px;transform:rotate(45deg);background:oklch(var(--ap-border-strong))}
+.running .skelbar,.running .skelmk{animation:pulse 1.4s ease-in-out infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.45}}
+.emptystate{padding:34px 18px 30px;text-align:center}
+.emptystate .em-mk{width:14px;height:14px;margin:0 auto 12px;transform:rotate(45deg);border:1.5px dashed oklch(var(--ap-border-strong));border-radius:3px}
+.emptystate h2{font-size:13px;font-weight:600;margin:0 0 6px;color:oklch(var(--ap-foreground))}
+.emptystate p{font-size:12px;line-height:1.55;color:oklch(var(--ap-faint));margin:0 auto;max-width:38ch}
 button:focus-visible,[tabindex]:focus-visible{outline:2px solid oklch(var(--ap-agent) / .9);outline-offset:2px}
 @media (prefers-reduced-motion: reduce){*{animation:none !important;transition:none !important}}
 </style>
 
 <div class="stage">
-  <div class="frame-note">
+  <main class="frame-note">
     <p class="eyebrow">NodeSlide · Inspector</p>
     <h1>The <em>Trace</em> tab, as a chain of custody</h1>
     <p>Every AI edit to a deck leaves a receipt. This panel renders one <code style="font-family:var(--mono);font-size:12px">AgentTrace</code> as six sealed nodes on a provenance rail — who authorized, what the agent read, planned and wrote, and the human-owned proof that binds it. A degraded link can never hide.</p>
-    <p>The rail leads the eye down to one loud terminal object: the <b style="color:oklch(var(--ap-human))">Receipt</b> node opens onto a <b>tri-signature seal</b> — <b style="color:oklch(var(--ap-agent-strong))">Agent</b> (model + candidate digest) countersigned by the <b style="color:oklch(var(--ap-success))">Validator</b> (ok · publish · clean) and awaiting the <b style="color:oklch(var(--ap-human))">Human</b>.</p>
+    <p>The rail leads the eye down to one loud terminal object: the <b style="color:oklch(var(--ap-human-strong))">Receipt</b> node opens onto a <b>tri-signature seal</b> — <b style="color:oklch(var(--ap-agent-strong))">Agent</b> (model + candidate digest) countersigned by the <b style="color:oklch(var(--ap-success))">Validator</b> (ok · publish · clean) and awaiting the <b style="color:oklch(var(--ap-human-strong))">Human</b>.</p>
     <p>Switch traces to compare a <b style="color:oklch(var(--ap-agent-strong))">live GLM 5.2 edit</b> against a <b style="color:oklch(var(--ap-warning))">deterministic fallback</b> where the model route timed out. Watch the rail break, honestly, at the exact hop it degraded — and the seal downgrade to a dashed-amber <b style="color:oklch(var(--ap-warning))">provisional</b> stamp.</p>
     <div class="legend">
       <div class="legend-row"><span class="lg-marker human"></span> Filled diamond — human-owned hop (consent · validate · receipt)</div>
@@ -385,10 +420,12 @@ button:focus-visible,[tabindex]:focus-visible{outline:2px solid oklch(var(--ap-a
       <div class="legend-row"><span class="lg-marker brk"></span> Dashed amber break — attribution degraded at this hop</div>
     </div>
     <p class="prov">Frame vocabulary adapted from <b>Agent Prism</b> by Evil Martians (MIT) — Oklch semantic tokens, typed badge+avatar per event, tabular mono numerics, row→attribute-table detail. The terminal <b>Countersigned</b> seal is grafted as the Receipt node's proof. Re-anchored to NodeSlide's terracotta/indigo inks; the OTEL span-tree waterfall is rejected in favor of a fixed six-node custody spine.</p>
-  </div>
+  </main>
 
   <aside class="inspector" aria-label="NodeSlide Trace tab — Agent Prism rail + Countersigned seal">
-    <div class="insp-tabs" aria-label="Inspector sections">
+    <!-- role="group": aria-label is PROHIBITED on an implicit generic role, so on a
+         bare <div> the browser drops it and the label announces nothing. -->
+    <div class="insp-tabs" role="group" aria-label="Inspector sections">
       <span class="insp-tab" aria-hidden="true">Content</span>
       <span class="insp-tab" aria-hidden="true">Sources</span>
       <span class="insp-tab current" aria-current="true">Trace</span>
@@ -409,6 +446,8 @@ button:focus-visible,[tabindex]:focus-visible{outline:2px solid oklch(var(--ap-a
         <button data-trace="A" aria-pressed="true">A · live</button>
         <button data-trace="B" aria-pressed="false">B · fallback</button>
         <button data-trace="C" aria-pressed="false">C · failed</button>
+        <button data-trace="D" aria-pressed="false">D · running</button>
+        <button data-trace="E" aria-pressed="false">E · empty</button>
       </div>
     </div>
     <div class="spine" id="spine"></div>
@@ -735,6 +774,8 @@ function detail(node,t){
 }
 
 /* ---------- render ---------- */
+var STATUS_TEXT={awaiting_review:'Awaiting review',completed:'Completed',failed:'Failed',cancelled:'Cancelled'};
+
 function renderBanner(t){
   var live=!t.fallback;
   var statusColor = t.status==='failed'||t.status==='cancelled' ? 'var(--ap-danger)'
@@ -745,7 +786,7 @@ function renderBanner(t){
   el.innerHTML=''
     +'<div class="banner-top">'
       +'<span class="statusdot" style="background:oklch('+statusColor+')"></span>'
-      +'<span class="banner-title">'+esc(({awaiting_review:'Awaiting review',completed:'Completed',failed:'Failed',cancelled:'Cancelled'})[t.status]||t.status)+'</span>'
+      +'<span class="banner-title">'+esc(STATUS_TEXT[t.status]||t.status)+'</span>'
       +'<span class="banner-ver">deck v'+t.validation.deckVersion+'</span>'
     +'</div>'
     +'<div class="banner-meta">'
@@ -759,6 +800,11 @@ function renderBanner(t){
 
 function renderSpine(t){
   var spine=document.getElementById('spine');
+  // Switching back from the running / empty states has to undo what they set,
+  // or the skeleton's class and aria-busy survive onto a finished trace.
+  spine.className='spine';
+  spine.removeAttribute('aria-busy');
+  spine.removeAttribute('aria-label');
   spine.innerHTML='';
   NODES.forEach(function(node,i){
     var m=META[node];
@@ -833,19 +879,101 @@ function renderSpine(t){
 function renderFootnote(t){
   var el=document.getElementById('footnote');
   if(t.validation && !t.validation.ok){
-    el.innerHTML='Deterministic validation <b style="color:oklch(var(--ap-danger))">rejected</b> the candidate: '+t.validation.issues.length+' blocking issue(s) at the <b>Validate</b> hop. The seal turns <b style="color:oklch(var(--ap-danger))">red</b> — the <b style="color:oklch(var(--ap-agent-strong))">Agent</b> produced a candidate, the <b style="color:oklch(var(--ap-danger))">Validator</b> countersignature is withheld and lists what failed, and the <b style="color:oklch(var(--ap-human))">Human</b> line reads <i>blocked — not signable</i>. Nothing reaches your signature until the deck validates clean.';
+    el.innerHTML='Deterministic validation <b style="color:oklch(var(--ap-danger))">rejected</b> the candidate: '+t.validation.issues.length+' blocking issue(s) at the <b>Validate</b> hop. The seal turns <b style="color:oklch(var(--ap-danger))">red</b> — the <b style="color:oklch(var(--ap-agent-strong))">Agent</b> produced a candidate, the <b style="color:oklch(var(--ap-danger))">Validator</b> countersignature is withheld and lists what failed, and the <b style="color:oklch(var(--ap-human-strong))">Human</b> line reads <i>blocked — not signable</i>. Nothing reaches your signature until the deck validates clean.';
   } else if(t.fallback){
     el.innerHTML='Rail breaks to a dashed amber gap at the <b style="color:oklch(var(--ap-warning))">Read</b> hop: the GLM 5.2 route timed out, so <code>provider·model</code> attribution is degraded. The Receipt seal downgrades to a dashed-amber <b style="color:oklch(var(--ap-warning))">provisional</b> stamp — Agent shows <i>no candidate receipt</i>, the Validator is still honestly green (deterministic validation ran), and the Human line reads <i>not yet signable</i>. The <b>deck is valid; the attribution is not.</b>';
   } else {
-    el.innerHTML='Live GLM 5.2 edit, sealed end-to-end. The Receipt seal shows the <b style="color:oklch(var(--ap-agent-strong))">Agent</b> line with a real <code>candidateDigest</code> (click to copy), a green <b style="color:oklch(var(--ap-success))">Validator</b> countersignature, and a terracotta <b style="color:oklch(var(--ap-human))">Human</b> line still <i>awaiting your review</i> — the machine countersigned; you have not.';
+    el.innerHTML='Live GLM 5.2 edit, sealed end-to-end. The Receipt seal shows the <b style="color:oklch(var(--ap-agent-strong))">Agent</b> line with a real <code>candidateDigest</code> (click to copy), a green <b style="color:oklch(var(--ap-success))">Validator</b> countersignature, and a terracotta <b style="color:oklch(var(--ap-human-strong))">Human</b> line still <i>awaiting your review</i> — the machine countersigned; you have not.';
   }
 }
 
+/* The live region existed but only ever said "Digest copied to clipboard". Switching
+   RUN repainted the banner, the whole rail and the footnote — including the swap to
+   the FAILED trace — and announced nothing, so a screen-reader user was told nothing
+   at the one moment it matters most. render() is the single funnel every trace and
+   depth change passes through, so the announcement belongs here and not in each
+   control's handler. WIG Interactions/"Announce async updates".
+   The text is derived from the same trace fields the banner renders; it never says
+   anything the screen does not. */
+function announce(msg){ var lv=document.getElementById('srLive'); if(lv) lv.textContent=msg; }
+
+/* The agent-running state. Three hops have sealed, three have not, and the panel says
+   which — no spinner standing in for the whole screen, and no cost or digest invented
+   for work that has not happened. aria-busy tells an assistive client the region is
+   still filling; the visible text says the same thing. */
+function renderRunning(){
+  var b=document.getElementById('banner');
+  b.className='banner';
+  b.innerHTML=''
+    +'<div class="banner-top">'
+      +'<span class="statusdot" style="background:oklch(var(--ap-agent))"></span>'
+      +'<span class="banner-title">Agent running</span>'
+      +'<span class="banner-ver">deck v2</span>'
+    +'</div>'
+    +'<div class="banner-meta">'
+      +'<span class="metanum"><b>2.4s</b> elapsed</span>'
+      +'<span class="metanum"><b>$—</b> · not yet billed</span>'
+    +'</div>'
+    +'<div class="attrib live" title="provider · model attribution">'
+      +'<span class="dot"></span>openrouter · z-ai/glm-5.2'
+    +'</div>';
+  var sp=document.getElementById('spine');
+  sp.className='spine running';
+  sp.setAttribute('aria-busy','true');
+  sp.setAttribute('aria-label','Trace filling — 3 of 6 hops sealed');
+  var sealed=['Consent · sealed','Read · sealed','Plan · sealed'];
+  var html='';
+  for(var i=0;i<sealed.length;i++){
+    html+='<div class="skelrow"><div><div class="skelmk" style="background:oklch(var(--ap-agent));animation:none"></div></div>'
+      +'<div style="padding:2px 0 0 4px;font-size:12px;font-weight:600">'+esc(sealed[i])+'</div></div>';
+  }
+  var pending=['Edits','Validate','Receipt'];
+  for(var j=0;j<pending.length;j++){
+    html+='<div class="skelrow"><div><div class="skelmk"></div></div><div style="padding:0 0 0 4px">'
+      +'<div class="skelbar w45"></div><div class="skelbar '+(j===2?'w85':'w70')+'"></div></div></div>';
+  }
+  sp.innerHTML=html;
+  document.getElementById('footnote').innerHTML='The rail fills one hop at a time and each hop seals as it completes — <b>3 of 6 sealed</b>. No cost, no candidate digest and no signature line is shown for work that has not happened yet. Nothing here is signable until the <b>Receipt</b> node seals.';
+}
+
+/* The empty state. Not a blank panel: it says what is absent, and what the person
+   would do to make something appear. */
+function renderEmpty(){
+  var b=document.getElementById('banner');
+  b.className='';
+  b.innerHTML='';
+  var sp=document.getElementById('spine');
+  sp.className='spine';
+  sp.removeAttribute('aria-busy');
+  sp.setAttribute('aria-label','No agent run on this deck yet');
+  sp.innerHTML='<div class="emptystate"><div class="em-mk"></div>'
+    +'<h2>No agent run on this deck yet</h2>'
+    +'<p>Ask the assistant to edit a slide. The provenance rail, the cost, and the tri-signature seal appear here — including when a run degrades or fails.</p></div>';
+  document.getElementById('footnote').innerHTML='An empty Trace tab means no agent has touched this deck. It never means a run happened and was not recorded.';
+}
+
+var rendered=false;
 function render(){
+  if(state.trace==='D'||state.trace==='E'){
+    if(state.trace==='D'){ renderRunning(); } else { renderEmpty(); }
+    if(rendered) announce(state.trace==='D'
+      ? 'Agent running. 3 of 6 hops sealed, not yet signable.'
+      : 'No agent run on this deck yet. Nothing to show.');
+    rendered=true;
+    return;
+  }
   var t=TRACES[state.trace];
   renderBanner(t);
   renderSpine(t);
   renderFootnote(t);
+  if(rendered) announce('Trace '+state.trace+'. '+(STATUS_TEXT[t.status]||t.status)+'. '
+    +(t.validation && !t.validation.ok
+       ? 'Validation failed with '+t.validation.issues.length+' blocking issue'+(t.validation.issues.length===1?'':'s')+' — blocked, not signable.'
+       : t.fallback
+         ? 'Model route timed out, attribution degraded — provisional receipt, no tokens billed.'
+         : 'Sealed end to end, awaiting your signature.')
+    +' Detail level '+state.density+'.');
+  rendered=true;
 }
 
 /* ---------- controls ---------- */
@@ -872,6 +1000,7 @@ themeBtn.addEventListener('click',function(){
   var dark = state.theme==null ? window.matchMedia('(prefers-color-scheme: dark)').matches : state.theme==='dark';
   state.theme = dark?'light':'dark';
   applyTheme();
+  announce(state.theme==='dark'?'Dark theme':'Light theme');
 });
 
 applyTheme();

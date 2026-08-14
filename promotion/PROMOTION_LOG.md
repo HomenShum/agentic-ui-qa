@@ -89,11 +89,11 @@ reproduction; a hunch is not a defect. `<SCRATCH>` =
 | # | Severity | Journey | Reproduction | Status |
 |---|----------|---------|--------------|--------|
 | D1 | major | J2 | **FIXED — iteration 1.** `examples/trace-revamp/mockup.html` ships no document-head boilerplate. `grep -i 'doctype\|name="viewport"\|<html'` returns **0 hits**; the file opens straight into `<meta charset="utf-8">`. Three observable consequences, all measured at runtime by `node <SCRATCH>/kbd-check.mjs`: (a) `document.doctype` → `null` and `document.compatMode` → `"BackCompat"`, i.e. the demo renders in **quirks mode**; (b) `document.querySelector('meta[name=viewport]')` → `null`, so a real phone lays the page out at ~980px and scales down — the 375px layout in `state-C-mobile-375.png` is reachable only because Playwright sets the layout viewport directly; (c) `document.documentElement.getAttribute("lang")` → `null` (WCAG 3.1.1 Level A). One missing seam, three symptoms — fix it once at the top of the file, not three times. Fixed at the top of the file **and** at the instruction that produced it (`REVAMP.md` step 4 specified the head as exactly one tag). Re-proved: `promotion/evidence/head-check.json` → `doctype html · CSS1Compat · lang en · viewport width=device-width · mobileLayoutViewport 375`. **Iteration 2 correction:** the root-cause half was one copy short. `REVAMP.md` carried the same directive a THIRD time at :165, in "Non-negotiables at every tier" — *"charset first line"*, verbatim and scoped more broadly than the step-4 text. An agent following the non-negotiables checklist would still have authored a fragment. Rewritten there too. | **closed** |
-| D2 | major | J2 | Horizontal overflow at 320px. Load the mockup at viewport 320x900; `document.documentElement.scrollWidth` = **360** vs `clientWidth` = **320**. Clean at 375, 768, 1024, 1440, 1920. Measured by `node <SCRATCH>/kbd-check.mjs` (`overflow` map). ~~**Untested hypothesis for Wave 2:** quirks mode (D1a) changes the box model document-wide, so D1 may be the upstream cause of D2 — do not assume it; re-measure at 320px *after* adding the doctype before writing any width CSS.~~ **Hypothesis tested and FALSE (iteration 1).** Measured with only the doctype added and no CSS touched: 320px `scrollWidth` is **360 both before and after** — identical. `promotion/evidence/head-check-before.json` and `head-check.json` both record `overflow["320"] = {scrollWidth: 360, clientWidth: 320}`. Quirks mode was never the cause; D2 is an independent CSS width defect and still needs a width fix. Corroborating: `desktop-1440-before.png` and `desktop-1440.png` are byte-identical (sha256 `1cf36037…`), so the box-model switch changed no layout at all. | open |
-| D3 | major | J1 | The package has zero behavioral tests. `npm test` → exit 1 `Missing script: "test"`. The declared proof, `npm run proof`, exits 0 with `12/12` but `scripts/self-check.mjs` only checks that 6 documents exist and runs `node --check` (syntax parse) on 6 scripts. Nothing asserts that `qa-gate.mjs` exits 2 on absent state, that `live-signal.mjs` exits 1 on a missing signal, or that `qa-memory.mjs` fingerprints dedupe — all three of which I had to verify by hand this pass. A green `proof` is compatible with every script being semantically broken. **Narrowed, not closed, in iteration 2:** `npm run proof` now runs `head-check.mjs` for real against the demo surface (13/13 → 15/15) and a green proof is no longer compatible with a broken document shell — see D6. The other three behaviours above are still hand-checked only. | open |
+| D2 | major | J2 | Horizontal overflow at 320px. Load the mockup at viewport 320x900; `document.documentElement.scrollWidth` = **360** vs `clientWidth` = **320**. Clean at 375, 768, 1024, 1440, 1920. Measured by `node <SCRATCH>/kbd-check.mjs` (`overflow` map). ~~**Untested hypothesis for Wave 2:** quirks mode (D1a) changes the box model document-wide, so D1 may be the upstream cause of D2 — do not assume it; re-measure at 320px *after* adding the doctype before writing any width CSS.~~ **Hypothesis tested and FALSE (iteration 1).** Measured with only the doctype added and no CSS touched: 320px `scrollWidth` is **360 both before and after** — identical. `promotion/evidence/head-check-before.json` and `head-check.json` both record `overflow["320"] = {scrollWidth: 360, clientWidth: 320}`. Quirks mode was never the cause; D2 is an independent CSS width defect and still needs a width fix. Corroborating: `desktop-1440-before.png` and `desktop-1440.png` are byte-identical (sha256 `1cf36037…`), so the box-model switch changed no layout at all. **FIXED — iteration 3.** Root cause is a missing clamp, not a width. `.stage` sized its single column `1fr`, and `1fr` is `minmax(auto,1fr)` whose automatic minimum adopts the widest item's min-content contribution — which is `.inspector`'s fixed `width:340px`. `.inspector`'s own `max-width:100%` cannot rescue it, because a percentage max-width resolves against the track currently being sized. The two-column rule at `@media(min-width:860px)` already wrote `minmax(0,1fr)` for exactly this reason; the one-column rule was one clamp short — the same one-copy-short shape as D1 and D6. One token changed: `1fr` -> `minmax(0,1fr)`. Re-proved: `promotion/evidence/head-check.json` -> `overflowWidths: []`, and independently `promotion/evidence/wig-review.json` -> Layout/"Responsive coverage" clean at 320/375/768/1024/1440/1920. Checked that it moves layout rather than hiding it: with the clamp applied no element's `right` exceeds `clientWidth` and no element reports `scrollWidth > clientWidth`, so nothing is being clipped behind the body's `overflow-x:hidden`. | **closed** |
+| D3 | major | J1 | The package has zero behavioral tests. `npm test` → exit 1 `Missing script: "test"`. The declared proof, `npm run proof`, exits 0 with `12/12` but `scripts/self-check.mjs` only checks that 6 documents exist and runs `node --check` (syntax parse) on 6 scripts. Nothing asserts that `qa-gate.mjs` exits 2 on absent state, that `live-signal.mjs` exits 1 on a missing signal, or that `qa-memory.mjs` fingerprints dedupe — all three of which I had to verify by hand this pass. A green `proof` is compatible with every script being semantically broken. **Narrowed, not closed, in iteration 2:** `npm run proof` now runs `head-check.mjs` for real against the demo surface (13/13 → 15/15) and a green proof is no longer compatible with a broken document shell — see D6. The other three behaviours above are still hand-checked only. **CLOSED — by commit `682f56a`, confirmed by re-running it in iteration 3.** The human-ready pass added `test/` and a `test` script; this ledger and the scorecard never caught up, which is why the row read `Missing script: "test"` long after it stopped being true. Measured this pass: `npm test` -> **32 pass, 0 fail, exit 0**, and the three behaviours this defect named are among the 32 by name — `qa-memory` giving one fingerprint to the same defect found twice, `qa-gate` refusing with no config and refusing with no prior state, and `live-signal` requiring both a live page and a stability window before it will call something absent. What remains is condition 11's other half, `npm run build`, which is not a test defect. | **closed** |
 | D6 | major | J1 | **FIXED — iteration 2.** D1's fix had no automated regression gate, so the repository could lose it again silently. `scripts/self-check.mjs` listed `head-check.mjs` but only spawned `node --check` on it — a **syntax parse**, not a run — and `.github/workflows/node-platform-conformance.yml` delegated entirely to NodeKit `repo check`, which asserts only that `nodekit.yaml`'s `proof.command` *references* an existing npm script and never executes it. Decisive reproduction, run on a fresh clone of `5134a04`: delete the four-line document shell out of `examples/trace-revamp/mockup.html` → `npm run doctor` **exit 0 `PASS (13/13)`** and `npm run proof` **exit 0 `PASS (13/13)`**. The producer worked; nothing ran it. Fixed at the seam: self-check now *runs* head-check against the demo surface (13/13 → 15/15), head-check gained a browserless source mode so it can gate where no browser is installed, and CI gained a job that actually executes `npm run proof`. Re-proved: `promotion/evidence/shell-regression-proof.json` → same command, **exit 1** without the shell, exit 0 with it. | **closed** |
-| D4 | minor | J2 | The screen-reader live region is declared but never announces the primary state change. `mockup.html:413` defines `<div id="srLive" aria-live="polite" role="status">`; the only write is at `:819`, for `'Digest copied to clipboard'`. Repro: focus `[data-trace="B"]`, press Enter — `aria-pressed` flips to `true`, the banner text changes to `Completed…deterministic fallback`, the footnote changes, and `document.getElementById('srLive').textContent` is still `""`. A screen-reader user is told nothing when the entire trace swaps, including when it swaps to the failed state. Same gap for the DEPTH and theme controls. | open |
-| D5 | minor | J2 | No loading and no empty state exist anywhere in the demo surface — not styled poorly, absent. The repo's own auditor says so: `<SCRATCH>/qa-shots/prettify-audit.json` scores V8 "State polish (empty / loading / error)" as `n/a` with the note that empty+loading+error PNGs must be captured. Three of five states named by gate condition 5 are designed and captured; two are not. | open |
+| D4 | minor | J2 | The screen-reader live region is declared but never announces the primary state change. `mockup.html:413` defines `<div id="srLive" aria-live="polite" role="status">`; the only write is at `:819`, for `'Digest copied to clipboard'`. Repro: focus `[data-trace="B"]`, press Enter — `aria-pressed` flips to `true`, the banner text changes to `Completed…deterministic fallback`, the footnote changes, and `document.getElementById('srLive').textContent` is still `""`. A screen-reader user is told nothing when the entire trace swaps, including when it swaps to the failed state. Same gap for the DEPTH and theme controls. **FIXED — iteration 3.** The announcement went into `render()`, the single funnel every trace and depth change already passes through, rather than into each control's handler — one place, all callers, and the next control added inherits it. The text is derived from the same trace fields the banner renders, so it cannot say something the screen does not; the theme toggle announces from its own click handler because it does not route through `render()`. Re-proved by driving it: `promotion/evidence/wig-review.json` -> Interactions/"Announce async updates" focuses `[data-trace="B"]`, activates it and reads the region back — `"Trace B. Completed. Model route timed out, attribution degraded — provisional receipt, no tokens billed. Detail level human."` where `promotion/evidence/before/wig-review.json` records `""`. | **closed** |
+| D5 | minor | J2 | No loading and no empty state exist anywhere in the demo surface — not styled poorly, absent. The repo's own auditor says so: `<SCRATCH>/qa-shots/prettify-audit.json` scores V8 "State polish (empty / loading / error)" as `n/a` with the note that empty+loading+error PNGs must be captured. Three of five states named by gate condition 5 are designed and captured; two are not. **FIXED — iteration 3.** Both states are reachable from the RUN control that already existed, as `D · running` and `E · empty`, rather than behind a timer — a state you cannot select is a state nobody can screenshot or argue with, and arguing with screenshots is this repo's entire product. `D` shows three hops sealed and three not, `aria-busy="true"`, and `$— · not yet billed`: no cost, no candidate digest and no signature line for work that has not happened, which is the rule A/B/C already followed. `E` says what is absent and what the person would do to make something appear. Re-proved: `promotion/evidence/wig-state-D.png`, `wig-state-E.png`, and `wig-review.json` -> Content/"All states designed" reads back `perState.D.ariaBusy "true"`, `skeletonBars 6`, `perState.E.emptyBlocks 1`. | **closed** |
 | D7 | minor | J1 | **FIXED — iteration 2.** `examples/trace-revamp/implementation-spec.md:3` declared *"Proven mockup: `trace-tab-merged.html`"*. No such file exists — the directory holds `README.md`, `implementation-spec.md`, `mockup.html`. A reader following the spec to its proven artifact lands on nothing. Pre-existing, and pointed at by an iteration-1 edit to that same line, which is how it surfaced. Now names `mockup.html`, beside it. | **closed** |
 
 Two advisory items, deliberately **not** listed as defects because they are
@@ -337,3 +337,178 @@ targets for a PRETTIFY pass, not gate blockers.
   `live-signal.mjs` exits 1 on a missing signal, that `qa-gate.mjs` exits 2 with no
   prior state, and that `qa-memory.mjs` fingerprints dedupe are still things a human
   has to check by hand, as the baseline did. D3 narrows; it does not close.
+
+### Iteration 3 — 2026-08-13 — the two conditions nobody had ever measured
+
+- **Journey exercised:** J2 "Show me what an honest agent-trace screen looks like
+  before I redesign mine" — the only journey that renders in a browser, and the
+  surface conditions 7 and 8 are about.
+
+- **Why this iteration exists.** Conditions 7 and 8 had been UNVERIFIED since the
+  baseline, with the reason "those authorities are not installed in this
+  environment". That reason was wrong, and it is worth naming the mistake rather
+  than the fix: both authorities install from npm on demand. Nothing needed
+  vendoring, nothing needed a licence, and neither condition was ever blocked by
+  the environment — they were blocked by nobody having typed the command.
+
+      npx --yes lighthouse@13.4.1 <url> --output=json --output-path=<f> --chrome-flags="--headless"
+      npx --yes @axe-core/cli@4.13.0 <url> --save <f>
+
+  Both are now wrapped in a committed producer, so the next wave types
+  `npm run audit:web` instead of rediscovering the incantation.
+
+- **The two are not interchangeable, and this is the trap the whole iteration was
+  built to avoid.** A Lighthouse accessibility score is axe-core run over a
+  smaller rule subset in a throttled mobile emulation. The Web Interface
+  Guidelines are a different and much larger list, most of which no tool checks:
+  whether async updates are announced, whether `<button>` was reached for before
+  `role="button"`, whether the browser chrome follows the page into dark mode.
+  **Recording a Lighthouse number against condition 7 would satisfy the row and
+  measure nothing it asks about.** So conditions 7 and 8 have separate producers
+  writing separate receipts, and `wig-review.mjs` says so in its own header.
+
+- **Condition 8 — `scripts/web-quality-audit.mjs`, new.** Serves the demo surface
+  on 127.0.0.1:4913 (Lighthouse refuses a `file://` URL and axe's driver will not
+  navigate one), runs both tools, and writes `lighthouse.json`, `axe.json` and a
+  summary receipt. Result on the fixed tree: Lighthouse 13.4.1 performance
+  **1.00**, accessibility **1.00**, best-practices **1.00**, SEO 0.91; **LCP
+  1358ms, CLS 0, TBT 0ms, FCP 1071ms**; axe-core 4.13.0 **0 violations**, 30
+  passes, 1 incomplete. Exit 0.
+
+  Two things this producer had to learn the hard way, both recorded because both
+  are the kind of bug that produces a confident wrong number:
+
+  1. **The rig authored a defect and then reported it.** The first version sent
+     `cache-control: no-store` out of habit, and Lighthouse correctly failed the
+     page on `bf-cache` — "Page prevented back/forward cache restoration". The
+     finding was real and the fault was the harness's. `scripts/lib/serve.mjs`
+     now sends content-type and nothing else, and `bf-cache` scores 1.
+  2. **The rig deadlocked against its own server.** `spawnSync` blocks the event
+     loop, including the Node HTTP server two lines above it that was serving the
+     page under audit. Lighthouse requested the URL, Node could not answer while
+     it waited for Lighthouse, and the run hung until timeout. Async `spawn`.
+
+- **Condition 7 — `scripts/wig-review.mjs`, new.** A review, performed against
+  https://vercel.com/design/guidelines as fetched on 2026-08-13, with the
+  guideline's own title and section on every check and a DOM measurement behind
+  every verdict. **28 checked, 20 pass, 2 fail (both minor), 5 requiring human
+  eyes, 1 n/a, exit 0.** The five perceptual guidelines — optical alignment,
+  deliberate alignment, easing that fits the subject, layered shadows, lockup
+  contrast — are recorded `status: "eyes"` with the screenshots a reviewer must
+  open. They are never auto-passed, because a script that silently marks them
+  green is how a 28-row receipt starts lying.
+
+  On the pre-fix tree the same review is **12 pass, 10 fail, 5 major, exit 1**
+  (`promotion/evidence/before/wig-review.json`). The five majors it found:
+
+  | Guideline | Measurement before | After |
+  |---|---|---|
+  | Interactions/"Announce async updates" | `#srLive` reads `""` after activating RUN B | reads the full trace status |
+  | Layout/"Responsive coverage" | 320px `scrollWidth` 360 vs `clientWidth` 320 | clean at all six widths |
+  | Layout/"No excessive scrollbars" | same measurement | clean |
+  | Content/"All states designed" | no loading and no empty state exist in the DOM | five states, each captured |
+  | Design/"Minimum contrast" | 20 text nodes below the WCAG AA floor, **light theme** | 0, both themes |
+
+- **The finding that mattered most was one no tool reported.** The axe CLI
+  rendered this page with `prefers-color-scheme: dark` — that is readable
+  straight off its own receipt, where every passing node reports a backdrop like
+  `#111315`. Its clean contrast result is therefore a statement about the **dark**
+  theme. The light theme had been measured by nobody, and it held **20 nodes
+  below the WCAG AA floor** while every automated tool was green. Two ink tokens
+  account for all twenty:
+
+  - `--ap-faint` at lightness 0.55 gives 3.98–4.48:1 on the light surfaces — a
+    family of near-misses, none of them visible to the eye as a defect. 0.50.
+  - `--ap-human` is the **marker** ink; `--ap-human-strong` is the **text** ink,
+    and it is the one that flips per theme (0.553 light, 0.775 dark) precisely so
+    that it can be read in both. Four text usages had reached for the marker,
+    measuring 2.75–2.81:1. Swapped, and `--ap-human-strong` nudged 0.553 → 0.530
+    so it also clears the floor as badge ink on `--ap-human-soft`.
+
+  **A green tool is a green tool in the mode it happened to render.** That belongs
+  in this repo's own protocol, not just in this log.
+
+- **The check that measured nothing, and how it was caught.** The contrast
+  resolver's first version reported "0 nodes below floor" — and had scored
+  **zero** nodes. This page is authored in oklch, and neither `getComputedStyle`
+  nor canvas `fillStyle` converts: both hand back `oklch(0.21 0.034 264.665)`
+  verbatim. An rgb-only parse rejected every element, the loop `continue`d on all
+  of them, and the empty result serialised as a clean pass. It was caught by
+  reading the receipt rather than the exit code: `worstNode.ratio` was `null`,
+  which is what `Infinity` becomes in JSON, and an untouched sentinel is a
+  measurement that never happened. Colours are now resolved by **painting one
+  pixel and reading it back**, `textNodesScored` is in the receipt, and the check
+  fails when it scores nothing.
+
+  Two more corrections in the same file, both false positives that would have
+  shipped findings that are not real:
+
+  - `transition-property` computes to `all` on **every** element including
+    `<head>` and `<meta>`, because that is its initial value. The check reported
+    206 violations on a page with none. It now also requires a non-zero duration.
+  - A `border-radius: 50%` dot inside a 5px chip is the intended shape, not a
+    nested-radius violation; comparing `50%` to `5px` with `parseFloat` said
+    otherwise. Percentage radii are excluded.
+
+- **The resolver is checked against the authority, not trusted.** On the same
+  tree, six nodes axe scored itself agree with this resolver to within **0.04**:
+  axe 5.39 / 6.76 / 9.96 / 6.22 / 6.01 / 6.16 against 5.39 / 6.73 / 9.97 / 6.26 /
+  6.01 / 6.20 (`promotion/evidence/before/wig-review.json` beside
+  `before/axe.json`). No expected value is hard-coded in the script — a number
+  frozen in a check is the stale measurement this repo keeps catching in its own
+  reports; the receipt names where to read axe's side instead.
+
+- **Fixed, all in `examples/trace-revamp/mockup.html` unless noted:**
+  - `.stage` grid track `1fr` → `minmax(0,1fr)` — **D2**, the 320px overflow.
+    One clamp, and the desktop rule had already written it.
+  - `render()` now announces into `#srLive` — **D4**. One funnel, all controls.
+  - `D · running` and `E · empty` added to the RUN switch, with `.skelrow` /
+    `.emptystate` styles — **D5**. Selectable, not timed, so they can be captured.
+  - `<div class="frame-note">` → `<main>` — closes axe `landmark-one-main` and
+    `region` in one edit, because both were the same absence.
+  - `role="group"` on `.insp-tabs` — `aria-label` is prohibited on an implicit
+    generic role, so the label was being dropped. This is axe's
+    `aria-prohibited-attr` incomplete, and it is why that incomplete is gone.
+  - `min-height:24px` on the segmented controls — they measured 21–23px tall.
+  - `color-scheme` on `:root` and both theme blocks; `<meta name="theme-color">`
+    for light and dark; `<meta name="description">`.
+  - `--ap-faint` and `--ap-human-strong` retuned, four `--ap-human` text usages
+    swapped — the contrast family above.
+  - `package.json` — `audit:wig` and `audit:web` targets.
+
+- **Blast radius, measured rather than argued.** Colour tokens were changed, so
+  every state was re-rendered and opened rather than assumed intact: A, B, C, D
+  and E at 1440 plus the dark composition, all committed. The red VALIDATION
+  FAILED seal still lists its two real validation issues and still reads
+  `blocked — not signable`; the dashed-amber provisional stamp still reports
+  `$0.000 · no tokens billed` and invents no hash. `npm test` → 32 pass,
+  `npm run doctor` → 21/21, `node scripts/head-check.mjs --evidence` → exit 0
+  rendered, `node scripts/shell-regression-proof.mjs` unchanged.
+
+- **Deliberately not done, and why.** No `build` script was added. Condition 11
+  asks for tests and build green; tests are green and there is no build stage in
+  a zero-dependency package. Adding a no-op `build` to turn the row green is
+  inventing a command that does nothing so a gate reports success, which is the
+  precise failure this gate exists to catch. The row stays FAIL and says which
+  half is which.
+
+- **Tests:** `npm test` → **32 pass, 0 fail, exit 0**. `npm run doctor` → exit 0,
+  `PASS agentic-ui-qa self-check (21/21)`. `npm run build` → exit 1,
+  `Missing script: "build"`. `node scripts/wig-review.mjs --evidence` → exit 0.
+  `node scripts/web-quality-audit.mjs --evidence` → exit 0. Both → exit 1 on the
+  stashed pre-fix surface, receipts under `promotion/evidence/before/`.
+
+- **Conditions newly PASS: 2, 4, 5, 6, 7, 8.** 5/12 → **11/12**. Conditions 9 and
+  10 were already PASS and did not move, but both stopped resting on session-local
+  temp files: 9 now cites `wig-review.json` (`consoleErrors: []`,
+  `failedRequests: []` across 4 page loads) and 10 cites `lighthouse.json`
+  (TBT 0ms, CLS 0, performance 1.00). Condition 11 stays FAIL on the build half.
+
+## Open ledger after iteration 3
+
+| # | Severity | Journey | Reproduction | Status |
+|---|----------|---------|--------------|--------|
+| D8 | minor | J2 | No skip link. `wig-review.json` → Content/"Headings & skip link": `hasSkipLink false`, `headingLevelSkips 0`. Minor on a single-view surface with 15 tab stops and no repeated navigation to skip past; it becomes real the moment this composition gains a second view. | open |
+| D9 | minor | J2 | The six rail nodes are `div[role="button"][tabindex="0"]`, not `<button>` — WIG Content/"Semantics before ARIA". `wig-review.json` → `roleButtonOnNonButtonElements: 6`. Not fixed deliberately: each node is a two-column grid whose rail segments position against its own box, so a native button needs a full UA-style reset before the layout returns to where it started. The ARIA pattern is complete and measured — Enter and Space both activate, `aria-expanded` tracks — so this is standing debt, not a broken control. | open |
+| D10 | minor | J2 | Nine controls are under the guideline's 44px **mobile** hit-target floor (they clear the 24px base floor). `wig-review.json` → Interactions/"Match visual & hit targets", `underMobileFloor`. Raising the segmented controls to 44px re-proportions the whole control bar, which is a redesign rather than a defect closure. | open |
+| D11 | minor | J1 | `npm run build` exits 1, `Missing script: "build"` — the only half of condition 11 still open. Recorded as a defect rather than left in the scorecard alone, so the next wave decides it deliberately: add a real build stage, or have the gate record "no build stage" explicitly. Do not add a no-op. | open |

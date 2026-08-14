@@ -1,0 +1,131 @@
+{
+  "tool": "web-quality-audit.mjs",
+  "ranAt": "2026-08-14T03:04:59.849Z",
+  "surface": "examples/trace-revamp/mockup.html",
+  "url": "http://127.0.0.1:4913/",
+  "commands": [
+    "npx.cmd --yes lighthouse@13.4.1 http://127.0.0.1:4913/ --output=json --output-path=C:\\Users\\hshum\\AppData\\Local\\Temp\\claude\\D--VSCode-Projects-cheiron-ai-take-home\\440ef9e9-83bb-4fe6-8676-4fdaaf332f3e\\scratchpad\\limits\\agentic-ui-qa\\repo\\promotion\\evidence\\before\\lighthouse.json --chrome-flags=\"--headless\" --quiet",
+    "npx.cmd --yes @axe-core/cli@4.13.0 http://127.0.0.1:4913/ --save promotion/evidence/before/axe.json"
+  ],
+  "exitCodes": {
+    "lighthouse": 0,
+    "axe": 0
+  },
+  "lighthouse": {
+    "version": "13.4.1",
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/151.0.0.0 Safari/537.36",
+    "scores": {
+      "performance": 1,
+      "accessibility": 0.98,
+      "best-practices": 1,
+      "seo": 0.82
+    },
+    "coreWebVitals": {
+      "lcpMs": 1206.4262986738677,
+      "cls": 0,
+      "tbtMs": 0,
+      "fcpMs": 1106.2131493369338,
+      "siMs": 1106.2131493369338
+    },
+    "failedAudits": [
+      {
+        "id": "landmark-one-main",
+        "title": "Document does not have a main landmark.",
+        "score": 0
+      },
+      {
+        "id": "meta-description",
+        "title": "Document does not have a meta description",
+        "score": 0
+      },
+      {
+        "id": "robots-txt",
+        "title": "robots.txt is not valid",
+        "score": 0
+      },
+      {
+        "id": "llms-txt",
+        "title": "llms.txt does not follow recommendations",
+        "score": 0
+      },
+      {
+        "id": "unminified-css",
+        "title": "Minify CSS",
+        "score": 0.5
+      },
+      {
+        "id": "unminified-javascript",
+        "title": "Minify JavaScript",
+        "score": 0.5
+      },
+      {
+        "id": "unused-css-rules",
+        "title": "Reduce unused CSS",
+        "score": 0.5
+      },
+      {
+        "id": "document-latency-insight",
+        "title": "Document request latency",
+        "score": 0.5
+      },
+      {
+        "id": "first-contentful-paint",
+        "title": "First Contentful Paint",
+        "score": 0.99
+      }
+    ]
+  },
+  "axe": {
+    "testEngine": "4.13.0",
+    "counts": {
+      "violations": 2,
+      "passes": 27,
+      "incomplete": 2
+    },
+    "byImpact": {
+      "moderate": 2
+    },
+    "violations": [
+      {
+        "id": "landmark-one-main",
+        "impact": "moderate",
+        "help": "Document should have one main landmark",
+        "nodes": 1,
+        "targets": [
+          "html"
+        ]
+      },
+      {
+        "id": "region",
+        "impact": "moderate",
+        "help": "All page content should be contained by landmarks",
+        "nodes": 1,
+        "targets": [
+          ".frame-note"
+        ]
+      }
+    ],
+    "incomplete": [
+      {
+        "id": "aria-prohibited-attr",
+        "impact": "serious",
+        "help": "Elements must only use permitted ARIA attributes",
+        "nodes": 1,
+        "reason": null,
+        "resolvedBy": null
+      },
+      {
+        "id": "color-contrast",
+        "impact": "serious",
+        "help": "Elements must meet minimum color contrast ratio thresholds",
+        "nodes": 21,
+        "reason": "Element's background color could not be determined due to a background gradient",
+        "resolvedBy": "scripts/wig-review.mjs — Design/\"Minimum contrast\". axe cannot composite a gradient backdrop; wig-review resolves every gradient colour stop the browser reports and scores each text node against its WORST stop."
+      }
+    ]
+  },
+  "majorFindings": [
+    "axe serious INCOMPLETE — aria-prohibited-attr: undecided on 1 node(s), no producer resolves it"
+  ],
+  "passed": false
+}
