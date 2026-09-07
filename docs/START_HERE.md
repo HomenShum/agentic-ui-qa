@@ -339,7 +339,8 @@ assert.match(gate.out, /unreadable|corrupt|parse/i);
 ```
 
 **Input** — none; each test builds its own temporary workspace.
-**Output** — 31 passing tests.
+**Output** — 32 passing TAP entries: 31 named behavior tests plus one helper-file entry.
+These source checks do not certify rendered layout or native clipboard behavior.
 **Failure behavior** — `npm test` exits non-zero and CI goes red.
 **Next** — nothing. That is the end of one pass.
 

@@ -1,0 +1,886 @@
+{
+  "derivedFrom": "32a82c7dc35461157e3c04d47690601f129a54598011711b95f466238fe16a1c",
+  "scope": "AGENT_EVALUATED_ONLY. Criterion-level partial observations from the owned local source/trace example, not full toolkit, human, shared or production certification.",
+  "criterionRatings": [
+    {
+      "id": "V1",
+      "field": "visualScore",
+      "name": "typography",
+      "observedScore": 3,
+      "finalScore": null,
+      "status": "PARTIALLY_OBSERVED",
+      "evidenceRefs": [
+        "current_phone",
+        "current320",
+        "current2x390"
+      ],
+      "deductionOrMissingEvidence": "The status words are now intact, but core receipt metadata is10–12px (ticks10.5px) and the default phone proof requires reading dense small text. Enlarging text is a usable workaround; normal-size typography remains below the portfolio target.",
+      "scope": "Rendered typography in the fixed-width example only; no human acuity or assistive-technology inference."
+    },
+    {
+      "id": "V2",
+      "field": "visualScore",
+      "name": "spacing/grid",
+      "observedScore": 4,
+      "finalScore": null,
+      "status": "PARTIALLY_OBSERVED",
+      "evidenceRefs": [
+        "desktop_entry",
+        "current_phone",
+        "current_desktop"
+      ],
+      "deductionOrMissingEvidence": "The receipt, invoice and provenance groups have consistent padding and clear boundaries. The fixed340px inspector leaves substantial unused width at tablet/desktop, an intentional demo frame with minor spatial inefficiency.",
+      "scope": "Observed light-theme composition; no universal layout certification."
+    },
+    {
+      "id": "V3",
+      "field": "visualScore",
+      "name": "color/token discipline",
+      "observedScore": 4,
+      "finalScore": null,
+      "status": "PARTIALLY_OBSERVED",
+      "evidenceRefs": [
+        "current_fallback",
+        "current_failed",
+        "dark_historical",
+        "continuity"
+      ],
+      "deductionOrMissingEvidence": "Terracotta ownership, indigo agent and green/red/amber state colors remain consistent. Historical dark/light switching was observed; color declarations are unchanged. Corrected dark receipt pixels were not replayed.",
+      "scope": "Token/color discipline only; numerical contrast is NOT_RUN."
+    },
+    {
+      "id": "V4",
+      "field": "visualScore",
+      "name": "hierarchy",
+      "observedScore": 3,
+      "finalScore": null,
+      "status": "PARTIALLY_OBSERVED",
+      "evidenceRefs": [
+        "phone_entry",
+        "desktop_entry"
+      ],
+      "deductionOrMissingEvidence": "Desktop clearly separates explanation and inspector. At390×844 the first viewport is almost entirely explanatory prose and the card only starts at the bottom, hiding every demo control until scrolling.",
+      "scope": "Actual first-view hierarchy; no fresh-human comprehension rating."
+    },
+    {
+      "id": "V5",
+      "field": "visualScore",
+      "name": "rendered legibility/contrast",
+      "observedScore": 4,
+      "finalScore": null,
+      "status": "PARTIALLY_OBSERVED",
+      "evidenceRefs": [
+        "current_phone",
+        "current2x320",
+        "current2x390",
+        "current_failed2x"
+      ],
+      "deductionOrMissingEvidence": "The repaired labels and failure reasons are legible without horizontal loss in the selected normal/enlarged images. Long identifiers use deliberate shortening plus full-copy values. Contrast ratios and WCAG thresholds were not measured.",
+      "scope": "Partial rendered-legibility observation only; this score is not a contrast grade."
+    },
+    {
+      "id": "V6",
+      "field": "visualScore",
+      "name": "consistent elevation/icons",
+      "observedScore": 4,
+      "finalScore": null,
+      "status": "PARTIALLY_OBSERVED",
+      "evidenceRefs": [
+        "lexical",
+        "current_phone",
+        "current2x320"
+      ],
+      "deductionOrMissingEvidence": "All42 intended status icons are visibly11×11px; whole chips wrap correctly. Seal elevation and warning icons distinguish outcomes. The fixed11px ticks remain visually small beside doubled21px labels.",
+      "scope": "Scoped actual icon/elevation evidence; full-theme icon fidelity is incomplete."
+    },
+    {
+      "id": "V7",
+      "field": "visualScore",
+      "name": "alignment",
+      "observedScore": 4,
+      "finalScore": null,
+      "status": "PARTIALLY_OBSERVED",
+      "evidenceRefs": [
+        "current_provenance",
+        "current_desktop",
+        "state_readback"
+      ],
+      "deductionOrMissingEvidence": "Invoice values, receipt blocks and copy controls stay aligned and contained. Provenance value starts differ with per-row key lengths; the modest variation remains readable rather than an overlap.",
+      "scope": "Observed receipt/provenance alignment at the declared cells."
+    },
+    {
+      "id": "V8",
+      "field": "visualScore",
+      "name": "polish of empty/loading/error/populated states",
+      "observedScore": 4,
+      "finalScore": null,
+      "status": "PARTIALLY_OBSERVED",
+      "evidenceRefs": [
+        "current_fallback",
+        "current_failed",
+        "running",
+        "empty",
+        "continuity"
+      ],
+      "deductionOrMissingEvidence": "Populated, provisional, failed, running and empty fixtures present distinct labels and shapes. Empty/running states retain the prior observed rendering through unchanged owners; they are examples, not executed job lifecycles.",
+      "scope": "Static fixture-state polish; no backend lifecycle or production-state coverage."
+    },
+    {
+      "id": "V9",
+      "field": "visualScore",
+      "name": "purposeful motion and reduced-motion behavior",
+      "observedScore": null,
+      "finalScore": null,
+      "status": "NOT_RUN",
+      "evidenceRefs": [
+        "reduced_report",
+        "first_after_report"
+      ],
+      "deductionOrMissingEvidence": "Reduced-motion mode and disabled skeleton animation were observed, but no purpose/motion reference or video-based animation evaluation was completed.",
+      "scope": "Purposeful motion remains ungraded; no numerical motion score from a still image or CSS count."
+    },
+    {
+      "id": "D1",
+      "field": "designScore",
+      "name": "Clarity of the main action",
+      "observedScore": 3,
+      "finalScore": null,
+      "status": "PARTIALLY_OBSERVED",
+      "evidenceRefs": [
+        "phone_entry",
+        "desktop_entry",
+        "controls320"
+      ],
+      "deductionOrMissingEvidence": "The instruction to switch traces is explicit, and controls work once reached. On the phone, the instruction and extended explanation precede the actual controls by more than the initial viewport.",
+      "scope": "Agent-observed action discovery with a scrolling workaround."
+    },
+    {
+      "id": "D2",
+      "field": "designScore",
+      "name": "navigation/information architecture",
+      "observedScore": 4,
+      "finalScore": null,
+      "status": "PARTIALLY_OBSERVED",
+      "evidenceRefs": [
+        "desktop_entry",
+        "first_after_report"
+      ],
+      "deductionOrMissingEvidence": "Run A–E and Human/Pro/Tech provide a small understandable local navigation model. Content/Sources are surrounding mockup context, not exercised application routes.",
+      "scope": "Local trace-example information architecture; real application navigation untested."
+    },
+    {
+      "id": "D3",
+      "field": "designScore",
+      "name": "progressive disclosure",
+      "observedScore": 3,
+      "finalScore": null,
+      "status": "PARTIALLY_OBSERVED",
+      "evidenceRefs": [
+        "phone_entry",
+        "first_after_report",
+        "current_provenance"
+      ],
+      "deductionOrMissingEvidence": "Human/Pro/Tech successfully reveal additional provenance, but the large introductory explanation itself is always expanded ahead of the phone inspector. The first inspection requires scrolling through that explanation.",
+      "scope": "Scoped information disclosure in the example; no implied redesign of the toolkit."
+    },
+    {
+      "id": "D4",
+      "field": "designScore",
+      "name": "useful information density",
+      "observedScore": 3,
+      "finalScore": null,
+      "status": "PARTIALLY_OBSERVED",
+      "evidenceRefs": [
+        "phone_entry",
+        "current_phone",
+        "current2x320"
+      ],
+      "deductionOrMissingEvidence": "The introduction repeats custody/seal concepts before the first action, and the340px panel packs many small labels into one column. Enlarged text is contained but substantially taller.",
+      "scope": "Observed density/friction; no participant task-time or attention measurement."
+    },
+    {
+      "id": "D5",
+      "field": "designScore",
+      "name": "consistency of component behavior and wording",
+      "observedScore": 4,
+      "finalScore": null,
+      "status": "PARTIALLY_OBSERVED",
+      "evidenceRefs": [
+        "current_fallback",
+        "current_failed",
+        "clipboard",
+        "example_readme"
+      ],
+      "deductionOrMissingEvidence": "Trace, depth, receipt and copy controls preserve consistent local state and outcome wording. Detailed clipboard recovery is carried in title/accessible feedback rather than persistent inline prose. README identifies the historic live-run language as illustrative fixtures.",
+      "scope": "Example controls and documentation only."
+    },
+    {
+      "id": "R1",
+      "field": "responsiveScore",
+      "name": "Reflow/content preservation",
+      "observedScore": 4,
+      "finalScore": null,
+      "status": "PARTIALLY_OBSERVED",
+      "evidenceRefs": [
+        "final_report",
+        "state_readback",
+        "current2x320"
+      ],
+      "deductionOrMissingEvidence": "All 28 final views (18 receipt states and 10 footer views) preserve horizontal containment and exact protected text/full values across seven normal pairs plus three doubled conditions. Long identifiers and whole status items reflow within the inspector.",
+      "scope": "Current affected-layout evidence plus preserved broad controls; no unsupported device/locale extrapolation."
+    },
+    {
+      "id": "R2",
+      "field": "responsiveScore",
+      "name": "reachability of navigation and primary actions",
+      "observedScore": 4,
+      "finalScore": null,
+      "status": "PARTIALLY_OBSERVED",
+      "evidenceRefs": [
+        "controls320",
+        "controls320_state",
+        "first_after_report",
+        "continuity"
+      ],
+      "deductionOrMissingEvidence": "The final Run control is reachable at320 after the wrapping repair; native pointer/keyboard paths were observed. Phone users must scroll to the inspector on first view.",
+      "scope": "CSS viewport and actual keyboard/pointer only; real-touch/OS keyboard NOT_RUN."
+    },
+    {
+      "id": "R3",
+      "field": "responsiveScore",
+      "name": "modal/panel/table/canvas adaptation",
+      "observedScore": 4,
+      "finalScore": null,
+      "status": "PARTIALLY_OBSERVED",
+      "evidenceRefs": [
+        "current320",
+        "current_desktop",
+        "current_provenance",
+        "current_failed2x"
+      ],
+      "deductionOrMissingEvidence": "The inspector, invoice, receipt and provenance adapt without horizontal clipping. Extra scrolling at doubled text is preserved; full-screen adaptation of a real deck editor is not part of this example.",
+      "scope": "Owned example panel/table only; no invented modal or canvas test."
+    },
+    {
+      "id": "R4",
+      "field": "responsiveScore",
+      "name": "touch and on-screen-keyboard usability",
+      "observedScore": null,
+      "finalScore": null,
+      "status": "NOT_RUN",
+      "evidenceRefs": [],
+      "deductionOrMissingEvidence": "No physical touch device or on-screen keyboard was used. Chromium viewport dimensions and pointer clicks do not establish finger or OS-keyboard usability.",
+      "scope": "Real device evidence required."
+    },
+    {
+      "id": "R5",
+      "field": "responsiveScore",
+      "name": "stability under zoom, long content and declared locales",
+      "observedScore": null,
+      "finalScore": null,
+      "status": "NOT_RUN",
+      "evidenceRefs": [
+        "final_report"
+      ],
+      "deductionOrMissingEvidence": "Computed2× text and320 CSS width were tested, but native200/400% browser zoom, locale promises and additional locale/long-content combinations were not.",
+      "scope": "Keep composite zoom/locale criterion ungraded despite bounded reflow observations."
+    },
+    {
+      "id": "I1",
+      "field": "interactionScore",
+      "name": "Working controls and keyboard paths",
+      "observedScore": 5,
+      "finalScore": null,
+      "status": "PARTIALLY_OBSERVED",
+      "evidenceRefs": [
+        "first_after_report",
+        "clipboard",
+        "continuity"
+      ],
+      "deductionOrMissingEvidence": "Two native390/1440 journeys exercised all five traces, three depth levels,18 row open/close actions per journey, focus retention, both themes and12 transition pairs. Actual copy/retry and repeated copies completed.",
+      "scope": "Only the named local example controls; new CSS proof does not claim new native playback."
+    },
+    {
+      "id": "I2",
+      "field": "interactionScore",
+      "name": "immediate honest feedback and durable status",
+      "observedScore": 4,
+      "finalScore": null,
+      "status": "PARTIALLY_OBSERVED",
+      "evidenceRefs": [
+        "clipboard",
+        "clipboard_denied",
+        "clipboard_success",
+        "current_fallback",
+        "current_failed"
+      ],
+      "deductionOrMissingEvidence": "Clipboard success follows real fulfillment, rejection stays a warning and running/failed fixtures avoid invented billed cost or signature. No durable backend status was exercised.",
+      "scope": "Observed immediate local feedback; durable status NOT_RUN."
+    },
+    {
+      "id": "I3",
+      "field": "interactionScore",
+      "name": "validation/error/retry behavior",
+      "observedScore": 4,
+      "finalScore": null,
+      "status": "PARTIALLY_OBSERVED",
+      "evidenceRefs": [
+        "clipboard",
+        "unavailable",
+        "current_failed2x"
+      ],
+      "deductionOrMissingEvidence": "Actual NotAllowedError, granted retry and subsequent denial preserve truthful warning/recovery semantics. The unavailable case is explicitly simulated. Validation failure explains two causes without offering a false approval path.",
+      "scope": "Native clipboard recovery plus fixture validation; provider/network recovery NOT_RUN."
+    },
+    {
+      "id": "I4",
+      "field": "interactionScore",
+      "name": "safe cancellation/undo and duplicate-action handling",
+      "observedScore": 4,
+      "finalScore": null,
+      "status": "PARTIALLY_OBSERVED",
+      "evidenceRefs": [
+        "clipboard",
+        "first_after_report"
+      ],
+      "deductionOrMissingEvidence": "Sixteen actual Copy clicks including12 repeated copies, timer ordering and12 trace/depth pairs per native journey showed no row/control accumulation. No cancel/undo or pending-write cancellation contract was tested.",
+      "scope": "Partial bounded duplicate-action observation, not unlimited concurrency or durable-job cancellation."
+    },
+    {
+      "id": "I5",
+      "field": "interactionScore",
+      "name": "state continuity through navigation, reload, conflicts and reopening",
+      "observedScore": null,
+      "finalScore": null,
+      "status": "NOT_RUN",
+      "evidenceRefs": [
+        "first_after_report"
+      ],
+      "deductionOrMissingEvidence": "Fresh contexts and local transitions were observed, but back/forward, interrupted reload, persisted session recovery, conflict/reopen and durable state are not established.",
+      "scope": "No lifecycle continuity score from static fixture resets."
+    },
+    {
+      "id": "A1",
+      "field": "accessibilityScore",
+      "name": "Semantic names/structure",
+      "observedScore": 4,
+      "finalScore": null,
+      "status": "PARTIALLY_OBSERVED",
+      "evidenceRefs": [
+        "first_after_report",
+        "state_readback"
+      ],
+      "deductionOrMissingEvidence": "Buttons and expandable rows have names, pressed/expanded states and keyboard ownership; exact full-copy values remain present. This is DOM/behavior evidence, not a complete accessibility-tree or AT audit.",
+      "scope": "Observed semantics only."
+    },
+    {
+      "id": "A2",
+      "field": "accessibilityScore",
+      "name": "keyboard/focus order and modal focus return",
+      "observedScore": 4,
+      "finalScore": null,
+      "status": "PARTIALLY_OBSERVED",
+      "evidenceRefs": [
+        "first_after_report"
+      ],
+      "deductionOrMissingEvidence": "Native Tab/ShiftTab, Enter/Space, row focus after rerender and theme activation worked in two declared viewports. There is no modal focus-return journey in this surface.",
+      "scope": "Partial keyboard/focus evidence; screen readers and alternative inputs untested."
+    },
+    {
+      "id": "A3",
+      "field": "accessibilityScore",
+      "name": "contrast/non-color cues",
+      "observedScore": null,
+      "finalScore": null,
+      "status": "NOT_RUN",
+      "evidenceRefs": [
+        "current_fallback",
+        "current_failed",
+        "clipboard_denied"
+      ],
+      "deductionOrMissingEvidence": "Text labels, borders and icons provide non-color cues, but no numeric contrast evaluation or manual contrast/vision protocol was run.",
+      "scope": "No contrast grade inferred from apparently readable pixels."
+    },
+    {
+      "id": "A4",
+      "field": "accessibilityScore",
+      "name": "text resize/reflow and target size",
+      "observedScore": 4,
+      "finalScore": null,
+      "status": "PARTIALLY_OBSERVED",
+      "evidenceRefs": [
+        "controls320_state",
+        "final_report",
+        "current2x320"
+      ],
+      "deductionOrMissingEvidence": "Actual trace/depth controls measure24px high, copy buttons remain24×24 and computed doubled text reflows. These meet the measured scope; primary44px ergonomic preference, native zoom and real touch remain unverified.",
+      "scope": "Partial measured target/text-reflow result, not WCAG conformance."
+    },
+    {
+      "id": "A5",
+      "field": "accessibilityScore",
+      "name": "screen-reader announcements and reduced-motion alternatives. Manual checks accompany automated scans",
+      "observedScore": null,
+      "finalScore": null,
+      "status": "NOT_RUN",
+      "evidenceRefs": [
+        "first_after_report",
+        "reduced_report"
+      ],
+      "deductionOrMissingEvidence": "Live-region strings and reduced-motion CSS state were observed, but no screen reader was used and no complete alternative-motion evaluation was recorded.",
+      "scope": "No assistive-technology grade from aria text alone."
+    },
+    {
+      "id": "P1",
+      "field": "performanceScore",
+      "name": "Initial usable view",
+      "observedScore": null,
+      "finalScore": null,
+      "status": "NOT_RUN",
+      "evidenceRefs": [],
+      "deductionOrMissingEvidence": "No initial-usable-view budget, LCP measurement, field window or device segment was frozen/measured. Command wall time is not rendering performance.",
+      "scope": "Performance NOT_RUN."
+    },
+    {
+      "id": "P2",
+      "field": "performanceScore",
+      "name": "input/scroll responsiveness",
+      "observedScore": null,
+      "finalScore": null,
+      "status": "NOT_RUN",
+      "evidenceRefs": [],
+      "deductionOrMissingEvidence": "No input/scroll latency budget or INP measurement was collected. Successful scripted input is functional evidence only.",
+      "scope": "Performance NOT_RUN."
+    },
+    {
+      "id": "P3",
+      "field": "performanceScore",
+      "name": "layout stability",
+      "observedScore": null,
+      "finalScore": null,
+      "status": "NOT_RUN",
+      "evidenceRefs": [],
+      "deductionOrMissingEvidence": "No CLS or layout-shift measurement was collected; settled snapshots cannot quantify transient stability.",
+      "scope": "Performance NOT_RUN."
+    },
+    {
+      "id": "P4",
+      "field": "performanceScore",
+      "name": "honest long-operation feedback",
+      "observedScore": null,
+      "finalScore": null,
+      "status": "NOT_RUN",
+      "evidenceRefs": [
+        "running"
+      ],
+      "deductionOrMissingEvidence": "The running display is a static illustrative fixture, not a timed real long operation. No progress-staleness/cancel/timeout budget was exercised.",
+      "scope": "Performance/lifecycle feedback NOT_RUN."
+    },
+    {
+      "id": "P5",
+      "field": "performanceScore",
+      "name": "behavior with large data and constrained device/network conditions. Record workload and measured budgets separately from reviewer impressions",
+      "observedScore": null,
+      "finalScore": null,
+      "status": "NOT_RUN",
+      "evidenceRefs": [],
+      "deductionOrMissingEvidence": "No large-data, constrained-device or network workload/budget was defined or run. The fixed fixtures do not provide load evidence.",
+      "scope": "Performance NOT_RUN."
+    },
+    {
+      "id": "U1",
+      "field": "usageScore",
+      "name": "First-time task comprehension",
+      "observedScore": null,
+      "finalScore": null,
+      "status": "NOT_RUN",
+      "evidenceRefs": [],
+      "deductionOrMissingEvidence": "No first-time human participant from the intended developer/QA audience was observed with frozen tasks and assistance counts.",
+      "scope": "Fresh human usability NOT_RUN."
+    },
+    {
+      "id": "U2",
+      "field": "usageScore",
+      "name": "successful core journey",
+      "observedScore": null,
+      "finalScore": null,
+      "status": "NOT_RUN",
+      "evidenceRefs": [
+        "first_after_report",
+        "source_floor"
+      ],
+      "deductionOrMissingEvidence": "An agent completed source commands and the example journeys. No human core-task completion study or complete toolkit-in-a-new-project workflow was observed.",
+      "scope": "Human core journey and full toolkit adoption NOT_RUN."
+    },
+    {
+      "id": "U3",
+      "field": "usageScore",
+      "name": "bounded errors/help/rework",
+      "observedScore": 4,
+      "finalScore": null,
+      "status": "PARTIALLY_OBSERVED",
+      "evidenceRefs": [
+        "clipboard",
+        "current_failed",
+        "source_floor"
+      ],
+      "deductionOrMissingEvidence": "The local copy denial/retry loop is bounded and actionable; source commands provide explicit pass/fail, and the failed fixture preserves reasons. Full toolkit user rework was not exercised.",
+      "scope": "Agent-observed local errors/help only."
+    },
+    {
+      "id": "U4",
+      "field": "usageScore",
+      "name": "usable export or consumer result",
+      "observedScore": 4,
+      "finalScore": null,
+      "status": "PARTIALLY_OBSERVED",
+      "evidenceRefs": [
+        "source_floor",
+        "clipboard",
+        "current_provenance"
+      ],
+      "deductionOrMissingEvidence": "The exact exported HTML runs as a consumer surface, and actual native readback yields the full synthetic digest despite visual shortening. No new real-app QA report, provider output or narrated export was produced.",
+      "scope": "Local example consumer/result only."
+    },
+    {
+      "id": "U5",
+      "field": "usageScore",
+      "name": "restart/reopen/handoff without hidden knowledge. Fresh-agent operability is separate from observed fresh-human usability",
+      "observedScore": null,
+      "finalScore": null,
+      "status": "NOT_RUN",
+      "evidenceRefs": [
+        "source_floor",
+        "source_readme"
+      ],
+      "deductionOrMissingEvidence": "Normal no-install source tests/doctor/proof passed and documentation identifies the browser dependency. A fresh developer end-to-end host setup, toolkit restart/handoff and audit-artifact reopening were not observed.",
+      "scope": "Do not equate source-only self-check with full fresh-user operability."
+    },
+    {
+      "id": "L1",
+      "field": "alignmentScore",
+      "name": "Fit to intended user and job",
+      "observedScore": 4,
+      "finalScore": null,
+      "status": "PARTIALLY_OBSERVED",
+      "evidenceRefs": [
+        "source_readme",
+        "desktop_entry",
+        "current_failed"
+      ],
+      "deductionOrMissingEvidence": "The example helps developers inspect consent, provenance, validation and human authority, matching the toolkit’s agentic-QA purpose. Audience fit is agent evaluated, not validated through users.",
+      "scope": "Scoped example fit."
+    },
+    {
+      "id": "L2",
+      "field": "alignmentScore",
+      "name": "coverage of advertised capabilities",
+      "observedScore": null,
+      "finalScore": null,
+      "status": "NOT_RUN",
+      "evidenceRefs": [
+        "source_readme",
+        "gating"
+      ],
+      "deductionOrMissingEvidence": "The toolkit also advertises audit/gate, multi-host, declutter and proof-video workflows. These were not all executed in a fresh downstream application.",
+      "scope": "Coverage of all advertised capabilities NOT_RUN."
+    },
+    {
+      "id": "L3",
+      "field": "alignmentScore",
+      "name": "truthful limits/status",
+      "observedScore": 4,
+      "finalScore": null,
+      "status": "PARTIALLY_OBSERVED",
+      "evidenceRefs": [
+        "example_readme",
+        "source_floor",
+        "current_fallback",
+        "current_failed",
+        "clipboard"
+      ],
+      "deductionOrMissingEvidence": "Current documentation identifies A–E/costs as illustrative; source-floor receipts have null browser-derived facts. The UI correctly distinguishes provisional/failed/human-pending and real clipboard success/failure. Historic live-GLM prose is fixture context, not current provider proof.",
+      "scope": "Observed documentation/local state truth; production accounting not claimed."
+    },
+    {
+      "id": "L4",
+      "field": "alignmentScore",
+      "name": "permissions and review authority",
+      "observedScore": 4,
+      "finalScore": null,
+      "status": "PARTIALLY_OBSERVED",
+      "evidenceRefs": [
+        "clipboard",
+        "current_fallback",
+        "current_failed"
+      ],
+      "deductionOrMissingEvidence": "Native clipboard permissions are obeyed, the fallback has no signable candidate and failed validation withholds a countersignature. No backend authorization, real human signature or owner isolation was tested.",
+      "scope": "Local permission and illustrative review-authority boundaries only."
+    },
+    {
+      "id": "L5",
+      "field": "alignmentScore",
+      "name": "source/trace/artifact consistency",
+      "observedScore": 5,
+      "finalScore": null,
+      "status": "PARTIALLY_OBSERVED",
+      "evidenceRefs": [
+        "source_freeze",
+        "continuity",
+        "closure",
+        "final_judge"
+      ],
+      "deductionOrMissingEvidence": "Raw/canonical source, exact exported inputs, full-copy values, scripts and before/after artifacts are independently bound. All134 current plus468 historical artifacts and source/Git guards close.",
+      "scope": "Strong local source/trace/artifact consistency; no production lineage claim."
+    }
+  ],
+  "evidence": {
+    "standard": {
+      "archiveMember": "raw/REPO_READINESS_STANDARD.md",
+      "bytes": 18664,
+      "sha256": "8b5bb532bf0dfeed7cc4ecd2b425d708fc49048cc05ab4cbeb315fc3534aeff2"
+    },
+    "source_freeze": {
+      "archiveMember": "raw/E6n_AGENTIC_UI_QA_TICK_SOURCE_FREEZE.json",
+      "bytes": 7396,
+      "sha256": "d87109b5291c2cad9b8e6f00b3b1044af82298d8371169ba644272cf927a0000"
+    },
+    "source_floor": {
+      "archiveMember": "raw/E6n-agentic-ui-qa-tick-source-floor-01/receipt.json",
+      "bytes": 11710,
+      "sha256": "8bbb27ffedf9db67a745e8bc411c7347695f0a5010523fa8bc6c8a7f33b279de"
+    },
+    "source_readme": {
+      "archiveMember": "raw/source/README.md",
+      "bytes": 20529,
+      "sha256": "32f825e07efc08b437b748ac391f9ece6f86845599f81c0409b283d8b4d048aa"
+    },
+    "example_readme": {
+      "archiveMember": "raw/source/examples/trace-revamp/README.md",
+      "bytes": 2011,
+      "sha256": "622a38628940423f3dade9da3e7ff31613ed51216d87ee38e4ac7bf4bfc075dd"
+    },
+    "gating": {
+      "archiveMember": "raw/source/GATING.md",
+      "bytes": 12307,
+      "sha256": "31dfe34fc8cfdd2c1dc314c2bf70dd02f60167722cb1c6cabf55fca5a470cee6"
+    },
+    "baseline_judge": {
+      "archiveMember": "raw/E6n_AGENTIC_UI_QA_BROWSER_BASELINE_JUDGE.json",
+      "bytes": 8244,
+      "sha256": "786992485a81c019719bfba062accfb5aaec2f988ee48dfc41ccbf76b418fad0"
+    },
+    "first_after_judge": {
+      "archiveMember": "raw/E6n_AGENTIC_UI_QA_AFTER_JUDGE.json",
+      "bytes": 10889,
+      "sha256": "6779bc18fd79d4da097bff6cc622e47e26313e1c6177dde7a29aee6874eb12c3"
+    },
+    "first_after_report": {
+      "archiveMember": "raw/E6n-agentic-ui-qa-browser-after-01/browser/report.json",
+      "bytes": 466085,
+      "sha256": "63336f1ce6e1b52f9a127f256a0e3de9c764d6229bf5bb85c9568f7ccc8cb7c6"
+    },
+    "final_judge": {
+      "archiveMember": "raw/E6n_AGENTIC_UI_QA_TICK_FINAL_JUDGE.json",
+      "bytes": 11092,
+      "sha256": "39f6d515b48fe1d1a9da90a8c23a7dff7d49c33b4360b88c360488bc026ab5e5"
+    },
+    "final_report": {
+      "archiveMember": "raw/E6n-agentic-ui-qa-tick-after-01/browser/report.json",
+      "bytes": 308987,
+      "sha256": "da2fc7eb6153da650da0f1fdc9d7fb33ce4da7447acdaa69f76eab4bb617f6e7"
+    },
+    "continuity": {
+      "archiveMember": "raw/E6n-agentic-ui-qa-tick-after-01/independent-source-continuity.json",
+      "bytes": 2442,
+      "sha256": "8d37c39569ac6fc8ef4f7ad8cdf7dbf677cc8062ac80b316ab229a863a8ba8ae"
+    },
+    "closure": {
+      "archiveMember": "raw/E6n-agentic-ui-qa-tick-final-judge-01/guard-closure.json",
+      "bytes": 4319,
+      "sha256": "aa1d0fd38d8ce16cde7420168fcea732d7ccf26a496a83a52ce00e0178945e86"
+    },
+    "final_viewed": {
+      "archiveMember": "raw/E6n-agentic-ui-qa-tick-final-judge-01/viewed-images.json",
+      "bytes": 8741,
+      "sha256": "f5d55154c9bab30eb1ff5f15fbd87db6bdc6bba547ce215ac5ac6477ee084532"
+    },
+    "phone_entry": {
+      "archiveMember": "raw/E6n-agentic-ui-qa-browser-after-01/browser/matrix-390x844-A-entry.png",
+      "bytes": 131870,
+      "sha256": "7afc3d1a82b6c164523dc94517aab764fd3cf86dcc714627f49e1dc0df717fd9"
+    },
+    "desktop_entry": {
+      "archiveMember": "raw/E6n-agentic-ui-qa-browser-after-01/browser/matrix-1440x960-A-entry.png",
+      "bytes": 185541,
+      "sha256": "3ff0cf60c3b8581f459af906c9f103f0078a45c4051596eaae2fe6c07c59d282"
+    },
+    "phone_entry_state": {
+      "archiveMember": "raw/E6n-agentic-ui-qa-browser-after-01/browser/matrix-390x844-A-entry.json",
+      "bytes": 316625,
+      "sha256": "6403867fd317c62f8790dce9d7a49ffeb8ee1a379e46f285c219ed32e922c80f"
+    },
+    "controls320": {
+      "archiveMember": "raw/E6n-agentic-ui-qa-browser-after-01/browser/matrix-320x800-A-controls.png",
+      "bytes": 36396,
+      "sha256": "ca5c7d6685d779e10896b0f16b15d8de75dc9329374594e4194158c5a595bc32"
+    },
+    "controls320_state": {
+      "archiveMember": "raw/E6n-agentic-ui-qa-browser-after-01/browser/matrix-320x800-A-controls.json",
+      "bytes": 319874,
+      "sha256": "7b82c50460bf9a1ea079216b9b28ca064c472c8fc9287f8c0b36db9bec9b139e"
+    },
+    "running": {
+      "archiveMember": "raw/E6n-agentic-ui-qa-browser-after-01/browser/native-390x844-D-human.png",
+      "bytes": 36441,
+      "sha256": "6c9fe74dd7a13122e5ce8d7604ccceda3cae7ffa44d13255dde3fa62f50ea520"
+    },
+    "empty": {
+      "archiveMember": "raw/E6n-agentic-ui-qa-browser-after-01/browser/native-390x844-E-human.png",
+      "bytes": 41213,
+      "sha256": "2db7142311702efc8979c2e62f85acd432bbf94e7309c081ae95bc1289306a2c"
+    },
+    "dark_historical": {
+      "archiveMember": "raw/E6n-agentic-ui-qa-browser-after-01/browser/native-390x844-dark.png",
+      "bytes": 50900,
+      "sha256": "ce4372e0679bc5e006cb18d62c294106b690d2f530a5ada17fca1682a619fba9"
+    },
+    "clipboard": {
+      "archiveMember": "raw/E6n-agentic-ui-qa-browser-after-01/browser/denied-clipboard-390x844-native-ledger.json",
+      "bytes": 5530,
+      "sha256": "8566adaca62c0ccdbed9270ab6faf3de552c88164b4111eed80205e324ecc692"
+    },
+    "clipboard_denied": {
+      "archiveMember": "raw/E6n-agentic-ui-qa-browser-after-01/browser/denied-clipboard-390x844-failure-after-prior-timer.png",
+      "bytes": 45673,
+      "sha256": "25854020725bde934fc349ab1d35320f93a31fa551bc75e3c45c11d5d1b07818"
+    },
+    "clipboard_success": {
+      "archiveMember": "raw/E6n-agentic-ui-qa-browser-after-01/browser/denied-clipboard-390x844-granted-retry.png",
+      "bytes": 45554,
+      "sha256": "9a5af56d2b8236bb8f135046f36657f80675e3e295fce98905b5556726866c8a"
+    },
+    "unavailable": {
+      "archiveMember": "raw/E6n-agentic-ui-qa-browser-after-01/browser/unavailable-capability-simulation-390x844-scope.json",
+      "bytes": 253,
+      "sha256": "89093bebcfbaab3b80f49fb2393847cf2bb88b12a11af67a48fcc3dba679f98c"
+    },
+    "reduced_report": {
+      "archiveMember": "raw/E6n-agentic-ui-qa-browser-after-01/browser/reduced-390x844-running.json",
+      "bytes": 144949,
+      "sha256": "5dbb9584775e917dad8b3325c67535150c729bc59ce7f201f92d3353eb6decc1"
+    },
+    "current_phone": {
+      "archiveMember": "raw/E6n-agentic-ui-qa-tick-after-01/browser/normal-390x844-A-receipt.png",
+      "bytes": 49567,
+      "sha256": "21214b6241f6e2f1b60e648b933d8bdce67d48b09ba6df67cf71d18f8b1bd8a3"
+    },
+    "current320": {
+      "archiveMember": "raw/E6n-agentic-ui-qa-tick-after-01/browser/normal-320x800-A-receipt.png",
+      "bytes": 43319,
+      "sha256": "17e7df2e71d44a726b699d2b118c3328597d26097815e94da081db58e3119006"
+    },
+    "current_desktop": {
+      "archiveMember": "raw/E6n-agentic-ui-qa-tick-after-01/browser/normal-1440x960-A-receipt.png",
+      "bytes": 76859,
+      "sha256": "573b3573c05bf0a47f439fafa5a384f689b89b0ff4400a3808afa185fdbc702c"
+    },
+    "current2x320": {
+      "archiveMember": "raw/E6n-agentic-ui-qa-tick-after-01/browser/text200-320x800-A-receipt.png",
+      "bytes": 45677,
+      "sha256": "0833019b59f3aa1af3705f9f3ac0c0482c77de6f1141b62e175fb16fa9f852dc"
+    },
+    "current2x390": {
+      "archiveMember": "raw/E6n-agentic-ui-qa-tick-after-01/browser/text200-390x844-A-receipt.png",
+      "bytes": 60199,
+      "sha256": "43d82f85daef8496fc9a8eb6fcf64ec4a3505707255b26d3d18db2175f65c13b"
+    },
+    "current2x1440": {
+      "archiveMember": "raw/E6n-agentic-ui-qa-tick-after-01/browser/text200-1440x960-A-receipt.png",
+      "bytes": 181902,
+      "sha256": "7f472e28b9fea6c838d2efe7ec2bd0c713193c82a8c08139435bf5beb46a1b4d"
+    },
+    "current_provenance": {
+      "archiveMember": "raw/E6n-agentic-ui-qa-tick-after-01/browser/text200-390x844-A-footer.png",
+      "bytes": 74983,
+      "sha256": "054b024a04d05a2d2e3b9221557aa09ad03cfb063ed7a0fdd9728af35b7c68f1"
+    },
+    "current_fallback": {
+      "archiveMember": "raw/E6n-agentic-ui-qa-tick-after-01/browser/normal-1440x960-B-receipt.png",
+      "bytes": 85597,
+      "sha256": "42759f994b57f3e7ef53c5b003dcc636d40b57dbf05badd0197f6125cad2618d"
+    },
+    "current_failed": {
+      "archiveMember": "raw/E6n-agentic-ui-qa-tick-after-01/browser/normal-390x844-C-receipt.png",
+      "bytes": 53335,
+      "sha256": "b504c82882d385711a5e55d186650e82a782c6f802a5c34e77175778c774ddad"
+    },
+    "current_failed2x": {
+      "archiveMember": "raw/E6n-agentic-ui-qa-tick-after-01/browser/text200-390x844-C-receipt.png",
+      "bytes": 60326,
+      "sha256": "3434a14a470be4ad3af4690da60442f24f5115c1595375cdfb6d7f423885fe5c"
+    },
+    "lexical": {
+      "archiveMember": "raw/E6n-agentic-ui-qa-tick-final-judge-01/lexical-readback.json",
+      "bytes": 14930,
+      "sha256": "08eee362c46aa531ff5cec91a9c62859977458c79df642f2db65adba05870327"
+    },
+    "state_readback": {
+      "archiveMember": "raw/E6n-agentic-ui-qa-tick-final-judge-01/state-readback.json",
+      "bytes": 29467,
+      "sha256": "a8dd121e83b268d3f14bb04b9ef7c4c602cf2d689b2646f306b451ceed0f7364"
+    }
+  },
+  "fullScores": {
+    "visualScore": null,
+    "designScore": null,
+    "responsiveScore": null,
+    "interactionScore": null,
+    "accessibilityScore": null,
+    "performanceScore": null,
+    "usageScore": null,
+    "alignmentScore": null,
+    "overallScore": null
+  },
+  "hardGates": [
+    {
+      "name": "Frozen local source/receipt repair",
+      "status": "PASS",
+      "evidenceRefs": [
+        "final_judge",
+        "closure"
+      ]
+    },
+    {
+      "name": "All required criterion evidence complete",
+      "status": "NOT_RUN",
+      "reason": "Missing human/device/zoom/contrast/AT/performance/lifecycle and full-toolkit coverage keeps every dimension/overall score null."
+    },
+    {
+      "name": "Portfolio numeric target",
+      "status": "NOT_MET_BY_PARTIAL_OBSERVATIONS",
+      "reason": "Five observed criteria are3; no means or letter grades calculated."
+    },
+    {
+      "name": "Toolkit advisory audit vs portfolio acceptance",
+      "status": "SEPARATE_POLICIES",
+      "reason": "GATING.md makes prettify-audit exit0 advisory. It was not run here; its exit convention does not waive this portfolio standard."
+    },
+    {
+      "name": "Shared integration and production",
+      "status": "NOT_RUN",
+      "reason": "No current shared/deployment inference from local results."
+    }
+  ],
+  "limitations": [
+    "All criteria are partial or NOT_RUN; no full dimension, mean, letter grade or readiness pass.",
+    "No original0–2 B/V rubric was converted to these1–5 observations.",
+    "Static model/cost/consent/signature data does not demonstrate provider operation or human approval.",
+    "No contrast ratio or accessibility/performance certification from pixels or CSS counts.",
+    "Native200/400% zoom, physical devices, AT, other engines, field performance and large-data workloads absent.",
+    "No human first-use participant study or complete toolkit-in-downstream-app execution.",
+    "Finite clipboard and transition evidence does not prove unlimited concurrency, pending-write cancellation or durable lifecycle.",
+    "Historical broad screenshots are distinguished from new28 corrected receipt pixels; no fresh dark receipt capture.",
+    "Prior failures and old grades are retained; central portfolio grade file was not edited."
+  ]
+}

@@ -144,7 +144,7 @@ Honesty invariants (P0 — enforce in code and tests):
 5. Cost uses the existing `formatCost` (four decimals, `$0.0000` for zero) — do **not** silently switch to the mockup's 3-decimal form.
 
 ### 4b. Copy interaction
-The copy button and clickable hash must `stopPropagation()` so a click inside the seal never toggles/collapses the Receipt node. Node keydown toggles **only** when `e.target === node` (inner controls keep their own Enter/Space). Copy writes the **full** digest via `navigator.clipboard.writeText`, flips the glyph to ✓ for ~1.2s, and announces via an `aria-live="polite"` region.
+The copy button and clickable hash must `stopPropagation()` so a click inside the seal never toggles/collapses the Receipt node. Node keydown toggles **only** when `e.target === node` (inner controls keep their own Enter/Space). Copy writes the **full** digest via `navigator.clipboard.writeText`. Only fulfillment flips the glyph to ✓ for ~1.2s and announces success via the existing `aria-live="polite"` region. Rejection or unavailable clipboard access shows a warning with an actionable accessible message, keeps the full digest intact, and permits an explicit retry. A new attempt clears previous feedback and its reset timer; no automatic retry or clipboard fallback is implied.
 
 ## 5. Progressive disclosure (Depth: Human / Pro / Tech) — already real, extend it
 **Important correction:** the Depth control is **already a working segmented control** in the component (`useState<TraceDensity>('human')`, three `role="tab"` buttons Human/Pro/Tech). It is **not** a decorative `ns-route-pill`. The only functional change required is **session persistence**:
