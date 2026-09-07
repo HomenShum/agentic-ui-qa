@@ -3,16 +3,24 @@
 Honest list of what is weak, unfinished, or would bite a newcomer. Nothing here is
 hidden in a footnote elsewhere.
 
-## Open defects on the demo surface
+## Demo surface: historical findings and current scope
 
-These are tracked in `promotion/PROMOTION_LOG.md` and were left alone on purpose:
-fixing them is feature work on the product, and this pass was structural.
+`promotion/` and `docs/SIMPLIFICATION_REPORT.md` retain the original structural
+pass. Their 320px outer overflow and missing trace announcements were historical
+findings; the current source already clamps the outer stage and announces trace,
+depth and theme changes. Those fixes are preserved.
 
-| | Defect | Evidence |
-|---|---|---|
-| D2 | `examples/trace-revamp/mockup.html` overflows horizontally at 320px — `scrollWidth` 360 against `clientWidth` 320 | `promotion/evidence/head-check.json` → `overflowWidths: [320]`; unchanged before and after the document-shell fix, which killed the quirks-mode hypothesis |
-| D4/D5 | minor, in the ledger | `promotion/PROMOTION_LOG.md` |
-| — | the `aria-live` region at `mockup.html:413` is only ever written for "Digest copied" (`:819`), so switching the whole trace announces nothing to a screen reader | condition 6 in `promotion/PRODUCT_GOAL.md` |
+The subsequent current-browser baseline found three different defects: the inner
+run selector clipped its last control at 320px, enlarged receipt content expanded
+beyond the inspector, and denied clipboard writes displayed success. The current
+HTML repairs those inner layout and completion-handler seams. A passing source
+check does not establish rendered readability or native clipboard behavior; these
+require matched pixels and actual permission/success/retry observations. Static
+A–E fixtures do not prove provider execution, durable state or human approval.
+
+Historical D4/D5 entries remain in `promotion/PROMOTION_LOG.md`; their dated claims
+are not rewritten by this scoped repair. Physical-device, screen-reader and other
+browser-engine coverage remain separate from a local Chromium observation.
 
 ## Coverage gaps
 
@@ -66,9 +74,9 @@ finds it explained here rather than discovering a config that hides findings.
 loop, and changing what it asserts is that loop's decision. CI runs both.
 
 **The scorecard in `promotion/PRODUCT_GOAL.md` quotes `15/15` for the self-check; it now
-reports `18/18`.** That document is dated, append-only evidence and was not rewritten.
+reports `21/21`.** That document is dated, append-only evidence and was not rewritten.
 The count moved because `self-check.mjs` discovers scripts instead of listing them, so
-it now also checks `scripts/lib/`.
+it now also checks the current scripts and `scripts/lib/`.
 
 ## Things a newcomer will misread
 

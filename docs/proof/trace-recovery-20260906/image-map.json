@@ -1,0 +1,56 @@
+[
+  {
+    "path": "controls-before.png",
+    "archiveMember": "raw/E6n-agentic-ui-qa-browser-baseline-01/browser/matrix-320x800-A-controls.png",
+    "bytes": 37894,
+    "sha256": "2edab9468c986b97f8ba1e568a51db7f7fadaf66e2195a4acc9d2c16928fb5cc"
+  },
+  {
+    "path": "controls-repaired.png",
+    "archiveMember": "raw/E6n-agentic-ui-qa-browser-after-01/browser/matrix-320x800-A-controls.png",
+    "bytes": 36396,
+    "sha256": "ca5c7d6685d779e10896b0f16b15d8de75dc9329374594e4194158c5a595bc32"
+  },
+  {
+    "path": "enlarged-before.png",
+    "archiveMember": "raw/E6n-agentic-ui-qa-browser-baseline-01/browser/text200-390x844-receipt.png",
+    "bytes": 54670,
+    "sha256": "adfc88d56f0f57b66079bb9a0813d3eed5a542b0a4a2274023f6aca60609bfe6"
+  },
+  {
+    "path": "enlarged-current.png",
+    "archiveMember": "raw/E6n-agentic-ui-qa-tick-after-01/browser/text200-390x844-A-receipt.png",
+    "bytes": 60199,
+    "sha256": "43d82f85daef8496fc9a8eb6fcf64ec4a3505707255b26d3d18db2175f65c13b"
+  },
+  {
+    "path": "words-rejected.png",
+    "archiveMember": "raw/E6n-agentic-ui-qa-browser-after-01/browser/matrix-390x844-A-receipt.png",
+    "bytes": 41749,
+    "sha256": "849f165462f239f4f1ec4d2781af8516c97df1bb8ff4681f1e0932beaba4bf76"
+  },
+  {
+    "path": "words-current.png",
+    "archiveMember": "raw/E6n-agentic-ui-qa-tick-after-01/browser/normal-390x844-A-receipt.png",
+    "bytes": 49567,
+    "sha256": "21214b6241f6e2f1b60e648b933d8bdce67d48b09ba6df67cf71d18f8b1bd8a3"
+  },
+  {
+    "path": "copy-false-success.png",
+    "archiveMember": "raw/E6n-agentic-ui-qa-browser-baseline-01/browser/denied-clipboard-390x844-after.png",
+    "bytes": 45515,
+    "sha256": "63ec4c42dfbd494845ca74e066cbb6069c8f822a17152d6e83e1a8e477bed1f5"
+  },
+  {
+    "path": "copy-honest-failure.png",
+    "archiveMember": "raw/E6n-agentic-ui-qa-browser-after-01/browser/denied-clipboard-390x844-failure-after-prior-timer.png",
+    "bytes": 45673,
+    "sha256": "25854020725bde934fc349ab1d35320f93a31fa551bc75e3c45c11d5d1b07818"
+  },
+  {
+    "path": "copy-granted-retry.png",
+    "archiveMember": "raw/E6n-agentic-ui-qa-browser-after-01/browser/denied-clipboard-390x844-granted-retry.png",
+    "bytes": 45554,
+    "sha256": "9a5af56d2b8236bb8f135046f36657f80675e3e295fce98905b5556726866c8a"
+  }
+]

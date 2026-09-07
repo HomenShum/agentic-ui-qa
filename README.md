@@ -10,6 +10,8 @@
 | **Understand the code** | [`docs/START_HERE.md`](docs/START_HERE.md) — one real QA pass from the sentence a person types to the exit code that decides whether they may deploy, in the order the code executes. |
 | **Read it in your editor** | [`.tours/`](.tours/) — the same walk as three CodeTours that jump to live source. `npm test` fails if any step drifts off the line it names. |
 
+For the verified current example, setup commands and remaining grades, read [the developer handoff](docs/CURRENT_HANDOFF.md).
+
 Every other Markdown file on this page is reference material for one mode or one gate. None
 of it is prerequisite; go to whichever the two documents above send you to.
 
