@@ -88,7 +88,7 @@ diagram for multi-layer fixes, and a QA packet. Each phase is conditional on wha
 touched, and an *independent deployed layer* is required before the word "shipped." For a
 landed DECLUTTER/REVAMP or a demo deliverable, [`PROOF.md`](PROOF.md) is the heavy generator
 for the verified-demo phase: a storyboarded before/after narrated clip (empty → action →
-loading → result, animated cursor, on-screen verdicts) via [FeatureClipStudio](https://github.com/HomenShum)
+loading → result, animated cursor, on-screen verdicts) via [FeatureClipStudio](https://github.com/HomenShum/FeatureClipStudio)
 (Playwright → Remotion → ffmpeg → vision-judge). Same honesty floor: a before/after that
 shows only the happy path and hides the honest degraded state is a fake success — a P0, not
 a highlight reel.
