@@ -11,6 +11,8 @@
 <p align="center"><a href="docs/START_HERE.md">Code&nbsp;walkthrough</a> · <a href="HANDOFF.md">Handoff</a> · <a href="https://homenshum.github.io/">All&nbsp;projects</a></p>
 <!-- brand:end -->
 
+# agentic-ui-qa
+
 **An agent-agnostic QA + dogfooding protocol for agentic application UIs — until any coding agent, on any model, can drive them end to end.**
 
 ## Start here
